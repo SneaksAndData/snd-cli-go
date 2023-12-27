@@ -8,16 +8,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 )
 
-type Client struct {
-	SubscriptionId string
-}
-
-func NewClient(subscriptionId string) Client {
-	c := Client{subscriptionId}
-	return c
-}
-
-func (Client Client) GetDefaultToken() (string, error) {
+func GetDefaultToken() (string, error) {
 	cred, err := getAzureCredentials()
 	if err != nil {
 		return "", err

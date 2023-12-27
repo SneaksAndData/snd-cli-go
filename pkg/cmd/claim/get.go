@@ -1,7 +1,9 @@
 package claim
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/shared/esd-client/boxer"
 )
 
 func NewCmdGetClaim() *cobra.Command {
@@ -18,6 +20,19 @@ func NewCmdGetClaim() *cobra.Command {
 }
 
 func getClaimRun() error {
-	// TODO: add claim get logic, return nil if successful otherwise error
+	url := fmt.Sprintf("https://boxer-claim.%s.sneaksanddata.com", env)
+	input := boxer.Input{
+		TokenUrl: "",
+		ClaimUrl: url,
+		Auth:     boxer.ExternalToken{},
+		Retries:  0,
+	}
+	var boxerConn boxer.Claim
+	boxerConn = boxer.NewConnector(input)
+	claims, err := boxerConn.GetClaim(userId, claimProvider)
+	if err != nil {
+		return err
+	}
+	fmt.Println(claims)
 	return nil
 }

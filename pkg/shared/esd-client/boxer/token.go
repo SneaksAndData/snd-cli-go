@@ -1,4 +1,3 @@
-// Package boxer Connector for Boxer Auth API.
 package boxer
 
 import (
@@ -8,24 +7,28 @@ import (
 	"time"
 )
 
-func GetBoxerToken(getToken func() (string, error), provider string, baseUrl string) (string, error) {
+type ExternalToken struct {
+	GetToken func() (string, error)
+	Provider string
+	Retry    bool
+}
+
+func (c connector) GetToken() (string, error) {
 	httpClient := &http.Client{
 		Timeout: 30 * time.Second,
 	}
 
-	azureAdToken, err := getToken()
+	token, err := c.auth.GetToken()
 	if err != nil {
 		return "", err
 	}
-	bearer := "Bearer " + azureAdToken
-	targetURL := fmt.Sprintf("%s/token/%s", baseUrl, provider)
-
+	bearer := "Bearer " + token
+	targetURL := fmt.Sprintf("%s/token/%s", c.tokenUrl, c.auth.Provider)
 	req, err := http.NewRequest("GET", targetURL, nil)
 	if err != nil {
 		return "", err
 	}
-
-	req.Header.Add("Authorization", bearer)
+	addHeaders(req, bearer)
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return "", err
@@ -45,4 +48,9 @@ func GetBoxerToken(getToken func() (string, error), provider string, baseUrl str
 	}
 
 	return string(body), nil
+}
+
+func addHeaders(r *http.Request, token string) {
+	r.Header.Add("Authorization", token)
+	r.Header.Add("Content-Type", "application/json")
 }
