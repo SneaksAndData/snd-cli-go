@@ -3,6 +3,7 @@ package claim
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/shared/esd-client/boxer"
 )
 
@@ -26,11 +27,14 @@ func addClaimRun() error {
 		TokenUrl: "",
 		ClaimUrl: url,
 		Auth:     boxer.ExternalToken{},
-		Retries:  0,
 	}
 	var boxerConn boxer.Claim
 	boxerConn = boxer.NewConnector(input)
-	claims, err := boxerConn.AddClaim(userId, claimProvider, ca)
+	token, err := util.ReadToken()
+	if err != nil {
+		return err
+	}
+	claims, err := boxerConn.AddClaim(userId, claimProvider, ca, token)
 	if err != nil {
 		return err
 	}

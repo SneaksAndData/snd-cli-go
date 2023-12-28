@@ -4,11 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"snd-cli/pkg/cmd/util"
+	"snd-cli/pkg/shared/esd-client/http"
 	"strings"
-	"time"
 )
 
 type claimPayload struct {
@@ -17,18 +14,13 @@ type claimPayload struct {
 	Claims    map[string]string `json:"claims"`
 }
 
-func (c connector) GetClaim(user string, provider string) (string, error) {
+func (c connector) GetClaim(user string, provider string, token string) (string, error) {
 	targetURL := fmt.Sprintf("%s/claim/%s/%s", c.claimUrl, provider, user)
 
-	token, err := util.ReadToken()
-	if err != nil {
-		return "", err
-	}
-
-	return makeHTTPRequest("GET", targetURL, token, nil)
+	return http.MakeRequest("GET", targetURL, token, nil)
 }
 
-func (c connector) AddClaim(user string, provider string, claims []string) (string, error) {
+func (c connector) AddClaim(user string, provider string, claims []string, token string) (string, error) {
 	targetURL := fmt.Sprintf("%s/claim/%s/%s", c.claimUrl, provider, user)
 
 	payload, err := json.Marshal(preparePayload(claims, "Insert"))
@@ -36,15 +28,10 @@ func (c connector) AddClaim(user string, provider string, claims []string) (stri
 		return "", err
 	}
 
-	token, err := util.ReadToken()
-	if err != nil {
-		return "", err
-	}
-
-	return makeHTTPRequest("PATCH", targetURL, token, bytes.NewBuffer(payload))
+	return http.MakeRequest("PATCH", targetURL, token, bytes.NewBuffer(payload))
 }
 
-func (c connector) RemoveClaim(user string, provider string, claims []string) (string, error) {
+func (c connector) RemoveClaim(user string, provider string, claims []string, token string) (string, error) {
 	targetURL := fmt.Sprintf("%s/claim/%s/%s", c.claimUrl, provider, user)
 
 	payload, err := json.Marshal(preparePayload(claims, "Delete"))
@@ -52,43 +39,7 @@ func (c connector) RemoveClaim(user string, provider string, claims []string) (s
 		return "", err
 	}
 
-	token, err := util.ReadToken()
-	if err != nil {
-		return "", err
-	}
-
-	return makeHTTPRequest("PATCH", targetURL, token, bytes.NewBuffer(payload))
-}
-
-func makeHTTPRequest(method, url string, token string, payload io.Reader) (string, error) {
-	httpClient := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-
-	req, err := http.NewRequest(method, url, payload)
-	if err != nil {
-		return "", err
-	}
-
-	bearer := "Bearer " + token
-	addHeaders(req, bearer)
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(body), nil
+	return http.MakeRequest("PATCH", targetURL, token, bytes.NewBuffer(payload))
 }
 
 func preparePayload(claims []string, operation string) claimPayload {

@@ -3,7 +3,6 @@ package claim
 
 import (
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmd/claim/user"
 )
 
 var env, authProvider, userId, claimProvider string
@@ -15,7 +14,7 @@ func NewCmdClaim() *cobra.Command {
 		GroupID: "claim",
 	}
 
-	cmd.AddCommand(user.NewCmdUser())
+	cmd.AddCommand(NewCmdUser())
 	cmd.AddCommand(NewCmdAddClaim())
 	cmd.AddCommand(NewCmdGetClaim())
 	cmd.AddCommand(NewCmdRemoveClaim())

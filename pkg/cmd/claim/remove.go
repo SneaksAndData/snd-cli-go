@@ -3,6 +3,7 @@ package claim
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/shared/esd-client/boxer"
 )
 
@@ -27,11 +28,14 @@ func removeClaimRun() error {
 		TokenUrl: "",
 		ClaimUrl: url,
 		Auth:     boxer.ExternalToken{},
-		Retries:  0,
 	}
 	var boxerConn boxer.Claim
 	boxerConn = boxer.NewConnector(input)
-	claims, err := boxerConn.RemoveClaim(userId, claimProvider, cr)
+	token, err := util.ReadToken()
+	if err != nil {
+		return err
+	}
+	claims, err := boxerConn.RemoveClaim(userId, claimProvider, cr, token)
 	if err != nil {
 		return err
 	}

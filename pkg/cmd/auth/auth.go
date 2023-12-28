@@ -38,13 +38,11 @@ func run(args []string) error {
 		Retry:    true,
 	}
 	url := fmt.Sprintf("https://boxer.%s.sneaksanddata.com", env)
-	retries := 10
 
 	input := boxer.Input{
 		TokenUrl: url,
 		ClaimUrl: "",
 		Auth:     azureToken,
-		Retries:  retries,
 	}
 
 	var boxerConn boxer.Token
