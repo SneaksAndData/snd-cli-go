@@ -17,7 +17,7 @@ func NewCmdAuth() *cobra.Command {
 		GroupID: "auth",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(args)
+			return run()
 		},
 	}
 
@@ -29,8 +29,7 @@ func NewCmdAuth() *cobra.Command {
 	return cmd
 }
 
-func run(args []string) error {
-	// TODO: login logic, return nil if successful otherwise error
+func run() error {
 	// Create an ExternalToken instance
 	azureToken := boxer.ExternalToken{
 		GetToken: azure.GetDefaultToken,

@@ -3,12 +3,14 @@ package boxer
 import (
 	"fmt"
 	"snd-cli/pkg/cmd/util"
-	"snd-cli/pkg/shared/esd-client/http"
+	"snd-cli/pkg/shared/api"
 )
 
 func (c connector) AddUser(user string, provider string, token string) (string, error) {
 	targetURL := fmt.Sprintf("%s/claim/%s/%s", c.claimUrl, provider, user)
-	return http.MakeRequest("POST", targetURL, token, nil)
+	client := api.NewClient(token)
+
+	return client.MakeRequest("POST", targetURL, nil)
 }
 
 func (c connector) RemoveUser(user string, provider string, token string) (string, error) {
@@ -17,5 +19,7 @@ func (c connector) RemoveUser(user string, provider string, token string) (strin
 	if err != nil {
 		return "", err
 	}
-	return http.MakeRequest("DELETE", targetURL, token, nil)
+	client := api.NewClient(token)
+
+	return client.MakeRequest("DELETE", targetURL, nil)
 }

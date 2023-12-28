@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"snd-cli/pkg/shared/esd-client/http"
+	"snd-cli/pkg/shared/api"
 	"strings"
 )
 
@@ -16,8 +16,9 @@ type claimPayload struct {
 
 func (c connector) GetClaim(user string, provider string, token string) (string, error) {
 	targetURL := fmt.Sprintf("%s/claim/%s/%s", c.claimUrl, provider, user)
+	client := api.NewClient(token)
 
-	return http.MakeRequest("GET", targetURL, token, nil)
+	return client.MakeRequest("GET", targetURL, nil)
 }
 
 func (c connector) AddClaim(user string, provider string, claims []string, token string) (string, error) {
@@ -27,8 +28,9 @@ func (c connector) AddClaim(user string, provider string, claims []string, token
 	if err != nil {
 		return "", err
 	}
+	client := api.NewClient(token)
 
-	return http.MakeRequest("PATCH", targetURL, token, bytes.NewBuffer(payload))
+	return client.MakeRequest("PATCH", targetURL, bytes.NewBuffer(payload))
 }
 
 func (c connector) RemoveClaim(user string, provider string, claims []string, token string) (string, error) {
@@ -38,8 +40,9 @@ func (c connector) RemoveClaim(user string, provider string, claims []string, to
 	if err != nil {
 		return "", err
 	}
+	client := api.NewClient(token)
 
-	return http.MakeRequest("PATCH", targetURL, token, bytes.NewBuffer(payload))
+	return client.MakeRequest("PATCH", targetURL, bytes.NewBuffer(payload))
 }
 
 func preparePayload(claims []string, operation string) claimPayload {

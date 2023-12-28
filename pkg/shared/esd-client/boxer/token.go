@@ -2,7 +2,7 @@ package boxer
 
 import (
 	"fmt"
-	"snd-cli/pkg/shared/esd-client/http"
+	"snd-cli/pkg/shared/api"
 )
 
 type ExternalToken struct {
@@ -18,6 +18,7 @@ func (c connector) GetToken() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	client := api.NewClient(token)
 
-	return http.MakeRequest("GET", targetURL, token, nil)
+	return client.MakeRequest("GET", targetURL, nil)
 }
