@@ -31,7 +31,13 @@ func CacheToken(token string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open file: %v", err)
 	}
-	defer file.Close()
+
+	defer func() {
+		errClose := file.Close()
+		if err == nil && errClose != nil {
+			err = errClose
+		}
+	}()
 
 	// The string to be written to the file
 	data := fmt.Sprintf(token)

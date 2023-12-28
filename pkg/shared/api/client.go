@@ -50,7 +50,12 @@ func (c *Client) MakeRequest(method, url string, payload interface{}) (string, e
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		errClose := resp.Body.Close()
+		if err == nil && errClose != nil {
+			err = errClose
+		}
+	}()
 
 	if resp.StatusCode == http.StatusUnauthorized {
 		return "", fmt.Errorf("authorization failed, please run 'snd login' to refresh your token")
