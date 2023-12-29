@@ -1,8 +1,13 @@
 package ml
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
+	"snd-cli/pkg/shared/esd-client/crystal"
 )
+
+var id string
 
 func NewCmdGet() *cobra.Command {
 	cmd := &cobra.Command{
@@ -12,11 +17,22 @@ func NewCmdGet() *cobra.Command {
 			return getRun()
 		},
 	}
-	cmd.Flags().StringP("id", "i", "", "Specify the Crystal Job ID")
+	cmd.Flags().StringVarP(&id, "id", "i", "", "Specify the Crystal Job ID")
 	return cmd
 }
 
 func getRun() error {
-	// TODO: add logic
+	url := fmt.Sprintf("https://crystal.%s.sneaksanddata.com", env)
+	var crystalConn crystal.Connector
+	crystalConn = crystal.NewConnector(url, "", "v1.2")
+	token, err := util.ReadToken()
+	if err != nil {
+		return err
+	}
+	resp, err := crystalConn.RetrieveRun(id, algorithm, token)
+	if err != nil {
+		return err
+	}
+	fmt.Println(resp)
 	return nil
 }

@@ -59,7 +59,7 @@ func (c *Client) MakeRequest(method, url string, payload interface{}) (string, e
 
 	if resp.StatusCode == http.StatusUnauthorized {
 		return "", fmt.Errorf("authorization failed, please run 'snd login' to refresh your token")
-	} else if resp.StatusCode != http.StatusOK {
+	} else if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
 		return "", fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode)
 	}
 

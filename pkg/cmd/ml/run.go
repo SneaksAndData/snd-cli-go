@@ -1,8 +1,13 @@
 package ml
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
+	"snd-cli/pkg/shared/esd-client/crystal"
 )
+
+var payload, tag string
 
 func NewCmdRun() *cobra.Command {
 	cmd := &cobra.Command{
@@ -13,13 +18,25 @@ func NewCmdRun() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("payload", "p", "", "Path to the payload JSON file")
-	cmd.Flags().StringP("tag", "t", "", " Client-side submission identifier")
-
+	cmd.Flags().StringVarP(&payload, "payload", "p", "", "Path to the payload JSON file")
+	cmd.Flags().StringVarP(&tag, "tag", "t", "", " Client-side submission identifier")
 	return cmd
 }
 
 func runRun() error {
-	// TODO: add logic
+	url := fmt.Sprintf("https://crystal.%s.sneaksanddata.com", env)
+	var crystalConn crystal.Connector
+	crystalConn = crystal.NewConnector(url, "", "v1.2")
+	token, err := util.ReadToken()
+	if err != nil {
+		return err
+	}
+	body, err := util.ReadJSONFile(payload)
+	//TODO: conf := body["CustomConfiguration"]
+	resp, err := crystalConn.CreateRun(algorithm, body["AlgorithmParameters"], crystal.AlgorithmConfiguration{}, tag, token)
+	if err != nil {
+		return err
+	}
+	fmt.Println(resp)
 	return nil
 }

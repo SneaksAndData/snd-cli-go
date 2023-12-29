@@ -4,6 +4,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var env, authProvider, algorithm string
+
 func NewCmdAlgorithm() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "algorithm",
@@ -15,9 +17,9 @@ func NewCmdAlgorithm() *cobra.Command {
 	cmd.AddCommand(NewCmdRun())
 	cmd.AddCommand(NewCmdSubmit())
 
-	cmd.PersistentFlags().StringP("env", "e", "test", "Target environment")
-	cmd.PersistentFlags().StringP("auth_provider", "a", "azuread", "Specify the authentication provider name")
-	cmd.PersistentFlags().StringP("algorithm", "l", "", "Specify the algorithm name")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&authProvider, "auth_provider", "a", "azuread", "Specify the authentication provider name")
+	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "l", "", "Specify the algorithm name")
 
 	return cmd
 }
