@@ -5,21 +5,29 @@ package spark
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
 )
+
+var object string
 
 func NewCmdRuntimeInfo() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "runtime-info",
 		Short: "Get the runtime info of a Spark Job",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("runtimeInfo called")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return runtimeInfoRun()
 		},
 	}
 
-	cmd.Flags().StringP("id", "i", "", "Beast Job ID")
-	cmd.Flags().StringP("object", "o", "", "Apply a filter on the returned JSON output")
+	cmd.Flags().StringVarP(&object, "object", "o", "", "Apply a filter on the returned JSON output")
 
 	return cmd
+}
+
+func runtimeInfoRun() error {
+	url := fmt.Sprintf(beastBaseURL, env)
+	fmt.Println(url)
+
+	return nil
+
 }

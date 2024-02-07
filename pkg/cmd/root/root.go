@@ -7,6 +7,8 @@ import (
 	"snd-cli/pkg/cmd/claim"
 	"snd-cli/pkg/cmd/ml"
 	"snd-cli/pkg/cmd/spark"
+	"snd-cli/pkg/cmd/spark/configuration"
+	"snd-cli/pkg/cmd/spark/encrypt"
 )
 
 func NewCmdRoot() (*cobra.Command, error) {
@@ -24,22 +26,22 @@ func NewCmdRoot() (*cobra.Command, error) {
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "auth",
-		Title: "Auth commands",
+		Title: "Auth Commands",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "claim",
-		Title: "Claim commands",
+		Title: "Claim Commands",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "ml",
-		Title: "ML algorithm commands",
+		Title: "ML Algorithm Commands",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "spark",
-		Title: "spark commands",
+		Title: "Spark Commands",
 	})
 
 	// Child commands
@@ -47,6 +49,8 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(claim.NewCmdClaim())
 	cmd.AddCommand(ml.NewCmdAlgorithm())
 	cmd.AddCommand(spark.NewCmdSpark())
+	cmd.AddCommand(configuration.NewCmdConfiguration())
+	cmd.AddCommand(encrypt.NewCmdEncrypt())
 	return cmd, nil
 
 }

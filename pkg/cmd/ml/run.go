@@ -3,8 +3,6 @@ package ml
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmd/util"
-	"snd-cli/pkg/shared/esd-client/crystal"
 )
 
 var payload, tag string
@@ -24,19 +22,7 @@ func NewCmdRun() *cobra.Command {
 }
 
 func runRun() error {
-	url := fmt.Sprintf("https://crystal.%s.sneaksanddata.com", env)
-	var crystalConn crystal.Connector
-	crystalConn = crystal.NewConnector(url, "", "v1.2")
-	token, err := util.ReadToken()
-	if err != nil {
-		return err
-	}
-	body, err := util.ReadJSONFile(payload)
-	//TODO: conf := body["CustomConfiguration"]
-	resp, err := crystalConn.CreateRun(algorithm, body["AlgorithmParameters"], crystal.AlgorithmConfiguration{}, tag, token)
-	if err != nil {
-		return err
-	}
-	fmt.Println(resp)
+	url := fmt.Sprintf(crystalBaseURL, env)
+	fmt.Println(url)
 	return nil
 }

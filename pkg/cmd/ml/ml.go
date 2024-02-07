@@ -15,7 +15,6 @@ func NewCmdAlgorithm() *cobra.Command {
 
 	cmd.AddCommand(NewCmdGet())
 	cmd.AddCommand(NewCmdRun())
-	cmd.AddCommand(NewCmdSubmit())
 
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth_provider", "a", "azuread", "Specify the authentication provider name")

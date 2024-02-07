@@ -1,9 +1,10 @@
-// Package spark /*
 package spark
 
 import (
 	"github.com/spf13/cobra"
 )
+
+var env, authProvider, id string
 
 func NewCmdSpark() *cobra.Command {
 	cmd := &cobra.Command{
@@ -16,11 +17,10 @@ func NewCmdSpark() *cobra.Command {
 	cmd.AddCommand(NewCmdRuntimeInfo())
 	cmd.AddCommand(NewCmdRequestStatus())
 	cmd.AddCommand(NewCmdLogs())
-	cmd.AddCommand(NewCmdEncrypt())
-	cmd.AddCommand(NewCmdConfiguration())
 
-	cmd.PersistentFlags().StringP("env", "e", "test", "Target environment")
-	cmd.PersistentFlags().StringP("auth_provider", "a", "azuread", "Specify the authentication provider name")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&authProvider, "auth_provider", "a", "azuread", "Specify the authentication provider name")
+	cmd.PersistentFlags().StringVarP(&id, "id", "i", "", "Specify the Crystal Job ID")
 
 	return cmd
 }

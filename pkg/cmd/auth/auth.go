@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util"
-	"snd-cli/pkg/shared/esd-client/azure"
-	"snd-cli/pkg/shared/esd-client/boxer"
 )
 
 var env, provider string
@@ -30,31 +28,6 @@ func NewCmdAuth() *cobra.Command {
 }
 
 func run() error {
-	// Create an ExternalToken instance
-	azureToken := boxer.ExternalToken{
-		GetToken: azure.GetDefaultToken,
-		Provider: "azuread",
-		Retry:    true,
-	}
-	url := fmt.Sprintf("https://boxer.%s.sneaksanddata.com", env)
-
-	input := boxer.Input{
-		TokenUrl: url,
-		ClaimUrl: "",
-		Auth:     azureToken,
-	}
-
-	var boxerConn boxer.Token
-
-	boxerConn = boxer.NewConnector(input)
-	token, err := boxerConn.GetToken()
-	if err != nil {
-		return err
-	}
-	fmt.Println(token)
-	err = util.CacheToken(token)
-	if err != nil {
-		return err
-	}
+	fmt.Println("Login")
 	return nil
 }

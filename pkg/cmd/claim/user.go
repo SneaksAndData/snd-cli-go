@@ -3,8 +3,6 @@ package claim
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmd/util"
-	"snd-cli/pkg/shared/esd-client/boxer"
 )
 
 func NewCmdUser() *cobra.Command {
@@ -35,22 +33,7 @@ func NewCmdAddUser() *cobra.Command {
 
 func addUserRun() error {
 	url := fmt.Sprintf("https://boxer-claim.%s.sneaksanddata.com", env)
-	input := boxer.Input{
-		TokenUrl: "",
-		ClaimUrl: url,
-		Auth:     boxer.ExternalToken{},
-	}
-	var boxerConn boxer.User
-	boxerConn = boxer.NewConnector(input)
-	token, err := util.ReadToken()
-	if err != nil {
-		return err
-	}
-	user, err := boxerConn.AddUser(userId, claimProvider, token)
-	if err != nil {
-		return err
-	}
-	fmt.Println(user)
+	fmt.Println(url)
 	return nil
 }
 
@@ -68,21 +51,7 @@ func NewCmdRemoveUser() *cobra.Command {
 }
 
 func removeUserRun() error {
-	url := fmt.Sprintf("https://boxer-claim.%s.sneaksanddata.com", env)
-	input := boxer.Input{
-		TokenUrl: "",
-		ClaimUrl: url,
-		Auth:     boxer.ExternalToken{},
-	}
-	var boxerConn boxer.User
-	boxerConn = boxer.NewConnector(input)
-	token, err := util.ReadToken()
-	if err != nil {
-		return err
-	}
-	_, err = boxerConn.RemoveUser(userId, claimProvider, token)
-	if err != nil {
-		return err
-	}
+	url := fmt.Sprintf(boxerClaimBaseURL, env)
+	fmt.Println(url)
 	return nil
 }
