@@ -21,6 +21,7 @@ jobs:
         run: go mod verify
       - name: Install dependencies
         run: |
+          pwd
           go get .
       - name: Run go vet
         run: go vet ./...
