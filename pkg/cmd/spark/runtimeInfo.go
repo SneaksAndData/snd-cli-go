@@ -25,7 +25,8 @@ func NewCmdRuntimeInfo() *cobra.Command {
 }
 
 func runtimeInfoRun() error {
-	fmt.Println("Runtime info")
+	url := fmt.Sprintf(beastBaseURL, env)
+	fmt.Println(url)
 
 	return nil
 

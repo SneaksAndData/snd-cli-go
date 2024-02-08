@@ -29,5 +29,6 @@ func NewCmdAuth() *cobra.Command {
 
 func run() error {
 	fmt.Println("Login")
+	fmt.Printf(boxerBaseURL, env)
 	return nil
 }
