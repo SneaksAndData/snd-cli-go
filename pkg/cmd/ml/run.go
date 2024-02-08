@@ -12,7 +12,7 @@ func NewCmdRun() *cobra.Command {
 		Use:   "run",
 		Short: "Run a ML Algorithm",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return submitRun()
+			return runRun()
 		},
 	}
 
@@ -21,7 +21,7 @@ func NewCmdRun() *cobra.Command {
 	return cmd
 }
 
-func submitRun() error {
-	fmt.Println("Submit alg run")
+func runRun() error {
+	fmt.Println("Run")
 	return nil
 }

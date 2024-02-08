@@ -1,3 +1,3 @@
 package auth
 
-//const boxerBaseURL = "https://boxer.%s.sneaksanddata.com"
+const boxerBaseURL = "https://boxer.%s.sneaksanddata.com"
