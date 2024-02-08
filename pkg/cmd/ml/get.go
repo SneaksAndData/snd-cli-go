@@ -20,7 +20,7 @@ func NewCmdGet() *cobra.Command {
 }
 
 func getRun() error {
-	url := fmt.Sprintf(crystalBaseURL, env)
+	url := fmt.Sprint(crystalBaseURL, env)
 	fmt.Println(url)
 	return nil
 }

@@ -32,7 +32,7 @@ func NewCmdAddUser() *cobra.Command {
 }
 
 func addUserRun() error {
-	url := fmt.Sprintf("https://boxer-claim.%s.sneaksanddata.com", env)
+	url := fmt.Sprint("https://boxer-claim.%s.sneaksanddata.com", env)
 	fmt.Println(url)
 	return nil
 }
@@ -51,7 +51,7 @@ func NewCmdRemoveUser() *cobra.Command {
 }
 
 func removeUserRun() error {
-	url := fmt.Sprintf(boxerClaimBaseURL, env)
+	url := fmt.Sprint(boxerClaimBaseURL, env)
 	fmt.Println(url)
 	return nil
 }
