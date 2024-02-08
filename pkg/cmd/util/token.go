@@ -40,7 +40,7 @@ func CacheToken(token string) error {
 	}()
 
 	// The string to be written to the file
-	data := fmt.Sprint(token)
+	data := fmt.Sprintf(token)
 
 	// Write the string to the file
 	_, err = file.WriteString(data)
