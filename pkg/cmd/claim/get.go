@@ -19,7 +19,6 @@ func NewCmdGetClaim() *cobra.Command {
 }
 
 func getClaimRun() error {
-	url := fmt.Sprintf(boxerClaimBaseURL, env)
-	fmt.Println(url)
+	fmt.Println("Get Claim")
 	return nil
 }

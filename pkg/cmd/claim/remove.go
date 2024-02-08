@@ -21,7 +21,6 @@ func NewCmdRemoveClaim() *cobra.Command {
 }
 
 func removeClaimRun() error {
-	url := fmt.Sprintf(boxerClaimBaseURL, env)
-	fmt.Println(url)
+	fmt.Println("Remove claim")
 	return nil
 }

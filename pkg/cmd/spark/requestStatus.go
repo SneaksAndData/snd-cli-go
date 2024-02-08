@@ -19,8 +19,7 @@ func NewCmdRequestStatus() *cobra.Command {
 }
 
 func requestStatusRun() error {
-	url := fmt.Sprintf(beastBaseURL, env)
-	fmt.Println(url)
+	fmt.Println("Request status")
 
 	return nil
 }
