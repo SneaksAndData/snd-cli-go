@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package spark
 
 import (
@@ -27,7 +24,6 @@ func NewCmdRuntimeInfo() *cobra.Command {
 func runtimeInfoRun() error {
 	url := fmt.Sprintf(beastBaseURL, env)
 	fmt.Println(url)
-
-	return nil
+	panic("Not implemented")
 
 }

@@ -1,9 +1,7 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package spark
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -14,6 +12,9 @@ func NewCmdSubmit() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "submit",
 		Short: "Runs the provided Beast V3 job with optional overrides",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Submit called")
+		},
 	}
 
 	cmd.Flags().StringVarP(&jobName, "job-name", "n", "", "Beast SparkJob or SparkJobReference resource name")

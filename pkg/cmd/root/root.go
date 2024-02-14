@@ -7,14 +7,12 @@ import (
 	"snd-cli/pkg/cmd/claim"
 	"snd-cli/pkg/cmd/ml"
 	"snd-cli/pkg/cmd/spark"
-	"snd-cli/pkg/cmd/spark/configuration"
-	"snd-cli/pkg/cmd/spark/encrypt"
 )
 
 func NewCmdRoot() (*cobra.Command, error) {
 	// Cmd represents the base command when called without any subcommands
 	var cmd = &cobra.Command{
-		Use:   "snd <command> <subcommand> [flags]",
+		Use:   "snd <service command group> <service command> [flags]",
 		Short: "SnD CLI",
 		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
@@ -49,8 +47,8 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(claim.NewCmdClaim())
 	cmd.AddCommand(ml.NewCmdAlgorithm())
 	cmd.AddCommand(spark.NewCmdSpark())
-	cmd.AddCommand(configuration.NewCmdConfiguration())
-	cmd.AddCommand(encrypt.NewCmdEncrypt())
+	cmd.AddCommand(spark.NewCmdConfiguration())
+	cmd.AddCommand(spark.NewCmdEncrypt())
 	return cmd, nil
 
 }

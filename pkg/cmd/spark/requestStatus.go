@@ -21,6 +21,5 @@ func NewCmdRequestStatus() *cobra.Command {
 func requestStatusRun() error {
 	url := fmt.Sprintf(beastBaseURL, env)
 	fmt.Println(url)
-
-	return nil
+	panic("Not implemented")
 }

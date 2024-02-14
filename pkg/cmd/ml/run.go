@@ -24,5 +24,5 @@ func NewCmdRun() *cobra.Command {
 func runRun() error {
 	url := fmt.Sprintf(crystalBaseURL, env)
 	fmt.Println(url)
-	return nil
+	panic("Not implemented")
 }

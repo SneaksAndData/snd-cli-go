@@ -22,5 +22,5 @@ func NewCmdAddClaim() *cobra.Command {
 func addClaimRun() error {
 	url := fmt.Sprintf(boxerClaimBaseURL, env)
 	fmt.Println(url)
-	return nil
+	panic("Not implemented")
 }
