@@ -2,7 +2,9 @@ package claim
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var cr []string
@@ -12,7 +14,11 @@ func NewCmdRemoveClaim() *cobra.Command {
 		Use:   "remove",
 		Short: "Removes a claim from an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return removeClaimRun()
+			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
+			if err != nil {
+				log.Fatal(err)
+			}
+			return removeClaimRun(claimService)
 		},
 	}
 
@@ -20,8 +26,13 @@ func NewCmdRemoveClaim() *cobra.Command {
 	return cmd
 }
 
-func removeClaimRun() error {
-	url := fmt.Sprintf(boxerClaimBaseURL, env)
-	fmt.Println(url)
-	panic("Not implemented")
+func removeClaimRun(claimService *claim.Service) error {
+	// Add user claims
+	response, err := claimService.RemoveClaim(userId, claimProvider, cr)
+	if err != nil {
+		log.Fatalf("Failed to remove claims for user %s with claim provider %s: %v", userId, claimProvider, err)
+	}
+
+	fmt.Println("Response:", response)
+	return nil
 }

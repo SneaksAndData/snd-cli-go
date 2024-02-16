@@ -2,7 +2,9 @@ package claim
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 func NewCmdUser() *cobra.Command {
@@ -23,7 +25,11 @@ func NewCmdAddUser() *cobra.Command {
 		Use:   "add",
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return addUserRun()
+			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
+			if err != nil {
+				log.Fatal(err)
+			}
+			return addUserRun(claimService)
 		},
 	}
 
@@ -31,9 +37,13 @@ func NewCmdAddUser() *cobra.Command {
 
 }
 
-func addUserRun() error {
-	url := fmt.Sprintf("https://boxer-claim.%s.sneaksanddata.com", env)
-	fmt.Println(url)
+func addUserRun(claimService *claim.Service) error {
+	response, err := claimService.AddUser(userId, claimProvider)
+	if err != nil {
+		log.Fatalf("Failed to add user %s with claim provider %s: %v", userId, claimProvider, err)
+	}
+
+	fmt.Println("Response:", response)
 	return nil
 }
 
@@ -42,7 +52,11 @@ func NewCmdRemoveUser() *cobra.Command {
 		Use:   "remove",
 		Short: "Remove a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return removeUserRun()
+			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
+			if err != nil {
+				log.Fatal(err)
+			}
+			return removeUserRun(claimService)
 		},
 	}
 
@@ -50,8 +64,12 @@ func NewCmdRemoveUser() *cobra.Command {
 
 }
 
-func removeUserRun() error {
-	url := fmt.Sprintf(boxerClaimBaseURL, env)
-	fmt.Println(url)
+func removeUserRun(claimService *claim.Service) error {
+	response, err := claimService.RemoveUser(userId, claimProvider)
+	if err != nil {
+		log.Fatalf("Failed to remove user %s with claim provider %s: %v", userId, claimProvider, err)
+	}
+
+	fmt.Println("Response:", response)
 	return nil
 }

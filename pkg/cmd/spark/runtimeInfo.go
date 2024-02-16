@@ -2,7 +2,9 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var object string
@@ -12,7 +14,12 @@ func NewCmdRuntimeInfo() *cobra.Command {
 		Use:   "runtime-info",
 		Short: "Get the runtime info of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runtimeInfoRun()
+
+			var sparkService, err = InitSparkService(fmt.Sprintf(beastBaseURL, env))
+			if err != nil {
+				log.Fatal(err)
+			}
+			return runtimeInfoRun(sparkService)
 		},
 	}
 
@@ -21,9 +28,12 @@ func NewCmdRuntimeInfo() *cobra.Command {
 	return cmd
 }
 
-func runtimeInfoRun() error {
-	url := fmt.Sprintf(beastBaseURL, env)
-	fmt.Println(url)
-	panic("Not implemented")
+func runtimeInfoRun(sparkService *spark.Service) error {
+	response, err := sparkService.GetRuntimeInfo(id)
+	if err != nil {
+		log.Fatalf("Failed to retrieve runtime info for run id %s: %v", id, err)
+	}
 
+	fmt.Println("Response:", response)
+	return nil
 }

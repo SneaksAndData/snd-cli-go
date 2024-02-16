@@ -2,7 +2,10 @@
 package claim
 
 import (
+	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
+	"log"
+	"snd-cli/pkg/cmd/util"
 )
 
 var env, authProvider, userId, claimProvider string
@@ -25,4 +28,16 @@ func NewCmdClaim() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&claimProvider, "claims-provider", "p", "", "Specify the claim provider")
 
 	return cmd
+}
+
+func InitClaimService(url string) (*claim.Service, error) {
+	config := claim.Config{
+		ClaimURL:     url,
+		GetTokenFunc: util.ReadToken,
+	}
+	claimService, err := claim.New(config)
+	if err != nil {
+		log.Fatalf("Failed to create claim service: %v", err)
+	}
+	return claimService, nil
 }

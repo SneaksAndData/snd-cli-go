@@ -2,7 +2,9 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 func NewCmdRequestStatus() *cobra.Command {
@@ -10,7 +12,11 @@ func NewCmdRequestStatus() *cobra.Command {
 		Use:   "request-status",
 		Short: "Get the status of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return requestStatusRun()
+			var sparkService, err = InitSparkService(fmt.Sprintf(beastBaseURL, env))
+			if err != nil {
+				log.Fatal(err)
+			}
+			return requestStatusRun(sparkService)
 		},
 	}
 
@@ -18,8 +24,12 @@ func NewCmdRequestStatus() *cobra.Command {
 
 }
 
-func requestStatusRun() error {
-	url := fmt.Sprintf(beastBaseURL, env)
-	fmt.Println(url)
-	panic("Not implemented")
+func requestStatusRun(sparkService *spark.Service) error {
+	response, err := sparkService.GetLifecycleStage(id)
+	if err != nil {
+		log.Fatalf("Failed to retrieve lifecycle stage for run id %s: %v", id, err)
+	}
+
+	fmt.Println("Response:", response)
+	return nil
 }

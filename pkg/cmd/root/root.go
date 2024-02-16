@@ -21,7 +21,6 @@ func NewCmdRoot() (*cobra.Command, error) {
 			return nil
 		},
 	}
-
 	cmd.AddGroup(&cobra.Group{
 		ID:    "auth",
 		Title: "Auth Commands",
@@ -50,5 +49,4 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(spark.NewCmdConfiguration())
 	cmd.AddCommand(spark.NewCmdEncrypt())
 	return cmd, nil
-
 }

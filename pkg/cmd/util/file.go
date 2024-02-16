@@ -23,3 +23,8 @@ func ReadJSONFile(filePath string) (map[string]interface{}, error) {
 	}
 	return result, nil
 }
+
+func IsValidPath(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}

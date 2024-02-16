@@ -1,7 +1,10 @@
 package ml
 
 import (
+	algorithms "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
+	"log"
+	"snd-cli/pkg/cmd/util"
 )
 
 var env, authProvider, algorithm string
@@ -21,4 +24,18 @@ func NewCmdAlgorithm() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "l", "", "Specify the algorithm name")
 
 	return cmd
+}
+
+func InitAlgorithmService(url string) (*algorithms.Service, error) {
+	config := algorithms.Config{
+		GetTokenFunc: util.ReadToken,
+		SchedulerURL: url,
+		APIVersion:   "v1.2",
+	}
+
+	algorithmService, err := algorithms.New(config)
+	if err != nil {
+		log.Fatalf("Failed to create algorithm service: %v", err)
+	}
+	return algorithmService, nil
 }
