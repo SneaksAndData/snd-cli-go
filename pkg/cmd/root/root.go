@@ -16,7 +16,7 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Short: "SnD CLI",
 		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			// TODO: check that the user is authenticated before running most commands
+			// TODO: Check that the user is authenticated before running most commands
 			fmt.Println("To get started with SnD CLI, please run: snd login")
 			return nil
 		},
@@ -46,7 +46,5 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(claim.NewCmdClaim())
 	cmd.AddCommand(ml.NewCmdAlgorithm())
 	cmd.AddCommand(spark.NewCmdSpark())
-	cmd.AddCommand(spark.NewCmdConfiguration())
-	cmd.AddCommand(spark.NewCmdEncrypt())
 	return cmd, nil
 }
