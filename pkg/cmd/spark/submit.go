@@ -92,23 +92,21 @@ func getOverrides() spark.JobParams {
 }
 
 func generateTag() string {
-	// Get the hostname
 	hostname, err := os.Hostname()
 	if err != nil {
-		panic(err) // or handle the error according to your needs
+		log.Fatalf("Failed to retrieve hostname: %v", err)
 	}
 	// Generate a random string of 12 characters (uppercase + digits)
 	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, 12)
 	if _, err := rand.Read(b); err != nil {
-		panic(err) // or handle the error according to your needs
+		log.Fatalf("Error encountered while reading: %v", err)
 	}
 	for i := 0; i < len(b); i++ {
 		b[i] = charset[b[i]%byte(len(charset))]
 	}
 	randomString := string(b)
 
-	// Construct the default tag
 	defaultTag := fmt.Sprintf("cli-%s-%s", strings.ToLower(hostname), randomString)
 	return defaultTag
 }

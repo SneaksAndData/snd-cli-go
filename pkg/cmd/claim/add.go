@@ -17,7 +17,6 @@ func NewCmdAddClaim() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
-			fmt.Println(claimService)
 			if err != nil {
 				log.Fatal(err)
 			}

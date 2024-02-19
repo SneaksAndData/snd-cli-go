@@ -8,6 +8,8 @@ import (
 	"snd-cli/pkg/cmd/util"
 )
 
+const boxerBaseURL = "https://boxer.%s.sneaksanddata.com"
+
 var env, provider string
 
 func NewCmdAuth() *cobra.Command {
@@ -28,7 +30,6 @@ func NewCmdAuth() *cobra.Command {
 }
 
 func loginRun() error {
-	fmt.Println("Login")
 	tokenURL := fmt.Sprintf(boxerBaseURL, env)
 	config := auth.Config{
 		TokenURL: tokenURL,
