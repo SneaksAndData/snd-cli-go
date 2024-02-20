@@ -2,23 +2,22 @@ package claim
 
 import (
 	"fmt"
-	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
-	"log"
+	"strings"
 )
 
 var cr []string
 
-func NewCmdRemoveClaim() *cobra.Command {
+func NewCmdRemoveClaim(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
 		Short: "Removes a claim from an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := removeClaimRun(service, userId, claimProvider, cr)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return removeClaimRun(claimService)
+			return err
 		},
 	}
 
@@ -26,13 +25,15 @@ func NewCmdRemoveClaim() *cobra.Command {
 	return cmd
 }
 
-func removeClaimRun(claimService *claim.Service) error {
+func removeClaimRun(claimService Service, userId, claimProvider string, cr []string) (string, error) {
 	// Add user claims
 	response, err := claimService.RemoveClaim(userId, claimProvider, cr)
 	if err != nil {
-		log.Fatalf("Failed to remove claims for user %s with claim provider %s: %v", userId, claimProvider, err)
+		if strings.HasSuffix(err.Error(), "404") {
+			return "", fmt.Errorf("failed to remove claims for user %s for claim provider %s : %v", userId, claimProvider, "User not found")
+		}
+		return "", fmt.Errorf("failed to remove claims for user %s with claim provider %s: %v", userId, claimProvider, err)
 	}
 
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }

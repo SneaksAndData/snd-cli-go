@@ -2,34 +2,32 @@ package claim
 
 import (
 	"fmt"
-	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
-	"log"
 )
 
-func NewCmdUser() *cobra.Command {
+func NewCmdUser(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "user",
 		Short: "Manage (add/remove) a user",
 	}
 
-	cmd.AddCommand(NewCmdAddUser())
-	cmd.AddCommand(NewCmdRemoveUser())
+	cmd.AddCommand(NewCmdAddUser(service))
+	cmd.AddCommand(NewCmdRemoveUser(service))
 
 	return cmd
 
 }
 
-func NewCmdAddUser() *cobra.Command {
+func NewCmdAddUser(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := addUserRun(service, userId, claimProvider)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return addUserRun(claimService)
+			return err
 		},
 	}
 
@@ -37,26 +35,24 @@ func NewCmdAddUser() *cobra.Command {
 
 }
 
-func addUserRun(claimService *claim.Service) error {
+func addUserRun(claimService Service, userId, claimProvider string) (string, error) {
 	response, err := claimService.AddUser(userId, claimProvider)
 	if err != nil {
-		log.Fatalf("Failed to add user %s with claim provider %s: %v", userId, claimProvider, err)
+		return "", fmt.Errorf("failed to add user %s with claim provider %s: %v", userId, claimProvider, err)
 	}
-
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }
 
-func NewCmdRemoveUser() *cobra.Command {
+func NewCmdRemoveUser(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := removeUserRun(service, userId, claimProvider)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return removeUserRun(claimService)
+			return err
 		},
 	}
 
@@ -64,12 +60,10 @@ func NewCmdRemoveUser() *cobra.Command {
 
 }
 
-func removeUserRun(claimService *claim.Service) error {
+func removeUserRun(claimService Service, userId, claimProvider string) (string, error) {
 	response, err := claimService.RemoveUser(userId, claimProvider)
 	if err != nil {
-		log.Fatalf("Failed to remove user %s with claim provider %s: %v", userId, claimProvider, err)
+		return "", fmt.Errorf("failed to remove user %s with claim provider %s: %v", userId, claimProvider, err)
 	}
-
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }
