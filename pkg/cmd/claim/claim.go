@@ -45,13 +45,14 @@ func NewCmdClaim() *cobra.Command {
 }
 
 func InitClaimService(url string) (*claim.Service, error) {
+	tc := token.TokenCache{}
 	config := claim.Config{
 		ClaimURL:     url,
-		GetTokenFunc: token.ReadToken,
+		GetTokenFunc: tc.ReadToken,
 	}
 	claimService, err := claim.New(config)
 	if err != nil {
-		log.Fatalf("Failed to create claim service: %v", err)
+		return nil, fmt.Errorf("failed to create claim service: %v", err)
 	}
 	return claimService, nil
 }

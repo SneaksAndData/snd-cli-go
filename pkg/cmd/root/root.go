@@ -1,12 +1,20 @@
 package root
 
 import (
+	apiAuth "github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmd/auth"
-	"snd-cli/pkg/cmd/claim"
-	"snd-cli/pkg/cmd/ml"
-	"snd-cli/pkg/cmd/spark"
+	authCmd "snd-cli/pkg/cmd/auth"
+	claimCmd "snd-cli/pkg/cmd/claim"
+	mlCmd "snd-cli/pkg/cmd/ml"
+	sparkCmd "snd-cli/pkg/cmd/spark"
 )
+
+const boxerAuthBaseURL = "https://boxer.%s.sneaksanddata.com"
+
+// AuthServiceFactory is a function type that creates an Service instance.
+type AuthServiceFactory func(env, provider string) (*apiAuth.Service, error)
+
+type CacheToken func(token string) (string, error)
 
 func NewCmdRoot() (*cobra.Command, error) {
 	// Cmd represents the base command when called without any subcommands
@@ -41,9 +49,9 @@ func NewCmdRoot() (*cobra.Command, error) {
 	})
 
 	// Child commands
-	cmd.AddCommand(auth.NewCmdAuth())
-	cmd.AddCommand(claim.NewCmdClaim())
-	cmd.AddCommand(ml.NewCmdAlgorithm())
-	cmd.AddCommand(spark.NewCmdSpark())
+	cmd.AddCommand(authCmd.NewCmdAuth())
+	cmd.AddCommand(claimCmd.NewCmdClaim())
+	cmd.AddCommand(mlCmd.NewCmdAlgorithm())
+	cmd.AddCommand(sparkCmd.NewCmdSpark())
 	return cmd, nil
 }

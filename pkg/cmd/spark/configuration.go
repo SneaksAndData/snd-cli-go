@@ -4,21 +4,20 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 var name string
 
-func NewCmdConfiguration() *cobra.Command {
+func NewCmdConfiguration(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "configuration",
 		Short: "Get a deployed SparkJob configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var sparkService, err = InitSparkService(fmt.Sprintf(beastBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := configurationRun(service, name)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return configurationRun(sparkService)
+			return err
 		},
 	}
 
@@ -26,11 +25,11 @@ func NewCmdConfiguration() *cobra.Command {
 	return cmd
 }
 
-func configurationRun(sparkService *spark.Service) error {
+func configurationRun(sparkService Service, name string) (spark.SubmissionConfiguration, error) {
 	response, err := sparkService.GetConfiguration(name)
 	if err != nil {
-		log.Fatalf("Failed to retrieve configuration with name %s: %v", name, err)
+
+		return spark.SubmissionConfiguration{}, fmt.Errorf("failed to retrieve configuration with name %s: %v", name, err)
 	}
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }

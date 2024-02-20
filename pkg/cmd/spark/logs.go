@@ -2,8 +2,6 @@ package spark
 
 import (
 	"fmt"
-	"github.com/SneaksAndData/esd-services-api-client-go/spark"
-	"log"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -11,16 +9,16 @@ import (
 
 var trimLog bool
 
-func NewCmdLogs() *cobra.Command {
+func NewCmdLogs(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
 		Short: "Get logs from a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var sparkService, err = InitSparkService(fmt.Sprintf(beastBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := logsRun(service, id, trimLog)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return logsRun(sparkService)
+			return err
 		},
 	}
 
@@ -29,17 +27,16 @@ func NewCmdLogs() *cobra.Command {
 	return cmd
 }
 
-func logsRun(sparkService *spark.Service) error {
+func logsRun(sparkService Service, id string, trimLog bool) (string, error) {
 	response, err := sparkService.GetLogs(id)
 	if err != nil {
-		log.Fatalf("Failed to retrieve logs for run id %s: %v", id, err)
+		return "", fmt.Errorf("failed to retrieve logs for run id %s: %v", id, err)
 	}
 	if trimLog {
 		response = trimLogToStdout(response)
 	}
 
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }
 
 func trimLogToStdout(logs string) string {

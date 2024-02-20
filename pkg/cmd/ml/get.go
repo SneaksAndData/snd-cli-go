@@ -2,36 +2,36 @@ package ml
 
 import (
 	"fmt"
-	algorithms "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
-	"log"
+	"strings"
 )
 
 var id string
 
-func NewCmdGet() *cobra.Command {
+func NewCmdGet(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get the result for a ML Algorithm run",
 		RunE: func(cmd *cobra.Command, args []string) error {
-
-			var algorithmService, err = InitAlgorithmService(fmt.Sprintf(crystalBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := getRun(service, id, algorithm)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return getRun(algorithmService)
+			return err
 		},
 	}
 	cmd.Flags().StringVarP(&id, "id", "i", "", "Specify the Crystal Job ID")
 	return cmd
 }
 
-func getRun(algorithmService *algorithms.Service) error {
+func getRun(algorithmService Service, id, algorithm string) (string, error) {
 	response, err := algorithmService.RetrieveRun(id, algorithm)
 	if err != nil {
-		log.Fatalf("Failed to retrieve run for algorithm %s with run id %s: %v", algorithm, id, err)
+		if strings.HasSuffix(err.Error(), "404") {
+			return "", fmt.Errorf("failed to find run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
+		}
+		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %v", algorithm, id, err)
 	}
 
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }

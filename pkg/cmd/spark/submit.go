@@ -6,25 +6,24 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
-	"log"
 	"os"
-	"snd-cli/pkg/cmd/util"
+	"snd-cli/pkg/cmd/util/file"
 	"strings"
 )
 
 var jobName, clientTag string
 var overrides string
 
-func NewCmdSubmit() *cobra.Command {
+func NewCmdSubmit(service Service) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "submit",
 		Short: "Runs the provided Beast V3 job with optional overrides",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var sparkService, err = InitSparkService(fmt.Sprintf(beastBaseURL, env))
-			if err != nil {
-				log.Fatal(err)
+			resp, err := submitRun(service, overrides, jobName)
+			if err == nil {
+				fmt.Println(resp)
 			}
-			return submitRun(sparkService)
+			return err
 		},
 	}
 
@@ -35,9 +34,12 @@ func NewCmdSubmit() *cobra.Command {
 	return cmd
 }
 
-func submitRun(sparkService *spark.Service) error {
-	params := getOverrides()
-	defaultTag := generateTag()
+func submitRun(sparkService Service, overrides, jobName string) (string, error) {
+	params, err := getOverrides(overrides)
+	if err != nil {
+		return "", err
+	}
+	defaultTag, _ := generateTag()
 	if clientTag == "" {
 		fmt.Printf("You have not provided a client tag for this submission. Using generated tag: %s", defaultTag)
 		params.ClientTag = defaultTag
@@ -45,62 +47,62 @@ func submitRun(sparkService *spark.Service) error {
 	params.ClientTag = clientTag
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
-		log.Fatalf("Failed to submit job: %v", err)
+		return "", fmt.Errorf("failed to submit job: %v", err)
 	}
-
-	fmt.Println("Response:", response)
-	return nil
+	return response, nil
 }
 
-func getOverrides() spark.JobParams {
-	if overrides == "" {
-		return spark.JobParams{
-			ClientTag:           "",
-			ExtraArguments:      nil,
-			ProjectInputs:       nil,
-			ProjectOutputs:      nil,
-			ExpectedParallelism: 0,
-		}
+func getOverrides(overrides string) (spark.JobParams, error) {
+	var dp = spark.JobParams{
+		ClientTag:           "",
+		ExtraArguments:      nil,
+		ProjectInputs:       nil,
+		ProjectOutputs:      nil,
+		ExpectedParallelism: 0,
 	}
+	if overrides == "" {
+		return dp, nil
+	}
+	f := file.File{FilePath: overrides}
 
-	if util.IsValidPath(overrides) {
-		content, err := util.ReadJSONFile(overrides)
+	if f.IsValidPath() {
+		content, err := f.ReadJSONFile()
 		if err != nil {
-			log.Fatalf("Failed to read JSON file '%s': %v", overrides, err)
+			return dp, fmt.Errorf("failed to read JSON file '%s': %v", overrides, err)
 		}
 		var params *spark.JobParams
 		c, err := json.Marshal(content)
 		if err != nil {
-			log.Fatalf("Error marshaling content from file '%s': %v", overrides, err)
+			return dp, fmt.Errorf("error marshaling content from file '%s': %v", overrides, err)
 		}
 		err = json.Unmarshal(c, &params)
 		if err != nil {
-			log.Fatalf("Error unmarshaling content to spark.JobParams: %v", err)
+			return dp, fmt.Errorf("error unmarshaling content to spark.JobParams: %v", err)
 		}
-		return *params
+		return *params, nil
 	}
 	var params *spark.JobParams
 	c, err := json.Marshal(overrides)
 	if err != nil {
-		log.Fatal(err)
+		return dp, fmt.Errorf(err.Error())
 	}
 	err = json.Unmarshal(c, &params)
 	if err != nil {
-		log.Fatal(err)
+		return dp, fmt.Errorf(err.Error())
 	}
-	return *params
+	return *params, nil
 }
 
-func generateTag() string {
+func generateTag() (string, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		log.Fatalf("Failed to retrieve hostname: %v", err)
+		return "", fmt.Errorf("failed to retrieve hostname: %v", err)
 	}
 	// Generate a random string of 12 characters (uppercase + digits)
 	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, 12)
 	if _, err := rand.Read(b); err != nil {
-		log.Fatalf("Error encountered while reading: %v", err)
+		return "", fmt.Errorf("error encountered while reading: %v", err)
 	}
 	for i := 0; i < len(b); i++ {
 		b[i] = charset[b[i]%byte(len(charset))]
@@ -108,5 +110,5 @@ func generateTag() string {
 	randomString := string(b)
 
 	defaultTag := fmt.Sprintf("cli-%s-%s", strings.ToLower(hostname), randomString)
-	return defaultTag
+	return defaultTag, nil
 }

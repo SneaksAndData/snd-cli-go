@@ -5,12 +5,12 @@ import (
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/spf13/cobra"
 	"log"
-	"snd-cli/pkg/cmd/util"
+	tokenUtil "snd-cli/pkg/cmd/util/token"
 )
 
-const boxerBaseURL = "https://boxer.%s.sneaksanddata.com"
-
 var env, provider string
+
+const boxerBaseURL = "https://boxer.%s.sneaksanddata.com"
 
 func NewCmdAuth() *cobra.Command {
 	cmd := &cobra.Command{
@@ -19,7 +19,11 @@ func NewCmdAuth() *cobra.Command {
 		GroupID: "auth",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return loginRun()
+			var authService, err = InitAuthService()
+			if err != nil {
+				log.Fatalf("Failed to initialize auth service: %v", err)
+			}
+			return loginRun(authService)
 		},
 	}
 
@@ -29,27 +33,33 @@ func NewCmdAuth() *cobra.Command {
 	return cmd
 }
 
-func loginRun() error {
-	tokenURL := fmt.Sprintf(boxerBaseURL, env)
+type Service interface {
+	GetBoxerToken() (string, error)
+}
+
+func InitAuthService() (*auth.Service, error) {
 	config := auth.Config{
-		TokenURL: tokenURL,
+		TokenURL: fmt.Sprintf(boxerBaseURL, env),
 		Env:      env,
 		Provider: provider,
 	}
-
-	// Create a new instance of the auth service
 	authService, err := auth.New(config)
 	if err != nil {
-		log.Fatalf("Failed to create auth service: %v", err)
+		return nil, fmt.Errorf("failed to create auth service: %v", err)
 	}
+	return authService, nil
+}
+
+func loginRun(authService Service) error {
 	// Retrieve token
 	token, err := authService.GetBoxerToken()
 	if err != nil {
-		log.Fatalf("Failed to get token: %v", err)
+		return fmt.Errorf("failed to get token: %v", err)
 	}
-	cachedToken, err := util.CacheToken(token)
+	tc := tokenUtil.TokenCache{Token: token}
+	cachedToken, err := tc.CacheToken()
 	if err != nil {
-		log.Fatalf("Failed to cache token: %v", err)
+		return fmt.Errorf("failed to cache token: %v", err)
 	}
 	fmt.Println("Token:", cachedToken)
 	return nil
