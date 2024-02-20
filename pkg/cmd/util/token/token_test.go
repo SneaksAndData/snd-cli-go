@@ -24,5 +24,5 @@ func TestCreateDirectory(t *testing.T) {
 	assert.NoError(t, err, "Ensuring an existing directory should not produce an error")
 
 	// Cleanup
-	defer os.RemoveAll(dirPath)
+	defer os.Remove(dirPath)
 }

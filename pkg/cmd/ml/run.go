@@ -3,6 +3,7 @@ package ml
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var payload, tag string
@@ -13,6 +14,9 @@ func NewCmdRun(service Service, factory FileServiceFactory) *cobra.Command {
 		Short: "Run a ML Algorithm",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fileService, err := factory(payload)
+			if err != nil {
+				log.Fatalf(err.Error())
+			}
 			resp, err := runRun(service, fileService, algorithm, tag)
 			if err == nil {
 				fmt.Println(resp)

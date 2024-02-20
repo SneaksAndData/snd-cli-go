@@ -9,8 +9,6 @@ import (
 	sparkCmd "snd-cli/pkg/cmd/spark"
 )
 
-const boxerAuthBaseURL = "https://boxer.%s.sneaksanddata.com"
-
 // AuthServiceFactory is a function type that creates an Service instance.
 type AuthServiceFactory func(env, provider string) (*apiAuth.Service, error)
 
