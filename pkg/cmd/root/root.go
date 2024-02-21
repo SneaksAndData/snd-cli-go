@@ -9,7 +9,7 @@ import (
 	sparkCmd "snd-cli/pkg/cmd/spark"
 )
 
-// AuthServiceFactory is a function type that creates an Service instance.
+// AuthServiceFactory is a function type that creates a Service instance.
 type AuthServiceFactory func(env, provider string) (*apiAuth.Service, error)
 
 type CacheToken func(token string) (string, error)
