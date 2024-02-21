@@ -40,8 +40,8 @@ func NewCmdAlgorithm() *cobra.Command {
 	}
 	cmd.AddCommand(NewCmdGet(algorithmService))
 	cmd.AddCommand(NewCmdRun(algorithmService, func(path string) (file.File, error) {
-		// This anonymous function acts as the factory. It encapsulates
-		// the logic to create a new claim service instance.
+		// This anonymous function acts as a factory. It encapsulates
+		// the logic to create a new file instance.
 		return file.File{FilePath: path}, nil
 	}))
 	return cmd

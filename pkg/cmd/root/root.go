@@ -19,7 +19,7 @@ func NewCmdRoot() (*cobra.Command, error) {
 	var cmd = &cobra.Command{
 		Use:   "snd <service command group> <service command> [flags]",
 		Short: "SnD CLI",
-		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data. Written in Golang.`,
+		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			// TODO: Check that the user is authenticated before running most commands
 			// fmt.Println("To get started with SnD CLI, please run: snd login")
