@@ -8,11 +8,15 @@ import (
 
 var cr []string
 
-func NewCmdRemoveClaim(service Service) *cobra.Command {
+func NewCmdRemoveClaim(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
 		Short: "Removes a claim from an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := removeClaimRun(service, userId, claimProvider, cr)
 			if err == nil {
 				fmt.Println(resp)

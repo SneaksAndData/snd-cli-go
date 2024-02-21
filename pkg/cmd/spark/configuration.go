@@ -8,11 +8,15 @@ import (
 
 var name string
 
-func NewCmdConfiguration(service Service) *cobra.Command {
+func NewCmdConfiguration(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "configuration",
 		Short: "Get a deployed SparkJob configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := configurationRun(service, name)
 			if err == nil {
 				fmt.Println(resp)

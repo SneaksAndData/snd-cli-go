@@ -6,11 +6,15 @@ import (
 	"strings"
 )
 
-func NewCmdGetClaim(service Service) *cobra.Command {
+func NewCmdGetClaim(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Retrieves claims assigned to an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := getClaimRun(service, userId, claimProvider)
 			if err == nil {
 				fmt.Println(resp)

@@ -5,24 +5,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCmdUser(service Service) *cobra.Command {
+func NewCmdUser(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "user",
 		Short: "Manage (add/remove) a user",
 	}
 
-	cmd.AddCommand(NewCmdAddUser(service))
-	cmd.AddCommand(NewCmdRemoveUser(service))
+	cmd.AddCommand(NewCmdAddUser(factory))
+	cmd.AddCommand(NewCmdRemoveUser(factory))
 
 	return cmd
 
 }
 
-func NewCmdAddUser(service Service) *cobra.Command {
+func NewCmdAddUser(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := addUserRun(service, userId, claimProvider)
 			if err == nil {
 				fmt.Println(resp)
@@ -43,11 +47,15 @@ func addUserRun(claimService Service, userId, claimProvider string) (string, err
 	return response, nil
 }
 
-func NewCmdRemoveUser(service Service) *cobra.Command {
+func NewCmdRemoveUser(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := removeUserRun(service, userId, claimProvider)
 			if err == nil {
 				fmt.Println(resp)

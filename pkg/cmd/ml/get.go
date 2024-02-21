@@ -8,11 +8,15 @@ import (
 
 var id string
 
-func NewCmdGet(service Service) *cobra.Command {
+func NewCmdGet(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get the result for a ML Algorithm run",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := getRun(service, id, algorithm)
 			if err == nil {
 				fmt.Println(resp)

@@ -7,11 +7,15 @@ import (
 
 var value, sp string
 
-func NewCmdEncrypt(service Service) *cobra.Command {
+func NewCmdEncrypt(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "encrypt",
 		Short: "Encrypt a value from a file or stdin using encryption key from a corresponding Spark Runtime",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := encryptRun(service)
 			if err == nil {
 				fmt.Println(resp)

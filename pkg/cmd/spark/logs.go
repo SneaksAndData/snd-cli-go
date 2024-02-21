@@ -9,11 +9,15 @@ import (
 
 var trimLog bool
 
-func NewCmdLogs(service Service) *cobra.Command {
+func NewCmdLogs(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
 		Short: "Get logs from a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := logsRun(service, id, trimLog)
 			if err == nil {
 				fmt.Println(resp)

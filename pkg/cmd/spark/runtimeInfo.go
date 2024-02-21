@@ -7,11 +7,15 @@ import (
 
 var object string
 
-func NewCmdRuntimeInfo(service Service) *cobra.Command {
+func NewCmdRuntimeInfo(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "runtime-info",
 		Short: "Get the runtime info of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := runtimeInfoRun(service, id)
 			if err == nil {
 				fmt.Println(resp)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
-	"log"
 	"snd-cli/pkg/cmd/util/token"
 )
 
@@ -21,6 +20,8 @@ type Service interface {
 	RemoveUser(user string, provider string) (string, error)
 }
 
+type ServiceFactory func(env string) (Service, error)
+
 func NewCmdClaim() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "claim",
@@ -32,14 +33,10 @@ func NewCmdClaim() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&userId, "user", "u", "", "Specify the user ID")
 	cmd.PersistentFlags().StringVarP(&claimProvider, "claims-provider", "p", "", "Specify the claim provider")
 
-	var claimService, err = InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
-	if err != nil {
-		log.Fatalf("Failed to initialize claim service: %v", err)
-	}
-	cmd.AddCommand(NewCmdUser(claimService))
-	cmd.AddCommand(NewCmdAddClaim(claimService))
-	cmd.AddCommand(NewCmdGetClaim(claimService))
-	cmd.AddCommand(NewCmdRemoveClaim(claimService))
+	cmd.AddCommand(NewCmdUser(initClaimServiceHelper()))
+	cmd.AddCommand(NewCmdAddClaim(initClaimServiceHelper()))
+	cmd.AddCommand(NewCmdGetClaim(initClaimServiceHelper()))
+	cmd.AddCommand(NewCmdRemoveClaim(initClaimServiceHelper()))
 
 	return cmd
 }
@@ -55,4 +52,10 @@ func InitClaimService(url string) (*claim.Service, error) {
 		return nil, fmt.Errorf("failed to create claim service: %v", err)
 	}
 	return claimService, nil
+}
+
+func initClaimServiceHelper() ServiceFactory {
+	return func(env string) (Service, error) {
+		return InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
+	}
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	algorithms "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
-	"log"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmd/util/token"
 )
@@ -23,6 +22,7 @@ type Operations interface {
 }
 
 type FileServiceFactory func(path string) (file.File, error)
+type ServiceFactory func(env string) (Service, error)
 
 func NewCmdAlgorithm() *cobra.Command {
 	cmd := &cobra.Command{
@@ -34,12 +34,8 @@ func NewCmdAlgorithm() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "l", "", "Specify the algorithm name")
 
-	var algorithmService, err = InitAlgorithmService(fmt.Sprintf(crystalBaseURL, env))
-	if err != nil {
-		log.Fatalf("Failed to initialize algorithm service: %v", err)
-	}
-	cmd.AddCommand(NewCmdGet(algorithmService))
-	cmd.AddCommand(NewCmdRun(algorithmService, func(path string) (file.File, error) {
+	cmd.AddCommand(NewCmdGet(initAlgorithmServiceHelper()))
+	cmd.AddCommand(NewCmdRun(initAlgorithmServiceHelper(), func(path string) (file.File, error) {
 		// This anonymous function acts as a factory. It encapsulates
 		// the logic to create a new file instance.
 		return file.File{FilePath: path}, nil
@@ -60,4 +56,10 @@ func InitAlgorithmService(url string) (*algorithms.Service, error) {
 		return nil, fmt.Errorf("failed to create algorithm service: %v", err)
 	}
 	return algorithmService, nil
+}
+
+func initAlgorithmServiceHelper() ServiceFactory {
+	return func(env string) (Service, error) {
+		return InitAlgorithmService(fmt.Sprintf(crystalBaseURL, env))
+	}
 }

@@ -14,11 +14,15 @@ import (
 var jobName, clientTag string
 var overrides string
 
-func NewCmdSubmit(service Service) *cobra.Command {
+func NewCmdSubmit(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "submit",
 		Short: "Runs the provided Beast V3 job with optional overrides",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := submitRun(service, overrides, jobName)
 			if err == nil {
 				fmt.Println(resp)

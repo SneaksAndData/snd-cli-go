@@ -8,11 +8,15 @@ import (
 
 var ca []string
 
-func NewCmdAddClaim(service Service) *cobra.Command {
+func NewCmdAddClaim(factory ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
 		Short: "Add a new claim to an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			service, err := factory(env)
+			if err != nil {
+				return err
+			}
 			resp, err := addClaimRun(service, userId, claimProvider, ca)
 			if err == nil {
 				fmt.Println(resp)

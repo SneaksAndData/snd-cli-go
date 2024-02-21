@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
-	"log"
 	"snd-cli/pkg/cmd/util/token"
 )
 
@@ -20,6 +19,8 @@ type Service interface {
 	RunJob(request spark.JobParams, sparkJobName string) (string, error)
 }
 
+type ServiceFactory func(env string) (Service, error)
+
 func NewCmdSpark() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "spark",
@@ -30,17 +31,12 @@ func NewCmdSpark() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&id, "id", "i", "", "Specify the  Job ID")
 
-	var sparkService, err = InitSparkService(fmt.Sprintf(beastBaseURL, env))
-	if err != nil {
-		log.Fatalf("Failed to initialize spark service: %v", err)
-	}
-
-	cmd.AddCommand(NewCmdSubmit(sparkService))
-	cmd.AddCommand(NewCmdRuntimeInfo(sparkService))
-	cmd.AddCommand(NewCmdRequestStatus(sparkService))
-	cmd.AddCommand(NewCmdLogs(sparkService))
-	cmd.AddCommand(NewCmdConfiguration(sparkService))
-	cmd.AddCommand(NewCmdEncrypt(sparkService))
+	cmd.AddCommand(NewCmdSubmit(initSparkServiceHelper()))
+	cmd.AddCommand(NewCmdRuntimeInfo(initSparkServiceHelper()))
+	cmd.AddCommand(NewCmdRequestStatus(initSparkServiceHelper()))
+	cmd.AddCommand(NewCmdLogs(initSparkServiceHelper()))
+	cmd.AddCommand(NewCmdConfiguration(initSparkServiceHelper()))
+	cmd.AddCommand(NewCmdEncrypt(initSparkServiceHelper()))
 
 	return cmd
 }
@@ -58,4 +54,10 @@ func InitSparkService(url string) (*spark.Service, error) {
 	}
 	return sparkService, nil
 
+}
+
+func initSparkServiceHelper() ServiceFactory {
+	return func(env string) (Service, error) {
+		return InitSparkService(fmt.Sprintf(beastBaseURL, env))
+	}
 }

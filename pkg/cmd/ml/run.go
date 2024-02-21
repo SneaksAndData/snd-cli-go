@@ -8,12 +8,19 @@ import (
 
 var payload, tag string
 
-func NewCmdRun(service Service, factory FileServiceFactory) *cobra.Command {
+func NewCmdRun(serviceFactory ServiceFactory, factory FileServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "Run a ML Algorithm",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fileService, err := factory(payload)
+			if err != nil {
+				return err
+			}
+			service, err := serviceFactory(env)
+			if err != nil {
+				return err
+			}
 			if err != nil {
 				log.Fatalf(err.Error())
 			}
