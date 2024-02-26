@@ -1,0 +1,99 @@
+name: Publish package
+
+run-name: Publish ${{github.ref_name}} by @${{ github.actor }}
+
+on:
+  workflow_dispatch
+
+jobs:
+  setup_variables:
+    name: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+  binary:
+    name: Build on ${{ matrix.os }} for ${{ matrix.arch }}
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        os: [ windows, macos, linux ]
+        arch: [ amd64, arm64 ]
+        exclude:
+          - os: windows
+            arch: arm64
+          - os: [ macos, linux ]
+            arch: amd64
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Setup environment variables
+        run: |
+          echo "GOOS=${{ matrix.os }}" >> $GITHUB_ENV
+          echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+      - name: Build
+        run: |
+          go build -o snd-${{ matrix.os }}-${{ matrix.arch }}
+      - name: Import Secrets
+        uses: hashicorp/vault-action@v2.7.3
+        with:
+          url: https://hashicorp-vault.production.sneaksanddata.com/
+          role: github
+          method: jwt
+          secrets: |
+            /secret/data/applications/ds-datalakes/production/esd_datalake_connection_string DATALAKE_CONNECTION_STRING ;
+            /secret/data/applications/ds-datalakes/production/credentials DATALAKE_ACCOUNT_KEY ;
+            /secret/data/common/azcopy AZCOPY_DOWNLOAD_URL ;
+
+      - name: Setup deployment account
+        run: |
+          set -e
+
+          sudo apt-get update -y && sudo apt-get install -y libc-bin binutils
+
+          account_name=$(echo "${{ env.DATALAKE_CONNECTION_STRING }}" | cut -d';' -f2 | cut -d'=' -f2)
+
+          echo "ACCOUNT_NAME=$account_name" >> "$GITHUB_OUTPUT"
+          echo "ACCOUNT_KEY=${{ env.DATALAKE_ACCOUNT_KEY }}" >> "$GITHUB_OUTPUT" 
+
+        id: deployment_setup
+
+      - name: Install azcopy
+        uses: SneaksAndData/github-actions/install_azcopy@v0.0.16
+        with:
+          download_uri: https://aka.ms/downloadazcopy-v10-mac
+      - name: Generate SAS for upload
+        uses: SneaksAndData/github-actions/get_azure_share_sas@v0.1.5
+        with:
+          directory_name: dist/snd-cli/dist
+          account_key: ${{ steps.deployment_setup.outputs.ACCOUNT_KEY }}
+          account_name: ${{ steps.deployment_setup.outputs.ACCOUNT_NAME }}
+          directory_type: blob
+        id: sas
+
+      - name: Copy binaries
+        env:
+          UPLOAD_URL: ${{ steps.sas.outputs.authorized_destination }}
+        run: |
+          set -e
+          echo "Copying bundle..." 
+          
+          version=$(git describe --tags --abbrev=7)
+          echo "Version: $version" 
+
+          tar czf snd-${{ matrix.os }}-${{ matrix.arch }} ./dist/application && rm -rf ./dist/application && mv snd-${{ matrix.os }}-${{ matrix.arch }} ./dist
+          echo "Archiving application..."
+          
+          ./azcopy copy "dist/*" $UPLOAD_URL --overwrite true --put-md5 --metadata "version=$version"
+          echo "Uploading binaries..."  
+          
