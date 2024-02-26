@@ -75,7 +75,7 @@ jobs:
       - name: Generate SAS for upload
         uses: SneaksAndData/github-actions/get_azure_share_sas@v0.1.5
         with:
-          directory_name: dist/snd-cli/dist
+          directory_name: dist/snd-cli-go/
           account_key: ${{ steps.deployment_setup.outputs.ACCOUNT_KEY }}
           account_name: ${{ steps.deployment_setup.outputs.ACCOUNT_NAME }}
           directory_type: blob
