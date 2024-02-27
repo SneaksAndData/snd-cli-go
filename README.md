@@ -26,7 +26,7 @@ TBD
 
 ## Usage
 
-CLI supports the following command groups: login, claim, spark, algorithm. Each command group is described in respective
+CLI supports the following command groups: `login`, `claim`, `spark`, `algorithm`. Each command group is described in respective
 section below.
 
 ```bash
@@ -40,10 +40,10 @@ Claim Commands
   claim       Manage claims
 
 ML Algorithm Commands
-  algorithm   Manage ML algorithm jobs
+  algorithm   Manage ML/AI algorithm runs and related resources
 
 Spark Commands
-  spark       Manage Spark jobs
+  spark       Manage Spark jobs and related resources
 
 Additional Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -82,7 +82,7 @@ $ snd login -a azuread -e production
 
 ### Claim
 
-Manage Boxer claims and users.
+Manage Boxer claims and users. This feature is available only for platform administrators.
 
 ```bash
 Usage:
@@ -216,7 +216,7 @@ $ snd spark submit -n configuration-name -o ./overrides.json
 #### Get configuration
 
 ```bash
-$ snd spark configuration -n cconfiguration-name 
+$ snd spark configuration -n configuration-name 
 ```
 
 #### Encrypt
