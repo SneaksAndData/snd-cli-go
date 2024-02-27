@@ -1,42 +1,120 @@
 package token
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"snd-cli/pkg/cmd/util/file"
+	"time"
 )
 
 const folder = ".snd-cli"
 const tokenFileName = "user-token.json"
 
-type TokenCacher interface {
-	CacheToken(token string) (string, error)
-	ReadToken() (string, error)
+// AuthService defines the interface for an authentication service.
+// It requires an implementation of GetBoxerToken method that, when called,
+// returns a token as a string and any error encountered.
+type AuthService interface {
+	GetBoxerToken() (string, error)
 }
 
-type TokenCache struct {
-	Token string
+// Provider manages token operations, including caching and retrieval,
+// utilizing an AuthService to obtain tokens when necessary.
+type Provider struct {
+	token       string      // token holds the most recent authentication token obtained.
+	ttl         time.Time   // ttl represents the time-to-live for the current token.
+	authService AuthService // authService is an instance of AuthService used to obtain authentication tokens when required.
+	cachePath   file.File   // path to the file where the token will be cached
 }
 
-func (tc *TokenCache) CacheToken() (string, error) {
-	filePath, err := generateTokenCachePath()
+// tokenCache struct is used for storing a token and its expiry time
+// in a cache (such as a file).
+type tokenCache struct {
+	Token string    `json:"token"`
+	TTL   time.Time `json:"ttl"`
+}
+
+// NewProvider creates a new instance of Provider using the provided AuthService.
+// The AuthService is used to obtain authentication tokens when they are not
+// available in the cache or have expired.
+func NewProvider(authService AuthService) *Provider {
+	filePath, err := file.GenerateFilePathWithBaseHome(folder, tokenFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &Provider{
+		authService: authService,
+		cachePath:   file.File{FilePath: filePath},
+	}
+}
+
+// saveTokenToCache serializes the current token and its TTL into a JSON format and writes this data to a cache file.
+func (p *Provider) saveTokenToCache() error {
+	t := tokenCache{
+		Token: p.token,
+		TTL:   p.ttl,
+	}
+	data, err := json.Marshal(t)
+	if err != nil {
+		return err
+	}
+	return p.cachePath.WriteToFile(string(data))
+}
+
+// getTokenFromCache attempts to read the token and its TTL from a cache file.
+// If the token is still valid (not expired), it sets the token and TTL fields on the Provider and returns nil.
+// If the token is expired or if there is any issue reading from the cache, it returns an error.
+func (p *Provider) getTokenFromCache() error {
+	filePath, err := file.GenerateFilePathWithBaseHome(folder, tokenFileName)
+	if err != nil {
+		return err
+	}
+	data, err := os.ReadFile(filePath)
+
+	var cache tokenCache
+	if err := json.Unmarshal(data, &cache); err != nil {
+		return err // Invalid cache, possibly corrupted.
+	}
+
+	// Check if the token in cache is still valid.
+	if time.Now().Before(cache.TTL) {
+		p.token = cache.Token
+		p.ttl = cache.TTL
+		return nil
+	}
+
+	return fmt.Errorf("token expired")
+}
+
+// GetToken checks the current token's validity and returns it if it's still valid.
+// If the token is expired or not present, it attempts to load a valid token from the cache.
+// If no valid token is available in the cache, it fetches a new token using the authService,
+// updates the token and its TTL, caches the new token, and returns it.
+func (p *Provider) GetToken() (string, error) {
+	if p.token == "" || time.Now().After(p.ttl) {
+		if err := p.getTokenFromCache(); err == nil {
+			return p.token, nil
+		}
+	}
+	// Either cache is empty, or token is expired, fetch a new one.
+	token, err := p.authService.GetBoxerToken()
 	if err != nil {
 		return "", err
 	}
-
-	dirPath := filepath.Dir(filePath)
-	if err := createDirectory(dirPath); err != nil {
-		return "", err
+	p.token = token
+	p.ttl = time.Now().Add(time.Hour) // Assuming TTL is 1 hour.
+	if err := p.saveTokenToCache(); err != nil {
+		return token, err
 	}
 
-	if err := writeToFile(filePath, tc.Token); err != nil {
-		return "", err
-	}
+	return p.token, nil
 
-	return tc.Token, nil
 }
 
-func (tc *TokenCache) ReadToken() (string, error) {
+// TODO: this needs to be removed
+func (p *Provider) ReadToken() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
@@ -45,42 +123,9 @@ func (tc *TokenCache) ReadToken() (string, error) {
 	filePath := filepath.Join(homeDir, folder, tokenFileName)
 
 	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to read filePath: %v", err)
+	var cache tokenCache
+	if err := json.Unmarshal(data, &cache); err != nil {
+		return "", err
 	}
-
-	return string(data), nil
-}
-
-// GenerateTokenCachePath generates the full path for the token cache file
-func generateTokenCachePath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", fmt.Errorf("failed to get user home directory: %v", err)
-	}
-	dirPath := filepath.Join(homeDir, folder)
-	return filepath.Join(dirPath, tokenFileName), nil
-}
-
-func createDirectory(dirPath string) error {
-	err := os.MkdirAll(dirPath, 0755) // Use MkdirAll to simplify
-	if err != nil {
-		return fmt.Errorf("failed to create token cache directory: %v", err)
-	}
-	return nil
-}
-
-// WriteToFile writes data to the specified file path.
-func writeToFile(filePath, data string) error {
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to open file: %v", err)
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(data)
-	if err != nil {
-		return fmt.Errorf("failed to write to file: %v", err)
-	}
-	return nil
+	return cache.Token, nil
 }

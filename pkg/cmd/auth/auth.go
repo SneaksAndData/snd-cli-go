@@ -5,7 +5,7 @@ import (
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/spf13/cobra"
 	"log"
-	tokenUtil "snd-cli/pkg/cmd/util/token"
+	"snd-cli/pkg/cmd/util/token"
 )
 
 var env, provider string
@@ -33,10 +33,6 @@ func NewCmdAuth() *cobra.Command {
 	return cmd
 }
 
-type Service interface {
-	GetBoxerToken() (string, error)
-}
-
 func InitAuthService() (*auth.Service, error) {
 	config := auth.Config{
 		TokenURL: fmt.Sprintf(boxerBaseURL, env),
@@ -50,17 +46,14 @@ func InitAuthService() (*auth.Service, error) {
 	return authService, nil
 }
 
-func loginRun(authService Service) error {
-	// Retrieve token
-	token, err := authService.GetBoxerToken()
+func loginRun(authService token.AuthService) error {
+	tokenProvider := token.NewProvider(authService)
+	cachedToken, err := tokenProvider.GetToken() // Fetch and cache the token.
 	if err != nil {
-		return fmt.Errorf("failed to get token: %v", err)
+		log.Fatalf("Error logging: %v", err)
 	}
-	tc := tokenUtil.TokenCache{Token: token}
-	cachedToken, err := tc.CacheToken()
-	if err != nil {
-		return fmt.Errorf("failed to cache token: %v", err)
-	}
-	fmt.Println("Token:", cachedToken)
+	log.Println("Login successful.")
+
+	log.Println("Token:", cachedToken)
 	return nil
 }
