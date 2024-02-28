@@ -6,8 +6,6 @@ import (
 	"snd-cli/pkg/cmdutil"
 )
 
-const boxerClaimBaseURL = "https://boxer-claim.%s.sneaksanddata.com"
-
 var env, authProvider, userId, claimProvider string
 
 type Service interface {

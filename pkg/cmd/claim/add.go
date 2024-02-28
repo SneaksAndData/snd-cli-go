@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
+	"log"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -16,7 +17,13 @@ func NewCmdAddClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 		Short: "Add a new claim to an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			if err != nil {
+				log.Fatal(err)
+			}
 			service, err := serviceFactory.CreateService("claim", env, authService)
+			if err != nil {
+				log.Fatal(err)
+			}
 			if err != nil {
 				return err
 			}

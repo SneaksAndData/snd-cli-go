@@ -17,6 +17,9 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 		Short: "Run a ML Algorithm",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			if err != nil {
+				log.Fatal(err)
+			}
 			service, err := serviceFactory.CreateService("algorithm", env, authService)
 			if err != nil {
 				log.Fatalf(err.Error())

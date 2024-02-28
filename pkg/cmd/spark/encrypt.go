@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"log"
 	"snd-cli/pkg/cmdutil"
 )
 
@@ -15,6 +16,9 @@ func NewCmdEncrypt(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 		Short: "Encrypt a value from a file or stdin using encryption key from a corresponding Spark Runtime",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			if err != nil {
+				log.Fatal(err)
+			}
 			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err

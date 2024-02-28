@@ -71,6 +71,9 @@ func (p *Provider) getTokenFromCache() error {
 		return err
 	}
 	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
 
 	var cache tokenCache
 	if err := json.Unmarshal(data, &cache); err != nil {

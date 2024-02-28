@@ -1,7 +1,6 @@
 package claim
 
 import (
-	"errors"
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
@@ -18,6 +17,9 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		Short: "Removes a claim from an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			if err != nil {
+				log.Fatal(err)
+			}
 			service, err := serviceFactory.CreateService("claim", env, authService)
 			if err != nil {
 				return err
@@ -39,9 +41,9 @@ func removeClaimRun(claimService Service, userId, claimProvider string, cr []str
 	response, err := claimService.RemoveClaim(userId, claimProvider, cr)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "404") {
-			return "", errors.New(fmt.Sprintf("failed to remove claims for user %s for claim provider %s : %v", userId, claimProvider, "User not found"))
+			return "", fmt.Errorf("failed to remove claims for user %s for claim provider %s : %v", userId, claimProvider, "User not found")
 		}
-		return "", errors.New(fmt.Sprintf("failed to remove claims for user %s with claim provider %s: %v", userId, claimProvider, err))
+		return "", fmt.Errorf("failed to remove claims for user %s with claim provider %s: %v", userId, claimProvider, err)
 	}
 
 	return response, nil
