@@ -2,29 +2,27 @@ package ml
 
 import (
 	"fmt"
+	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"log"
+	"snd-cli/pkg/cmd/util/file"
+	"snd-cli/pkg/cmdutil"
 )
 
 var payload, tag string
 
-func NewCmdRun(serviceFactory ServiceFactory, factory FileServiceFactory) *cobra.Command {
+func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "Run a ML Algorithm",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fileService, err := factory(payload)
-			if err != nil {
-				return err
-			}
-			service, err := serviceFactory(env)
-			if err != nil {
-				return err
-			}
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("algorithm", env, authService)
 			if err != nil {
 				log.Fatalf(err.Error())
 			}
-			resp, err := runRun(service, fileService, algorithm, tag)
+			payloadPath := file.File{FilePath: payload}
+			resp, err := runRun(service.(*algorithmClient.Service), payloadPath, algorithm, tag)
 			if err == nil {
 				fmt.Println(resp)
 			}

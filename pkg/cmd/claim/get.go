@@ -2,20 +2,23 @@ package claim
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmdutil"
 	"strings"
 )
 
-func NewCmdGetClaim(factory ServiceFactory) *cobra.Command {
+func NewCmdGetClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Retrieves claims assigned to an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("claim", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := getClaimRun(service, userId, claimProvider)
+			resp, err := getClaimRun(service.(*claim.Service), userId, claimProvider)
 			if err == nil {
 				fmt.Println(resp)
 			}

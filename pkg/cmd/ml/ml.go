@@ -1,14 +1,10 @@
 package ml
 
 import (
-	"fmt"
-	algorithms "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/file"
-	"snd-cli/pkg/cmd/util/token"
+	"snd-cli/pkg/cmdutil"
 )
-
-const crystalBaseURL = "https://crystal.%s.sneaksanddata.com"
 
 var env, authProvider, algorithm string
 
@@ -22,9 +18,8 @@ type Operations interface {
 }
 
 type FileServiceFactory func(path string) (file.File, error)
-type ServiceFactory func(env string) (Service, error)
 
-func NewCmdAlgorithm() *cobra.Command {
+func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "algorithm",
 		Short:   "Manage ML algorithm jobs",
@@ -34,32 +29,7 @@ func NewCmdAlgorithm() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "l", "", "Specify the algorithm name")
 
-	cmd.AddCommand(NewCmdGet(initAlgorithmServiceHelper()))
-	cmd.AddCommand(NewCmdRun(initAlgorithmServiceHelper(), func(path string) (file.File, error) {
-		// This anonymous function acts as a factory. It encapsulates
-		// the logic to create a new file instance.
-		return file.File{FilePath: path}, nil
-	}))
+	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
 	return cmd
-}
-
-func InitAlgorithmService(url string) (*algorithms.Service, error) {
-	tc := token.TokenCache{}
-	config := algorithms.Config{
-		GetTokenFunc: tc.ReadToken,
-		SchedulerURL: url,
-		APIVersion:   "v1.2",
-	}
-
-	algorithmService, err := algorithms.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create algorithm service: %v", err)
-	}
-	return algorithmService, nil
-}
-
-func initAlgorithmServiceHelper() ServiceFactory {
-	return func(env string) (Service, error) {
-		return InitAlgorithmService(fmt.Sprintf(crystalBaseURL, env))
-	}
 }

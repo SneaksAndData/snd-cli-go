@@ -2,10 +2,8 @@
 package claim
 
 import (
-	"fmt"
-	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmd/util/token"
+	"snd-cli/pkg/cmdutil"
 )
 
 const boxerClaimBaseURL = "https://boxer-claim.%s.sneaksanddata.com"
@@ -22,7 +20,7 @@ type Service interface {
 
 type ServiceFactory func(env string) (Service, error)
 
-func NewCmdClaim() *cobra.Command {
+func NewCmdClaim(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "claim",
 		Short:   "Manage claims",
@@ -33,29 +31,10 @@ func NewCmdClaim() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&userId, "user", "u", "", "Specify the user ID")
 	cmd.PersistentFlags().StringVarP(&claimProvider, "claims-provider", "p", "", "Specify the claim provider")
 
-	cmd.AddCommand(NewCmdUser(initClaimServiceHelper()))
-	cmd.AddCommand(NewCmdAddClaim(initClaimServiceHelper()))
-	cmd.AddCommand(NewCmdGetClaim(initClaimServiceHelper()))
-	cmd.AddCommand(NewCmdRemoveClaim(initClaimServiceHelper()))
+	cmd.AddCommand(NewCmdUser(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdRemoveClaim(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdAddClaim(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdGetClaim(authServiceFactory, serviceFactory))
 
 	return cmd
-}
-
-func InitClaimService(url string) (*claim.Service, error) {
-	tc := token.TokenCache{}
-	config := claim.Config{
-		ClaimURL:     url,
-		GetTokenFunc: tc.ReadToken,
-	}
-	claimService, err := claim.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create claim service: %v", err)
-	}
-	return claimService, nil
-}
-
-func initClaimServiceHelper() ServiceFactory {
-	return func(env string) (Service, error) {
-		return InitClaimService(fmt.Sprintf(boxerClaimBaseURL, env))
-	}
 }

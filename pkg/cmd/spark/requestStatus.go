@@ -2,19 +2,22 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmdutil"
 )
 
-func NewCmdRequestStatus(factory ServiceFactory) *cobra.Command {
+func NewCmdRequestStatus(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "request-status",
 		Short: "Get the status of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := requestStatusRun(service, id)
+			resp, err := requestStatusRun(service.(*spark.Service), id)
 			if err == nil {
 				fmt.Println(resp)
 			}

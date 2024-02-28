@@ -2,21 +2,24 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmdutil"
 )
 
 var value, sp string
 
-func NewCmdEncrypt(factory ServiceFactory) *cobra.Command {
+func NewCmdEncrypt(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "encrypt",
 		Short: "Encrypt a value from a file or stdin using encryption key from a corresponding Spark Runtime",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := encryptRun(service)
+			resp, err := encryptRun(service.(*spark.Service))
 			if err == nil {
 				fmt.Println(resp)
 			}

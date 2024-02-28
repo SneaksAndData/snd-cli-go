@@ -8,22 +8,24 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"snd-cli/pkg/cmd/util/file"
+	"snd-cli/pkg/cmdutil"
 	"strings"
 )
 
 var jobName, clientTag string
 var overrides string
 
-func NewCmdSubmit(factory ServiceFactory) *cobra.Command {
+func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "submit",
 		Short: "Runs the provided Beast V3 job with optional overrides",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := submitRun(service, overrides, jobName)
+			resp, err := submitRun(service.(*spark.Service), overrides, jobName)
 			if err == nil {
 				fmt.Println(resp)
 			}

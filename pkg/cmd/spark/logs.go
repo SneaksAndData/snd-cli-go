@@ -2,6 +2,8 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"snd-cli/pkg/cmdutil"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -9,16 +11,17 @@ import (
 
 var trimLog bool
 
-func NewCmdLogs(factory ServiceFactory) *cobra.Command {
+func NewCmdLogs(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
 		Short: "Get logs from a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := logsRun(service, id, trimLog)
+			resp, err := logsRun(service.(*spark.Service), id, trimLog)
 			if err == nil {
 				fmt.Println(resp)
 			}

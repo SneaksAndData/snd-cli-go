@@ -1,16 +1,17 @@
 package root
 
 import (
-	apiAuth "github.com/SneaksAndData/esd-services-api-client-go/auth"
+	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/spf13/cobra"
 	authCmd "snd-cli/pkg/cmd/auth"
 	claimCmd "snd-cli/pkg/cmd/claim"
 	mlCmd "snd-cli/pkg/cmd/ml"
 	sparkCmd "snd-cli/pkg/cmd/spark"
+	"snd-cli/pkg/cmdutil"
 )
 
 // AuthServiceFactory is a function type that creates a Service instance.
-type AuthServiceFactory func(env, provider string) (*apiAuth.Service, error)
+type AuthServiceFactory func(env, provider string) (*auth.Service, error)
 
 type CacheToken func(token string) (string, error)
 
@@ -46,10 +47,13 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Title: "Spark Commands",
 	})
 
+	authServiceFactory := cmdutil.NewAuthServiceFactory()
+	serviceFactory := cmdutil.NewConcreteServiceFactory()
+
 	// Child commands
-	cmd.AddCommand(authCmd.NewCmdAuth())
-	cmd.AddCommand(claimCmd.NewCmdClaim())
-	cmd.AddCommand(mlCmd.NewCmdAlgorithm())
-	cmd.AddCommand(sparkCmd.NewCmdSpark())
+	cmd.AddCommand(authCmd.NewCmdAuth(authServiceFactory))
+	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
+	cmd.AddCommand(mlCmd.NewCmdAlgorithm(serviceFactory, authServiceFactory))
+	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
 	return cmd, nil
 }

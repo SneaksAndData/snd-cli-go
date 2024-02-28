@@ -2,7 +2,7 @@ package token
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"log"
 	"os"
 	"path/filepath"
@@ -50,7 +50,7 @@ func NewProvider(authService AuthService) *Provider {
 	}
 }
 
-// saveTokenToCache serializes the current token and its TTL into a JSON format and writes this data to a cache file.
+// saveTokenToCache serializes the current token and TTL into a JSON format and writes this data to a cache file.
 func (p *Provider) saveTokenToCache() error {
 	t := tokenCache{
 		Token: p.token,
@@ -85,7 +85,7 @@ func (p *Provider) getTokenFromCache() error {
 		return nil
 	}
 
-	return fmt.Errorf("token expired")
+	return errors.New("token expired")
 }
 
 // GetToken checks the current token's validity and returns it if it's still valid.
@@ -94,11 +94,13 @@ func (p *Provider) getTokenFromCache() error {
 // updates the token and its TTL, caches the new token, and returns it.
 func (p *Provider) GetToken() (string, error) {
 	if p.token == "" || time.Now().After(p.ttl) {
+		log.Println("Reading token from cache")
 		if err := p.getTokenFromCache(); err == nil {
 			return p.token, nil
 		}
 	}
 	// Either cache is empty, or token is expired, fetch a new one.
+	log.Println("Cached token not existent or expired, retrieving new token")
 	token, err := p.authService.GetBoxerToken()
 	if err != nil {
 		return "", err

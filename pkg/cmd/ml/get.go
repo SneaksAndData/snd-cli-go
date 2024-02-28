@@ -2,22 +2,22 @@ package ml
 
 import (
 	"fmt"
+	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmdutil"
 	"strings"
 )
 
 var id string
 
-func NewCmdGet(factory ServiceFactory) *cobra.Command {
+func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get the result for a ML Algorithm run",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
-			if err != nil {
-				return err
-			}
-			resp, err := getRun(service, id, algorithm)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("algorithm", env, authService)
+			resp, err := getRun(service.(*algorithmClient.Service), id, algorithm)
 			if err == nil {
 				fmt.Println(resp)
 			}

@@ -4,20 +4,22 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmdutil"
 )
 
 var name string
 
-func NewCmdConfiguration(factory ServiceFactory) *cobra.Command {
+func NewCmdConfiguration(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "configuration",
 		Short: "Get a deployed SparkJob configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := configurationRun(service, name)
+			resp, err := configurationRun(service.(*spark.Service), name)
 			if err == nil {
 				fmt.Println(resp)
 			}

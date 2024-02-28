@@ -2,21 +2,24 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmdutil"
 )
 
 var object string
 
-func NewCmdRuntimeInfo(factory ServiceFactory) *cobra.Command {
+func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "runtime-info",
 		Short: "Get the runtime info of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			service, err := factory(env)
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := runtimeInfoRun(service, id)
+			resp, err := runtimeInfoRun(service.(*spark.Service), id)
 			if err == nil {
 				fmt.Println(resp)
 			}
