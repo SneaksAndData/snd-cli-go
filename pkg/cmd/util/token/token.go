@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"os"
-	"path/filepath"
 	"snd-cli/pkg/cmd/util/file"
 	"time"
 )
@@ -113,21 +112,4 @@ func (p *Provider) GetToken() (string, error) {
 
 	return p.token, nil
 
-}
-
-// TODO: this needs to be removed
-func (p *Provider) ReadToken() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-
-	filePath := filepath.Join(homeDir, folder, tokenFileName)
-
-	data, err := os.ReadFile(filePath)
-	var cache tokenCache
-	if err := json.Unmarshal(data, &cache); err != nil {
-		return "", err
-	}
-	return cache.Token, nil
 }
