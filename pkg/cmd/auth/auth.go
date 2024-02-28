@@ -9,8 +9,6 @@ import (
 
 var env, provider string
 
-const boxerBaseURL = "https://boxer.%s.sneaksanddata.com"
-
 func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "login",

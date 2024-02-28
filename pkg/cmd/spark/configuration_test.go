@@ -28,7 +28,6 @@ func Test_configurationRun(t *testing.T) {
 			mockError:     errors.New("configuration not found"),
 			expectedError: true,
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tc := range testCases {
