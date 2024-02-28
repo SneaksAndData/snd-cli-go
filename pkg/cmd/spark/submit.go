@@ -60,7 +60,7 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	params.ClientTag = clientTag
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
-		return "", fmt.Errorf("failed to submit job: %v", err)
+		return "", fmt.Errorf("failed to submit job: %w", err)
 	}
 	return response, nil
 }
@@ -81,16 +81,16 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 	if f.IsValidPath() {
 		content, err := f.ReadJSONFile()
 		if err != nil {
-			return dp, fmt.Errorf("failed to read JSON file '%s': %v", overrides, err)
+			return dp, fmt.Errorf("failed to read JSON file '%s': %w", overrides, err)
 		}
 		var params *spark.JobParams
 		c, err := json.Marshal(content)
 		if err != nil {
-			return dp, fmt.Errorf("error marshaling content from file '%s': %v", overrides, err)
+			return dp, fmt.Errorf("error marshaling content from file '%s': %w", overrides, err)
 		}
 		err = json.Unmarshal(c, &params)
 		if err != nil {
-			return dp, fmt.Errorf("error unmarshaling content to spark.JobParams: %v", err)
+			return dp, fmt.Errorf("error unmarshaling content to spark.JobParams: %w", err)
 		}
 		return *params, nil
 	}
@@ -109,13 +109,13 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 func generateTag() (string, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve hostname: %v", err)
+		return "", fmt.Errorf("failed to retrieve hostname: %w", err)
 	}
 	// Generate a random string of 12 characters (uppercase + digits)
 	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, 12)
 	if _, err := rand.Read(b); err != nil {
-		return "", fmt.Errorf("error encountered while reading: %v", err)
+		return "", fmt.Errorf("error encountered while reading: %w", err)
 	}
 	for i := 0; i < len(b); i++ {
 		b[i] = charset[b[i]%byte(len(charset))]

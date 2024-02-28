@@ -49,7 +49,7 @@ func NewCmdAddUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 func addUserRun(claimService Service, userId, claimProvider string) (string, error) {
 	response, err := claimService.AddUser(userId, claimProvider)
 	if err != nil {
-		return "", fmt.Errorf("failed to add user %s with claim provider %s: %v", userId, claimProvider, err)
+		return "", fmt.Errorf("failed to add user %s with claim provider %s: %w", userId, claimProvider, err)
 	}
 	return response, nil
 }
@@ -85,7 +85,7 @@ func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 func removeUserRun(claimService Service, userId, claimProvider string) (string, error) {
 	response, err := claimService.RemoveUser(userId, claimProvider)
 	if err != nil {
-		return "", fmt.Errorf("failed to remove user %s with claim provider %s: %v", userId, claimProvider, err)
+		return "", fmt.Errorf("failed to remove user %s with claim provider %s: %w", userId, claimProvider, err)
 	}
 	return response, nil
 }

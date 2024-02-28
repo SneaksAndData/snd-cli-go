@@ -39,7 +39,7 @@ func configurationRun(sparkService Service, name string) (spark.SubmissionConfig
 	response, err := sparkService.GetConfiguration(name)
 	if err != nil {
 
-		return spark.SubmissionConfiguration{}, fmt.Errorf("failed to retrieve configuration with name %s: %v", name, err)
+		return spark.SubmissionConfiguration{}, fmt.Errorf("failed to retrieve configuration with name %s: %w", name, err)
 	}
 	return response, nil
 }

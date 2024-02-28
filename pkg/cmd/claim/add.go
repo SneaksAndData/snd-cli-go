@@ -45,7 +45,7 @@ func addClaimRun(claimService Service, userId, claimProvider string, ca []string
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to add claims for user %s for claim provider %s : %v", userId, claimProvider, "User not found")
 		}
-		return "", fmt.Errorf("failed to add claims for user %s with claim provider %s: %v", userId, claimProvider, err)
+		return "", fmt.Errorf("failed to add claims for user %s with claim provider %s: %w", userId, claimProvider, err)
 	}
 	return response, nil
 }

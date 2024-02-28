@@ -36,7 +36,7 @@ func NewCmdRequestStatus(authServiceFactory *cmdutil.AuthServiceFactory, service
 func requestStatusRun(sparkService Service, id string) (interface{}, error) {
 	response, err := sparkService.GetLifecycleStage(id)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve lifecycle stage for run id %s: %v", id, err)
+		return "", fmt.Errorf("failed to retrieve lifecycle stage for run id %s: %w", id, err)
 	}
 	return response, nil
 }

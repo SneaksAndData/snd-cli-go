@@ -35,7 +35,7 @@ func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Serv
 	}
 	authService, err := auth.New(config)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create auth service: %v", err)
+		return nil, fmt.Errorf("failed to create auth service: %w", err)
 	}
 	return authService, nil
 }
@@ -90,7 +90,7 @@ func initClaimService(env string, authService token.AuthService) (*claim.Service
 	}
 	claimService, err := claim.New(config)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create claim service: %v", err)
+		return nil, fmt.Errorf("failed to create claim service: %w", err)
 	}
 	return claimService, nil
 }
@@ -105,7 +105,7 @@ func initAlgorithmService(env string, authService token.AuthService) (*algorithm
 
 	algorithmService, err := algorithm.New(config)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create algorithm service: %v", err)
+		return nil, fmt.Errorf("failed to create algorithm service: %w", err)
 	}
 	return algorithmService, nil
 }
@@ -119,7 +119,7 @@ func initSparkService(env string, authService token.AuthService) (*spark.Service
 
 	sparkService, err := spark.New(config)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create spark service: %v", err)
+		return nil, fmt.Errorf("failed to create spark service: %w", err)
 	}
 	return sparkService, nil
 

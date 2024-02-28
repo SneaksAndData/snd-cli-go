@@ -41,7 +41,7 @@ func getRun(algorithmService Service, id, algorithm string) (string, error) {
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to find run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
 		}
-		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %v", algorithm, id, err)
+		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
 
 	return response, nil

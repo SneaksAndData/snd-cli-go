@@ -37,7 +37,6 @@ func loginRun(authService token.AuthService) error {
 		log.Fatalf("Error logging: %v", err)
 	}
 	log.Println("Login successful.")
-
 	log.Println("Token:", cachedToken)
 	return nil
 }

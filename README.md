@@ -26,7 +26,8 @@ TBD
 
 ## Usage
 
-CLI supports the following command groups: `login`, `claim`, `spark`, `algorithm`. Each command group is described in respective
+CLI supports the following command groups: `login`, `claim`, `spark`, `algorithm`. Each command group is described in
+respective
 section below.
 
 ```bash
@@ -96,7 +97,7 @@ Available Commands:
 
 Flags:
   -a, --auth-provider string     Specify the OAuth provider name (default "azuread")
-  -p, --claims-provider string   Specify the claim provider
+      --claims-provider string   Specify the claim provider
   -e, --env string               Target environment (default "test")
   -h, --help                     help for claim
   -u, --user string              Specify the user ID
@@ -105,19 +106,22 @@ Flags:
 #### Get claims
 
 ```bash
-$ snd claim get -p azuread -u test@ecco.com
+$ snd claim get --claims-provider azuread -u test@ecco.com
+$ snd claim get --claims-provider azuread --user test@ecco.com
 ```
 
 #### Add claims
 
 ```bash
-$ snd claim add -p azuread -u test@ecco.com -c "test1.test.sneaksanddata.com/.*:.*"
+$ snd claim add --claims-provider azuread -u test@ecco.com -c "test1.test.sneaksanddata.com/.*:.*"
+$ snd claim add --claims-provider azuread --user test@ecco.com --claims "test1.test.sneaksanddata.com/.*:.*"
 ```
 
 #### Remove claims
 
 ```bash
-$ snd claim remove -p azuread -u test@ecco.com -c "test1.test.sneaksanddata.com/.*:.*"
+$ snd claim remove --claims-provider azuread -u test@ecco.com -c "test1.test.sneaksanddata.com/.*:.*"
+$ snd claim remove --claims-provider azuread --user test@ecco.com --claims "test1.test.sneaksanddata.com/.*:.*"
 ```
 
 #### Manage users
@@ -125,13 +129,15 @@ $ snd claim remove -p azuread -u test@ecco.com -c "test1.test.sneaksanddata.com/
 ##### Add user
 
 ```bash
-$ snd claim user add -p azuread -u test@ecco.com 
+$ snd claim user add --claims-provider azuread -u test@ecco.com 
+$ snd claim user add --claims-provider azuread --user test@ecco.com 
 ```
 
 ##### Remove user
 
 ```bash
-$ snd claim user remove -p azuread -u test@ecco.com 
+$ snd claim user remove --claims-provider azuread -u test@ecco.com 
+$ snd claim user remove --claims-provider azuread --user test@ecco.com 
 ```
 
 ### Algorithm
@@ -147,7 +153,7 @@ Available Commands:
   run         Run a ML Algorithm
 
 Flags:
-  -l, --algorithm string       Specify the algorithm name
+      --algorithm string       Specify the algorithm name
   -a, --auth-provider string   Specify the OAuth provider name (default "azuread")
   -e, --env string             Target environment (default "test")
   -h, --help                   help for algorithm
@@ -156,13 +162,15 @@ Flags:
 #### Run algorithm
 
 ```bash
-$ snd algorithm run -l store-auto-replenishment-crystal-orchestrator -p ./crystal-payload.json
+$ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator -p ./crystal-payload.json
+$ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator --payload ./crystal-payload.json
 ```
 
 #### Get algorithm job result
 
 ```bash
-$ snd algorithm get -i fa1d02af-c294-4bf6-989f-1234 -l store-auto-replenishment-crystal-orchestrator
+$ snd algorithm get -i fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
+$ snd algorithm get --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
 ```
 
 ### Spark
@@ -211,12 +219,21 @@ $ snd spark logs -i 54284cb9-8e58-4d92-93cb-6543
 
 ```bash
 $ snd spark submit -n configuration-name -o ./overrides.json
+$ snd spark submit --job-name configuration-name --overrides ./overrides.json
+```
+overrides.json structure
+```json
+{
+  "extra_arguments": {},
+  "project_outputs": []
+}
 ```
 
 #### Get configuration
 
 ```bash
 $ snd spark configuration -n configuration-name 
+$ snd spark configuration --name configuration-name 
 ```
 
 #### Encrypt

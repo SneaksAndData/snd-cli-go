@@ -42,7 +42,7 @@ func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 func runtimeInfoRun(sparkService Service, id string) (string, error) {
 	response, err := sparkService.GetRuntimeInfo(id)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve runtime info for run id %s: %v", id, err)
+		return "", fmt.Errorf("failed to retrieve runtime info for run id %s: %w", id, err)
 	}
 	return response, nil
 }

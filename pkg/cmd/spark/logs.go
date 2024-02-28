@@ -41,7 +41,7 @@ func NewCmdLogs(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory c
 func logsRun(sparkService Service, id string, trimLog bool) (string, error) {
 	response, err := sparkService.GetLogs(id)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve logs for run id %s: %v", id, err)
+		return "", fmt.Errorf("failed to retrieve logs for run id %s: %w", id, err)
 	}
 	if trimLog {
 		response = trimLogToStdout(response)
