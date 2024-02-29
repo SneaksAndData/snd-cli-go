@@ -4,21 +4,38 @@ This repository contains a command-line interface for internal and external serv
 
 ## Requirements
 
-TBD
+To be able to retrieve the installation script and the cli binary you need to have Azure CLI installed. Instructions on
+how to install it can be found here https://learn.microsoft.com/en-us/cli/azure/install-azure-cli.
 
 ## Installation
 
-### Windows
-
-TBD
-
-### macOS
-
-TBD
+```bash
+# Login into Azure
+az login
+# Retrieve the install.sh script fro the blob storage
+az storage blob download --blob-url https://esddatalakeproduction.blob.core.windows.net/dist/snd-cli-go/install.sh --auth-mode login --file "install.sh"
+# Run the installation script
+# Add execute permission
+chmod +x install.sh
+```
 
 ### Linux
 
-TBD
+```bash
+./install.sh
+```
+
+### macOS
+
+```bash
+sh ./install.sh
+```
+
+### Windows
+```bash
+bash ./install.sh
+```
+
 
 ## Uninstall
 
@@ -221,7 +238,9 @@ $ snd spark logs -i 54284cb9-8e58-4d92-93cb-6543
 $ snd spark submit -n configuration-name -o ./overrides.json
 $ snd spark submit --job-name configuration-name --overrides ./overrides.json
 ```
+
 overrides.json structure
+
 ```json
 {
   "extra_arguments": {},
