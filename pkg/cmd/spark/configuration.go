@@ -32,7 +32,6 @@ func NewCmdConfiguration(authServiceFactory *cmdutil.AuthServiceFactory, service
 	}
 
 	cmd.Flags().StringVarP(&name, "name", "n", "", " Name of the configuration to find")
-	cmd.MarkFlagRequired("name")
 	return cmd
 }
 

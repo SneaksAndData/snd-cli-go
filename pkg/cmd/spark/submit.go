@@ -43,7 +43,6 @@ func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 	cmd.Flags().StringVarP(&jobName, "job-name", "n", "", "Beast SparkJob or SparkJobReference resource name")
 	cmd.Flags().StringVarP(&overrides, "overrides", "o", "", "Overrides for the provided job name")
 	cmd.Flags().StringVarP(&clientTag, "client-tag", "t", "", "Client tag for this submission")
-	cmd.MarkFlagRequired("job-name")
 
 	return cmd
 }
