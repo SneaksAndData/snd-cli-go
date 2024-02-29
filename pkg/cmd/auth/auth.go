@@ -3,23 +3,27 @@ package auth
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmd/util"
+	"log"
+	"snd-cli/pkg/cmd/util/token"
+	"snd-cli/pkg/cmdutil"
 )
 
 var env, provider string
 
-func NewCmdAuth() *cobra.Command {
+func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "login",
 		Short:   "Get internal authorization token",
 		GroupID: "auth",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return loginRun()
+			authService, err := authServiceFactory.CreateAuthService(env, provider)
+			if err != nil {
+				log.Fatalf("Failed to initialize auth service: %v", err)
+			}
+			return loginRun(authService)
 		},
 	}
-
-	util.DisableAuthCheck(cmd)
 
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
 	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
@@ -27,8 +31,13 @@ func NewCmdAuth() *cobra.Command {
 	return cmd
 }
 
-func loginRun() error {
-	fmt.Println("Login")
-	fmt.Printf(boxerBaseURL, env)
-	panic("Not implemented")
+func loginRun(authService token.AuthService) error {
+	tokenProvider := token.NewProvider(authService)
+	cachedToken, err := tokenProvider.GetToken() // Fetch and cache the token.
+	if err != nil {
+		log.Fatalf("Unable to get the token: %v", err)
+	}
+	fmt.Println("Login successful.")
+	fmt.Println("Token:", cachedToken)
+	return nil
 }

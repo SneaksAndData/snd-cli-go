@@ -2,17 +2,35 @@ package spark
 
 import (
 	"fmt"
+	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
+	"log"
+	"snd-cli/pkg/cmdutil"
 )
 
 var object string
 
-func NewCmdRuntimeInfo() *cobra.Command {
+func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "runtime-info",
 		Short: "Get the runtime info of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runtimeInfoRun()
+			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			if err != nil {
+				log.Fatal(err)
+			}
+			service, err := serviceFactory.CreateService("spark", env, authService)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if err != nil {
+				return err
+			}
+			resp, err := runtimeInfoRun(service.(*spark.Service), id)
+			if err == nil {
+				fmt.Println(resp)
+			}
+			return err
 		},
 	}
 
@@ -21,9 +39,10 @@ func NewCmdRuntimeInfo() *cobra.Command {
 	return cmd
 }
 
-func runtimeInfoRun() error {
-	url := fmt.Sprintf(beastBaseURL, env)
-	fmt.Println(url)
-	panic("Not implemented")
-
+func runtimeInfoRun(sparkService Service, id string) (string, error) {
+	response, err := sparkService.GetRuntimeInfo(id)
+	if err != nil {
+		return "", fmt.Errorf("failed to retrieve runtime info for run id %s: %w", id, err)
+	}
+	return response, nil
 }
