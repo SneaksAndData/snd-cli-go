@@ -10,7 +10,7 @@ RUN apt-get update \
  && ./aws/install -i /usr/local/aws-cli -b /usr/local/bin \
  && export AZ_DIST=$(lsb_release -cs) \
  && mkdir -p /etc/apt/keyrings \
- && curl -sLS https://packages.microsoft.com/keys/micros.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null \
+ && curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null \
  && chmod go+r /etc/apt/keyrings/microsoft.gpg \
  && echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | tee /etc/apt/sources.list.d/azure-cli.list \
  && apt-get update \
@@ -18,6 +18,7 @@ RUN apt-get update \
  && wget --quiet "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl" -O /usr/local/bin/kubectl \
  && chmod +x /usr/local/bin/kubectl \
  && mkdir /app
+
 
 COPY . /app
 
