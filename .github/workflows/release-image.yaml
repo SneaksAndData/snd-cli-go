@@ -72,7 +72,7 @@ jobs:
           aws ecr get-login-password --region "$CR_REGION" | docker login --username "$CR_USER" --password-stdin "$CR_REPO"
           version=$(git describe --tags --abbrev=7)
           
-          docker build -f .container/Dockerfile . --tag=$CR_REPO/snd-cli-go:$version --build-arg POETRY_PASSWORD=${{ steps.setup_aws_ca.outputs.token }} --build-arg POETRY_REPO_URL=${{ steps.setup_aws_ca.outputs.url }} && \
+          docker build -f .container/Dockerfile . --tag=$CR_REPO/snd-cli-go:$version && \
             docker push $CR_REPO/snd-cli-go:$version
 
       - name: Configure AWS Credentials (PROD)
