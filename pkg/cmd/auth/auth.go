@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 	"log"
 	"snd-cli/pkg/cmd/util/token"
@@ -34,9 +35,9 @@ func loginRun(authService token.AuthService) error {
 	tokenProvider := token.NewProvider(authService)
 	cachedToken, err := tokenProvider.GetToken() // Fetch and cache the token.
 	if err != nil {
-		log.Fatalf("Error logging: %v", err)
+		log.Fatalf("Unable to get the token: %v", err)
 	}
-	log.Println("Login successful.")
-	log.Println("Token:", cachedToken)
+	fmt.Println("Login successful.")
+	fmt.Println("Token:", cachedToken)
 	return nil
 }
