@@ -14,13 +14,13 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout head commit
         if: ${{ github.ref != 'refs/heads/main' && always() }}
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout main
         if: ${{ github.ref == 'refs/heads/main' && always() }}
         with:

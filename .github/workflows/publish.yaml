@@ -17,12 +17,12 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        os: [ windows, macos, linux ]
+        os: [ windows, darwin, linux ]
         arch: [ amd64, arm64 ]
         exclude:
           - os: windows
             arch: arm64
-          - os: [ macos, linux ]
+          - os: darwin
             arch: amd64
     permissions:
       contents: read
@@ -43,7 +43,7 @@ jobs:
           echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
       - name: Build
         run: |
-          go build -o snd-${{ matrix.os }}-${{ matrix.arch }}
+          go build -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.7.3
         with:
@@ -70,8 +70,7 @@ jobs:
 
       - name: Install azcopy
         uses: SneaksAndData/github-actions/install_azcopy@v0.0.16
-        with:
-          download_uri: https://aka.ms/downloadazcopy-v10-mac
+
       - name: Generate SAS for upload
         uses: SneaksAndData/github-actions/get_azure_share_sas@v0.1.5
         with:
@@ -89,11 +88,9 @@ jobs:
           echo "Copying bundle..." 
           
           version=$(git describe --tags --abbrev=7)
-          echo "Version: $version" 
-
-          tar czf snd-${{ matrix.os }}-${{ matrix.arch }} ./dist/application && rm -rf ./dist/application && mv snd-${{ matrix.os }}-${{ matrix.arch }} ./dist
+          echo "Version: $version"
           echo "Archiving application..."
           
-          ./azcopy copy "dist/*" $UPLOAD_URL --overwrite true --put-md5 --metadata "version=$version"
+          ./azcopy copy "snd-${{ matrix.os }}-${{ matrix.arch }}" $UPLOAD_URL --overwrite true --put-md5 --metadata "version=$version"
           echo "Uploading binaries..."  
           

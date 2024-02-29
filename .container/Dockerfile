@@ -1,6 +1,7 @@
 FROM golang:1.21-bookworm
 
 ARG KUBECTL_VERSION="v1.29.2"
+
 # aws-cli, azure-cli and kubectl
 RUN apt-get update \
  && apt-get --assume-yes upgrade \
@@ -10,7 +11,7 @@ RUN apt-get update \
  && ./aws/install -i /usr/local/aws-cli -b /usr/local/bin \
  && export AZ_DIST=$(lsb_release -cs) \
  && mkdir -p /etc/apt/keyrings \
- && curl -sLS https://packages.microsoft.com/keys/micros.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null \
+ && curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null \
  && chmod go+r /etc/apt/keyrings/microsoft.gpg \
  && echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | tee /etc/apt/sources.list.d/azure-cli.list \
  && apt-get update \
