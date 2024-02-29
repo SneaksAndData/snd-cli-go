@@ -93,5 +93,6 @@ jobs:
           echo "Archiving application..."
           
           ./azcopy copy "snd-${{ matrix.os }}-${{ matrix.arch }}" $UPLOAD_URL --overwrite true --put-md5 --metadata "version=$version"
+          ./azcopy copy "install.sh" $UPLOAD_URL --overwrite true --put-md5 
           echo "Uploading binaries..."  
           
