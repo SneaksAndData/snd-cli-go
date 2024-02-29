@@ -1,8 +1,7 @@
 FROM golang:1.21-bookworm
 
-ARG KUBECTL_VERSION="v1.29"
+ARG KUBECTL_VERSION="v1.29.2"
 # aws-cli, azure-cli and kubectl
-
 RUN apt-get update \
  && apt-get --assume-yes upgrade \
  && apt-get --no-install-recommends --assume-yes install ca-certificates curl jq unzip apt-transport-https lsb-release gnupg libc-bin binutils wget \
