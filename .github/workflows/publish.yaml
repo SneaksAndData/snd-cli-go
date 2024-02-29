@@ -71,8 +71,7 @@ jobs:
 
       - name: Install azcopy
         uses: SneaksAndData/github-actions/install_azcopy@v0.0.16
-        with:
-          download_uri: https://aka.ms/downloadazcopy-v10-mac
+
       - name: Generate SAS for upload
         uses: SneaksAndData/github-actions/get_azure_share_sas@v0.1.5
         with:
