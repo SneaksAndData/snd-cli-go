@@ -89,8 +89,7 @@ jobs:
           
           version=$(git describe --tags --abbrev=7)
           echo "Version: $version"
-#          mv snd-${{ matrix.os }}-${{ matrix.arch }} ./dist
-#          echo "Archiving application..."
+          echo "Archiving application..."
           
           ./azcopy copy "snd-${{ matrix.os }}-${{ matrix.arch }}" $UPLOAD_URL --overwrite true --put-md5 --metadata "version=$version"
           echo "Uploading binaries..."  
