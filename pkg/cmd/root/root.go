@@ -50,6 +50,8 @@ func NewCmdRoot() (*cobra.Command, error) {
 	authServiceFactory := cmdutil.NewAuthServiceFactory()
 	serviceFactory := cmdutil.NewConcreteServiceFactory()
 
+	cmd.SetVersionTemplate("Version: ")
+
 	// Child commands
 	cmd.AddCommand(authCmd.NewCmdAuth(authServiceFactory))
 	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
