@@ -43,7 +43,8 @@ jobs:
           echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
       - name: Build
         run: |
-          go build -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli
+          version=$(git describe --tags --abbrev=7)
+          go build -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli -ldflags="-X 'github.com/SneaksAndData/snd-cli-go/blob/main/cmd/snd-cli/main.version=$version'"
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.7.3
         with:
