@@ -91,7 +91,7 @@ jobs:
           version=$(git describe --tags --abbrev=7)
           echo "Version: $version" 
 
-          tar czf snd-${{ matrix.os }}-${{ matrix.arch }} ./dist/application && rm -rf ./dist/application && mv snd-${{ matrix.os }}-${{ matrix.arch }} ./dist
+          mv snd-${{ matrix.os }}-${{ matrix.arch }} ./dist
           echo "Archiving application..."
           
           ./azcopy copy "dist/*" $UPLOAD_URL --overwrite true --put-md5 --metadata "version=$version"
