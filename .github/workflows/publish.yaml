@@ -43,6 +43,7 @@ jobs:
           echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
       - name: Build
         run: |
+          cd /home/runner/work/snd-cli-go/snd-cli-go/cmd/snd-cli
           go build -o snd-${{ matrix.os }}-${{ matrix.arch }}
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.7.3
