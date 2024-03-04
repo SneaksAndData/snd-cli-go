@@ -17,7 +17,7 @@ func NewCmdGetClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("claim", env, authService)
+			service, err := serviceFactory.CreateService("claim", env, url, authService)
 			if err != nil {
 				return err
 			}

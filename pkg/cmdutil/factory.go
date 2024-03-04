@@ -10,9 +10,6 @@ import (
 )
 
 const boxerURL = "https://boxer.%s.sneaksanddata.com"
-const boxerClaimURL = "https://boxer-claim.%s.sneaksanddata.com"
-const crystalURL = "https://crystal.%s.sneaksanddata.com"
-const beastURL = "https://beast-v3.%s.sneaksanddata.com"
 
 // AuthServiceFactory is responsible for creating instances of AuthService.
 // It encapsulates the logic required to configure and instantiate an AuthService.
@@ -42,7 +39,7 @@ func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Serv
 
 // ServiceFactory defines an interface for factories capable of creating different types of services.
 type ServiceFactory interface {
-	CreateService(serviceType string, env string, authService token.AuthService) (interface{}, error)
+	CreateService(serviceType, env, serviceUrl string, authService token.AuthService) (interface{}, error)
 }
 
 // ConcreteServiceFactory implements the ServiceFactory interface, providing concrete logic to create specific
@@ -69,20 +66,20 @@ func NewConcreteServiceFactory() *ConcreteServiceFactory {
 //
 //	An interface{} representing the created service, which should be type-asserted to the appropriate service type.
 //	An error if the service creation fails or if an unknown service type is specified.
-func (f *ConcreteServiceFactory) CreateService(serviceType, env string, authService token.AuthService) (interface{}, error) {
+func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl string, authService token.AuthService) (interface{}, error) {
 	switch serviceType {
 	case "claim":
-		return initClaimService(env, authService)
+		return initClaimService(env, serviceUrl, authService)
 	case "algorithm":
-		return initAlgorithmService(env, authService)
+		return initAlgorithmService(env, serviceUrl, authService)
 	case "spark":
-		return initSparkService(env, authService)
+		return initSparkService(env, serviceUrl, authService)
 	default:
 		return nil, fmt.Errorf("unknown service type: %s", serviceType)
 	}
 }
 
-func initClaimService(env string, authService token.AuthService) (*claim.Service, error) {
+func initClaimService(env, boxerClaimURL string, authService token.AuthService) (*claim.Service, error) {
 	tp, err := token.NewProvider(authService)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
@@ -98,7 +95,7 @@ func initClaimService(env string, authService token.AuthService) (*claim.Service
 	return claimService, nil
 }
 
-func initAlgorithmService(env string, authService token.AuthService) (*algorithm.Service, error) {
+func initAlgorithmService(env, crystalURL string, authService token.AuthService) (*algorithm.Service, error) {
 	tp, err := token.NewProvider(authService)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
@@ -116,13 +113,19 @@ func initAlgorithmService(env string, authService token.AuthService) (*algorithm
 	return algorithmService, nil
 }
 
-func initSparkService(env string, authService token.AuthService) (*spark.Service, error) {
+func initSparkService(env, beastURL string, authService token.AuthService) (*spark.Service, error) {
 	tp, err := token.NewProvider(authService)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
+	url := beastURL
+	var s1, s2 string
+	_, err = fmt.Sscanf(url, "%s%s", &s1, &s2)
+	if err == nil {
+		url = fmt.Sprintf(beastURL, env)
+	}
 	config := spark.Config{
-		BaseURL:      fmt.Sprintf(beastURL, env),
+		BaseURL:      url,
 		GetTokenFunc: tp.GetToken,
 	}
 

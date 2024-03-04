@@ -19,7 +19,7 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("algorithm", env, authService)
+			service, err := serviceFactory.CreateService("algorithm", env, url, authService)
 			if err != nil {
 				return err
 			}

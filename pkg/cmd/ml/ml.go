@@ -6,7 +6,9 @@ import (
 	"snd-cli/pkg/cmdutil"
 )
 
-var env, authProvider, algorithm string
+const crystalURL = "https://crystal.%s.sneaksanddata.com"
+
+var env, url, authProvider, algorithm string
 
 type Service interface {
 	RetrieveRun(runID string, algorithmName string) (string, error)
@@ -28,6 +30,7 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "", "", "Specify the algorithm name")
+	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", crystalURL, "Specify the service url")
 
 	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
