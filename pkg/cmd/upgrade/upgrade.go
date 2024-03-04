@@ -17,12 +17,6 @@ func NewCmdUpgrade() *cobra.Command {
 			}
 			fmt.Println(s)
 			return nil
-
-			//err := CheckIfNewVersionIsAvailable()
-			//if err != nil {
-			//	return err
-			//}
-			//return nil
 		},
 	}
 	return cmd
