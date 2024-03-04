@@ -1,6 +1,7 @@
 package ml
 
 import (
+	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
@@ -23,8 +24,13 @@ type FileServiceFactory func(path string) (file.File, error)
 
 func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "algorithm",
-		Short:   "Manage ML algorithm jobs",
+		Use:   "algorithm",
+		Short: "Manage ML algorithm jobs",
+		Long:  "Manage ML algorithm jobs",
+		Example: heredoc.Doc(`
+			$ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator --payload ./crystal-payload.json
+			$ snd algorithm get --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
+		`),
 		GroupID: "ml",
 	}
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")

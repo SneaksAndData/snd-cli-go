@@ -2,6 +2,7 @@
 package claim
 
 import (
+	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
 )
@@ -22,8 +23,17 @@ type ServiceFactory func(env string) (Service, error)
 
 func NewCmdClaim(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "claim",
-		Short:   "Manage claims",
+		Use:   "claim",
+		Short: "Manage claims",
+		Long:  "Manage user claims",
+		Example: heredoc.Doc(`
+			$ snd claim get --claims-provider provider --user test@ecco.com
+			$ snd claim add --claims-provider provider --user test@ecco.com --claims "test1.test.sneaksanddata.com/.*:.*"
+			$ snd claim remove --claims-provider provider --user test@ecco.com --claims "test1.test.sneaksanddata.com/.*:.*"
+
+			$ snd claim user add --claims-provider provider --user test@ecco.com 
+			$ snd claim user remove --claims-provider azuread --user test@ecco.com 
+		`),
 		GroupID: "claim",
 	}
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")

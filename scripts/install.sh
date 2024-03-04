@@ -9,6 +9,7 @@ elif [[ "$OSTYPE" =~ ^linux ]]; then
     bin_name=snd-linux-arm64
   elif [[ "$ARCH" =~ amd64 ]]; then
     bin_name=snd-linux-amd64
+  fi
 else
     echo "Error: Unsupported OS type or architecture: $OSTYPE $ARCH "
     exit 1
