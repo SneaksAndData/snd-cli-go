@@ -3,6 +3,7 @@ package token
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"snd-cli/pkg/cmd/util/file"
@@ -38,15 +39,15 @@ type tokenCache struct {
 // NewProvider creates a new instance of Provider using the provided AuthService.
 // The AuthService is used to obtain authentication tokens when they are not
 // available in the cache or have expired.
-func NewProvider(authService AuthService) *Provider {
+func NewProvider(authService AuthService) (*Provider, error) {
 	filePath, err := file.GenerateFilePathWithBaseHome(folder, tokenFileName)
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("failed to generate the path for token cache: %w", err)
 	}
 	return &Provider{
 		authService: authService,
 		cachePath:   file.File{FilePath: filePath},
-	}
+	}, nil
 }
 
 // saveTokenToCache serializes the current token and TTL into a JSON format and writes this data to a cache file.

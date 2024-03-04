@@ -7,6 +7,7 @@ import (
 	claimCmd "snd-cli/pkg/cmd/claim"
 	mlCmd "snd-cli/pkg/cmd/ml"
 	sparkCmd "snd-cli/pkg/cmd/spark"
+	upgradeCmd "snd-cli/pkg/cmd/upgrade"
 	"snd-cli/pkg/cmdutil"
 )
 
@@ -53,5 +54,7 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
 	cmd.AddCommand(mlCmd.NewCmdAlgorithm(serviceFactory, authServiceFactory))
 	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
+
+	cmd.AddCommand(upgradeCmd.NewCmdUpgrade())
 	return cmd, nil
 }
