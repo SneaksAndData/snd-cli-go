@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: |
           version=$(git describe --tags --abbrev=7)
-          go build -ldflags="-X 'github.com/SneaksAndData/snd-cli-go/blob/main/cmd/snd-cli/main.version=$version'" -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli
+          go build -ldflags="-X 'github.com/SneaksAndData/snd-cli-go/blob/main/cmd/snd-cli/snd_cli_go.version=$version'" -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.7.3
         with:
