@@ -2,7 +2,7 @@ package version
 
 import (
 	"fmt"
-	"github.com/coreos/go-semver/semver"
+	"golang.org/x/mod/semver"
 	"os/exec"
 	snd_cli_go "snd-cli"
 	"strings"
@@ -17,10 +17,7 @@ func CheckIfNewVersionIsAvailable() error {
 	if err != nil {
 		return fmt.Errorf("failed to get latest tag: %w", err)
 	}
-	result, err := compareVersions(lastTag, currentVersion)
-	if err != nil {
-		return fmt.Errorf("failed to compare versions: %w", err)
-	}
+	result := semver.Compare(lastTag, currentVersion)
 	if result > 0 {
 		fmt.Printf("New version available. Please upgrade.\nCurrent version: %s\nAvailable version: %s\nPlease run `snd upgrade` command to update the CLI to the latest version.", currentVersion, lastTag)
 	} else if result < 0 {
@@ -47,16 +44,4 @@ func getLatestTag(repoURL string) (string, error) {
 	}
 
 	return lastTag, nil
-}
-
-func compareVersions(v1 string, v2 string) (int, error) {
-	semVer1, err := semver.NewVersion(strings.TrimPrefix(v1, "v"))
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse version %s: %w", v1, err)
-	}
-	semVer2, err := semver.NewVersion(strings.TrimPrefix(v2, "v"))
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse version %s: %w", v2, err)
-	}
-	return semVer1.Compare(*semVer2), nil
 }
