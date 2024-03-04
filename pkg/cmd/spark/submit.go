@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
-	"log"
 	"os"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
@@ -23,11 +22,11 @@ func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			if err != nil {
 				return err
