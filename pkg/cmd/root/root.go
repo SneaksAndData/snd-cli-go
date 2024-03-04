@@ -8,6 +8,7 @@ import (
 	mlCmd "snd-cli/pkg/cmd/ml"
 	sparkCmd "snd-cli/pkg/cmd/spark"
 	upgradeCmd "snd-cli/pkg/cmd/upgrade"
+	"snd-cli/pkg/cmd/util/version"
 	"snd-cli/pkg/cmdutil"
 )
 
@@ -22,6 +23,13 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Use:   "snd <service command group> <service command> [flags]",
 		Short: "SnD CLI",
 		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data.`,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			err := version.CheckIfNewVersionIsAvailable()
+			if err != nil {
+				return err
+			}
+			return nil
+		},
 	}
 
 	cmd.AddGroup(&cobra.Group{

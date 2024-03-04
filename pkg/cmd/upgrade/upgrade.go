@@ -11,13 +11,27 @@ func NewCmdUpgrade() *cobra.Command {
 		Use:   "upgrade",
 		Short: "Upgrade the CLI to the latest version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := exec.Command("/bin/sh", "../../install.sh").Output()
+			s, err := upgrade()
 			if err != nil {
 				return err
 			}
-			fmt.Println(string(c))
+			fmt.Println(s)
 			return nil
+
+			//err := CheckIfNewVersionIsAvailable()
+			//if err != nil {
+			//	return err
+			//}
+			//return nil
 		},
 	}
 	return cmd
+}
+
+func upgrade() (string, error) {
+	c, err := exec.Command("/bin/sh", "../../install.sh").Output()
+	if err != nil {
+		return "", err
+	}
+	return string(c), nil
 }
