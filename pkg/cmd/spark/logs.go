@@ -3,7 +3,6 @@ package spark
 import (
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
-	"log"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 
@@ -19,7 +18,7 @@ func NewCmdLogs(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory c
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			service, err := serviceFactory.CreateService("spark", env, authService)
 			if err != nil {

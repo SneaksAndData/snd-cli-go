@@ -18,7 +18,7 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			service, err := serviceFactory.CreateService("claim", env, authService)
 			if err != nil {

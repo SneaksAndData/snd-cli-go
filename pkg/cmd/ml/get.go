@@ -4,7 +4,6 @@ import (
 	"fmt"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
-	"log"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -18,11 +17,11 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			service, err := serviceFactory.CreateService("algorithm", env, authService)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			resp, err := getRun(service.(*algorithmClient.Service), id, algorithm)
 			if err == nil {
