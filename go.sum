@@ -6,6 +6,8 @@ github.com/Azure/azure-sdk-for-go/sdk/internal v1.5.1 h1:6oNBlSdi1QqM1PNW7FPA6xO
 github.com/Azure/azure-sdk-for-go/sdk/internal v1.5.1/go.mod h1:s4kgfzA0covAXNicZHDMN58jExvcng2mC/DepXiF1EI=
 github.com/AzureAD/microsoft-authentication-library-for-go v1.2.0 h1:hVeq+yCyUi+MsoO/CU95yqCIcdzra5ovzk8Q2BBpV2M=
 github.com/AzureAD/microsoft-authentication-library-for-go v1.2.0/go.mod h1:wP83P5OoQ5p6ip3ScPr0BAq0BvuPAvacpEuSzyouqAI=
+github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
+github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/SneaksAndData/esd-services-api-client-go v0.0.2 h1:MM/L0TiXSfIfcyrnbZ1YUTjHcfSeD8BGhrUDF5PGBO4=
 github.com/SneaksAndData/esd-services-api-client-go v0.0.2/go.mod h1:StEYmGCRQ8IWA+UDcoMOTw/MpYmlFAfTTS15yeXy5Q4=
 github.com/SneaksAndData/esd-services-api-client-go v0.0.3 h1:CPD5sgpVvhObgEMX/h989QkcsFGd9x8b/wUaks3bw2c=

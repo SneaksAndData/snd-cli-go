@@ -1,6 +1,7 @@
 package spark
 
 import (
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -18,8 +19,16 @@ type Service interface {
 
 func NewCmdSpark(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "spark",
-		Short:   "Manage Spark jobs",
+		Use:   "spark",
+		Short: "Manage Spark jobs",
+		Long:  "Manage Spark jobs",
+		Example: heredoc.Doc(`
+			$ snd spark request-status --id 54284cb9-8e58-4d92-93cb-6543
+			$ snd spark runtime-info --id 54284cb9-8e58-4d92-93cb-6543
+			$ snd spark logs --id 54284cb9-8e58-4d92-93cb-6543
+			$ snd spark submit --job-name configuration-name --overrides ./overrides.json
+			$ snd spark configuration --name configuration-name 
+		`),
 		GroupID: "spark",
 	}
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
