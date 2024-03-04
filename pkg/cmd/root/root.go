@@ -34,22 +34,22 @@ func NewCmdRoot() (*cobra.Command, error) {
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "auth",
-		Title: "Auth Commands",
+		Title: "AUTH COMMANDS",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "claim",
-		Title: "Claim Commands",
+		Title: "CLAIM COMMANDS",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "ml",
-		Title: "ML Algorithm Commands",
+		Title: "ML ALGORITHM COMMANDS",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "spark",
-		Title: "Spark Commands",
+		Title: "SPARK COMMANDS",
 	})
 
 	authServiceFactory := cmdutil.NewAuthServiceFactory()
