@@ -114,5 +114,4 @@ func (p *Provider) GetToken() (string, error) {
 	}
 
 	return p.token, nil
-
 }

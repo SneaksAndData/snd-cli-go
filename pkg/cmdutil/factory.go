@@ -84,8 +84,9 @@ func initClaimService(env, boxerClaimURL string, authService token.AuthService) 
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
+	url := processURL(boxerClaimURL, env)
 	config := claim.Config{
-		ClaimURL:     fmt.Sprintf(boxerClaimURL, env),
+		ClaimURL:     url,
 		GetTokenFunc: tp.GetToken,
 	}
 	claimService, err := claim.New(config)
@@ -100,8 +101,9 @@ func initAlgorithmService(env, crystalURL string, authService token.AuthService)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
+	url := processURL(crystalURL, env)
 	config := algorithm.Config{
-		SchedulerURL: fmt.Sprintf(crystalURL, env),
+		SchedulerURL: url,
 		APIVersion:   "v1.2",
 		GetTokenFunc: tp.GetToken,
 	}
@@ -118,12 +120,7 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
-	url := beastURL
-	var s1, s2 string
-	_, err = fmt.Sscanf(url, "%s%s", &s1, &s2)
-	if err == nil {
-		url = fmt.Sprintf(beastURL, env)
-	}
+	url := processURL(beastURL, env)
 	config := spark.Config{
 		BaseURL:      url,
 		GetTokenFunc: tp.GetToken,
@@ -134,5 +131,14 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 		return nil, fmt.Errorf("failed to create spark service: %w", err)
 	}
 	return sparkService, nil
+}
 
+func processURL(url, env string) string {
+	var s1, s2 string
+	_, err := fmt.Sscanf(url, "%s%s", &s1, &s2)
+	if err == nil {
+		url = fmt.Sprintf(url, env)
+		return url
+	}
+	return url
 }
