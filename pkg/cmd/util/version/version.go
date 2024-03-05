@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"golang.org/x/mod/semver"
 	"os/exec"
-	snd_cli_go "snd-cli"
+	snd "snd-cli/cmd"
 	"strings"
 )
 
 const repoURL = "https://github.com/SneaksAndData/snd-cli-go"
 
-var currentVersion = snd_cli_go.Version
+var currentVersion = snd.Version
 
 func CheckIfNewVersionIsAvailable() error {
 	lastTag, err := getLatestTag(repoURL)
