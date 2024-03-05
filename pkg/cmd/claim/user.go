@@ -25,7 +25,7 @@ func NewCmdAddUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 		Use:   "add",
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}
@@ -58,7 +58,7 @@ func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 		Use:   "remove",
 		Short: "Remove a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

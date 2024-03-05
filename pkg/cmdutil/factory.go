@@ -7,7 +7,19 @@ import (
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"snd-cli/pkg/cmd/util/token"
+	"strings"
 )
+
+// SubdomainToEnvironmentMap is a map of subdomains to environments
+var SubdomainToEnvironmentMap = map[string]string{
+	"test":       "test",
+	"dev":        "test",
+	"awsd":       "test",
+	"azd":        "test",
+	"production": "production",
+	"awsp":       "production",
+	"azp":        "production",
+}
 
 const boxerURL = "https://boxer.%s.sneaksanddata.com"
 
@@ -35,6 +47,16 @@ func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Serv
 		return nil, fmt.Errorf("failed to create auth service: %w", err)
 	}
 	return authService, nil
+}
+
+// InitializeAuthService initializes the AuthService based on a URL and an AuthProvider.
+// It checks the URL for a known subdomain to determine the environment.
+func InitializeAuthService(url, env, authProvider string, authServiceFactory AuthServiceFactory) (*auth.Service, error) {
+	matchedUrl, matchedEnv := ContainsSubdomain(url, SubdomainToEnvironmentMap)
+	if matchedUrl != "" {
+		env = matchedEnv
+	}
+	return authServiceFactory.CreateAuthService(env, authProvider)
 }
 
 // ServiceFactory defines an interface for factories capable of creating different types of services.
@@ -134,11 +156,17 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 }
 
 func processURL(url, env string) string {
-	var s1, s2 string
-	_, err := fmt.Sscanf(url, "%s%s", &s1, &s2)
-	if err == nil {
-		url = fmt.Sprintf(url, env)
-		return url
+	if strings.Contains(url, "%s") {
+		return fmt.Sprintf(url, env)
 	}
 	return url
+}
+
+func ContainsSubdomain(url string, subdomainMap map[string]string) (string, string) {
+	for key, value := range subdomainMap {
+		if strings.Contains(url, key) {
+			return url, value // Found a match, return the url and environment
+		}
+	}
+	return "", "" // No match found
 }

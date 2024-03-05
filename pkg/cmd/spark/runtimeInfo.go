@@ -14,7 +14,7 @@ func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		Use:   "runtime-info",
 		Short: "Get the runtime info of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

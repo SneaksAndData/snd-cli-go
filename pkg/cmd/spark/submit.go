@@ -20,7 +20,7 @@ func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 		Use:   "submit",
 		Short: "Runs the provided Beast V3 job with optional overrides",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}
