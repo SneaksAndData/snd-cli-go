@@ -1,3 +1,3 @@
-package snd_cli_go
+package cmd
 
 var Version = "v0.0.0"
