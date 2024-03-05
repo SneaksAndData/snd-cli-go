@@ -29,7 +29,7 @@ func NewCmdAddUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("claim", env, authService)
+			service, err := serviceFactory.CreateService("claim", env, url, authService)
 			if err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("claim", env, authService)
+			service, err := serviceFactory.CreateService("claim", env, url, authService)
 			if err != nil {
 				return err
 			}

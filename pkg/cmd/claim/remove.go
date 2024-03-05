@@ -20,7 +20,7 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("claim", env, authService)
+			service, err := serviceFactory.CreateService("claim", env, url, authService)
 			if err != nil {
 				return err
 			}
