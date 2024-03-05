@@ -16,7 +16,7 @@ func NewCmdRequestStatus(authServiceFactory *cmdutil.AuthServiceFactory, service
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("spark", env, authService)
+			service, err := serviceFactory.CreateService("spark", env, url, authService)
 			if err != nil {
 				return err
 			}

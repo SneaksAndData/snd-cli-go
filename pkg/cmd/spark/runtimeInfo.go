@@ -18,7 +18,7 @@ func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 			if err != nil {
 				return err
 			}
-			service, err := serviceFactory.CreateService("spark", env, authService)
+			service, err := serviceFactory.CreateService("spark", env, url, authService)
 			if err != nil {
 				return err
 			}
