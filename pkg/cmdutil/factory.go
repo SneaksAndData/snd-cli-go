@@ -52,7 +52,7 @@ func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Serv
 // InitializeAuthService initializes the AuthService based on a URL and an AuthProvider.
 // It checks the URL for a known subdomain to determine the environment.
 func InitializeAuthService(url, env, authProvider string, authServiceFactory AuthServiceFactory) (*auth.Service, error) {
-	matchedUrl, matchedEnv := ContainsSubdomain(url, SubdomainToEnvironmentMap)
+	matchedUrl, matchedEnv := containsSubdomain(url, SubdomainToEnvironmentMap)
 	if matchedUrl != "" {
 		env = matchedEnv
 	}
@@ -162,7 +162,7 @@ func processURL(url, env string) string {
 	return url
 }
 
-func ContainsSubdomain(url string, subdomainMap map[string]string) (string, string) {
+func containsSubdomain(url string, subdomainMap map[string]string) (string, string) {
 	for key, value := range subdomainMap {
 		if strings.Contains(url, key) {
 			return url, value // Found a match, return the url and environment
