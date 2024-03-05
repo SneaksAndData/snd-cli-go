@@ -12,6 +12,8 @@ import (
 	"snd-cli/pkg/cmdutil"
 )
 
+var disableVersionCheck bool
+
 // AuthServiceFactory is a function type that creates a Service instance.
 type AuthServiceFactory func(env, provider string) (*auth.Service, error)
 
@@ -24,13 +26,20 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Short: "SnD CLI",
 		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			err := version.CheckIfNewVersionIsAvailable()
-			if err != nil {
-				return err
+			// Do not run version check if disabled from the flag
+			if disableVersionCheck {
+				return nil
+			} else {
+				err := version.CheckIfNewVersionIsAvailable()
+				if err != nil {
+					return err
+				}
+				return nil
 			}
-			return nil
 		},
 	}
+
+	cmd.PersistentFlags().BoolVarP(&disableVersionCheck, "disable-version-check", "", false, "Set to true if you want to disable automatic version checks")
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    "auth",
@@ -54,8 +63,6 @@ func NewCmdRoot() (*cobra.Command, error) {
 
 	authServiceFactory := cmdutil.NewAuthServiceFactory()
 	serviceFactory := cmdutil.NewConcreteServiceFactory()
-
-	cmd.SetVersionTemplate("Version: ")
 
 	// Child commands
 	cmd.AddCommand(authCmd.NewCmdAuth(authServiceFactory))
