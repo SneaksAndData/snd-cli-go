@@ -13,7 +13,7 @@ func NewCmdGetClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 		Use:   "get",
 		Short: "Retrieves claims assigned to an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

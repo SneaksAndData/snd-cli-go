@@ -12,7 +12,7 @@ func NewCmdRequestStatus(authServiceFactory *cmdutil.AuthServiceFactory, service
 		Use:   "request-status",
 		Short: "Get the status of a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

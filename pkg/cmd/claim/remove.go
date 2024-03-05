@@ -16,7 +16,7 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		Use:   "remove",
 		Short: "Removes a claim from an existing user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

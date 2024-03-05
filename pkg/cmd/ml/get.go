@@ -15,7 +15,7 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 		Use:   "get",
 		Short: "Get the result for a ML Algorithm run",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

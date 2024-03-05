@@ -14,7 +14,7 @@ func NewCmdEncrypt(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 		Use:   "encrypt",
 		Short: "Encrypt a value from a file or stdin using encryption key from a corresponding Spark Runtime",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

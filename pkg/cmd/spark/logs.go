@@ -16,7 +16,7 @@ func NewCmdLogs(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory c
 		Use:   "logs",
 		Short: "Get logs from a Spark Job",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, authProvider)
+			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

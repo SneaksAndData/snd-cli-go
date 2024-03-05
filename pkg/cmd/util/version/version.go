@@ -12,6 +12,7 @@ const repoURL = "https://github.com/SneaksAndData/snd-cli-go"
 
 var currentVersion = snd.Version
 
+// CheckIfNewVersionIsAvailable checks if a new version of the snd-cli is available on GitHub and prints a message to the console indicating whether an upgrade is required.
 func CheckIfNewVersionIsAvailable() error {
 	lastTag, err := getLatestTag(repoURL)
 	if err != nil {
@@ -29,6 +30,7 @@ func CheckIfNewVersionIsAvailable() error {
 	return nil
 }
 
+// getLatestTag retrieves the latest version tag for the snd-cli from GitHub.
 func getLatestTag(repoURL string) (string, error) {
 	// Fetch tags from the remote
 	cmd := exec.Command("gh", "release", "view", "--repo", repoURL)
