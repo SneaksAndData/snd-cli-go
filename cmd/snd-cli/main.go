@@ -10,7 +10,8 @@ import (
 func main() {
 	rootCmd, _ := root.NewCmdRoot()
 	rootCmd.Version = cmd.Version
-	rootCmd.SetVersionTemplate(fmt.Sprintf("snd-cli version %s", cmd.Version))
+	versionTemplate := fmt.Sprintf("snd-cli version %s \n", cmd.Version)
+	rootCmd.SetVersionTemplate(versionTemplate)
 	err := rootCmd.Execute()
 	if err != nil {
 		fmt.Println("Error: ", err)
