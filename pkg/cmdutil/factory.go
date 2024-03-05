@@ -155,6 +155,9 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 	return sparkService, nil
 }
 
+// processURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
+// If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
+// If the URL does not contain the placeholder, the original URL is returned unchanged.
 func processURL(url, env string) string {
 	if strings.Contains(url, "%s") {
 		return fmt.Sprintf(url, env)
@@ -162,6 +165,7 @@ func processURL(url, env string) string {
 	return url
 }
 
+// containsSubdomain checks if the given URL contains any subdomain as defined in the subdomainMap.
 func containsSubdomain(url string, subdomainMap map[string]string) (string, string) {
 	for key, value := range subdomainMap {
 		if strings.Contains(url, key) {
