@@ -19,9 +19,9 @@ func CheckIfNewVersionIsAvailable() error {
 	}
 	result := semver.Compare(lastTag, currentVersion)
 	if result > 0 {
-		fmt.Printf("New version available. Please upgrade.\nCurrent version: %s\nAvailable version: %s\nPlease run `snd upgrade` command to update the CLI to the latest version.", currentVersion, lastTag)
+		fmt.Printf("New version available. Please upgrade.\nCurrent version: %s\nLast available version: %s\nPlease run `snd upgrade` command to update the CLI to the latest version.\n", currentVersion, lastTag)
 	} else if result < 0 {
-		fmt.Printf("Your version is newer than the one present in GitHub release.\nCurrent version: %s\nLast available version in GitHub release: %s", currentVersion, lastTag)
+		fmt.Printf("Your version is newer than the one present in GitHub release.\nCurrent version: %s\nLast available version in GitHub release: %s\n", currentVersion, lastTag)
 	} else {
 		fmt.Printf("The snd version is up to date. %s", currentVersion)
 	}

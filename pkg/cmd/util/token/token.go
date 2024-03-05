@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"snd-cli/pkg/cmd/util/file"
 	"time"
@@ -97,13 +96,13 @@ func (p *Provider) getTokenFromCache() error {
 // updates the token and its TTL, caches the new token, and returns it.
 func (p *Provider) GetToken() (string, error) {
 	if p.token == "" || time.Now().After(p.ttl) {
-		log.Println("Reading token from cache")
+		// log.Println("Reading token from cache")
 		if err := p.getTokenFromCache(); err == nil {
 			return p.token, nil
 		}
 	}
 	// Either cache is empty, or token is expired, fetch a new one.
-	log.Println("Cached token not existent or expired, retrieving new token")
+	// log.Println("Cached token not existent or expired, retrieving new token")
 	token, err := p.authService.GetBoxerToken()
 	if err != nil {
 		return "", err
