@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/token"
 	"snd-cli/pkg/cmdutil"
+	"strings"
 )
 
 var env, provider string
@@ -30,8 +31,14 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 		},
 	}
 
+	helpStr := []string{
+		"Specify the OAuth provider name ",
+		"For in-cluster Kubernetes auth specify name of your kubernetes cluster context prefixed with `k8s`",
+		"for example `k8s-esd-airflow-dev-0`",
+	}
+
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
-	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", "Specify the OAuth provider name \nFor in-cluster Kubernetes auth specify name of your kubernetes cluster context prefixed with `k8s`\nfor example `k8s-esd-airflow-dev-0`")
+	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", strings.Join(helpStr, "\n"))
 
 	return cmd
 }
