@@ -31,7 +31,7 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
-	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
+	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", "Specify the OAuth provider name \nFor in-cluster Kubernetes auth specify name of your kubernetes cluster context prefixed with `k8s`\nfor example `k8s-esd-airflow-dev-0`")
 
 	return cmd
 }
