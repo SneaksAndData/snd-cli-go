@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -36,7 +37,7 @@ func (f File) IsValidPath() bool {
 
 // CreateDirectory creates a directory by using the specified path.
 func (f File) CreateDirectory() error {
-	err := os.MkdirAll(f.FilePath, 0755) // Use MkdirAll to simplify
+	err := os.MkdirAll(path.Dir(f.FilePath), 0755) // Use MkdirAll to simplify
 	if err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
@@ -45,6 +46,12 @@ func (f File) CreateDirectory() error {
 
 // WriteToFile writes data to the specified file path.
 func (f File) WriteToFile(data string) error {
+	if !f.IsValidPath() {
+		err := f.CreateDirectory()
+		if err != nil {
+			return err
+		}
+	}
 	file, err := os.OpenFile(f.FilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
