@@ -43,7 +43,7 @@ func configurationRun(sparkService Service, name string) (string, error) {
 	}
 	m, err := json.Marshal(&response)
 	if err != nil {
-		return "", fmt.Errorf("failed to marshal response: %w", err)
+		return "", fmt.Errorf("Failed to serialize configuration: %w", err)
 	}
 	return string(m), nil
 }
