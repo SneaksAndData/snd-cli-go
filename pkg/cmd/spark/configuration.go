@@ -1,6 +1,7 @@
 package spark
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
@@ -34,11 +35,15 @@ func NewCmdConfiguration(authServiceFactory *cmdutil.AuthServiceFactory, service
 	return cmd
 }
 
-func configurationRun(sparkService Service, name string) (spark.SubmissionConfiguration, error) {
+func configurationRun(sparkService Service, name string) (string, error) {
 	response, err := sparkService.GetConfiguration(name)
 	if err != nil {
 
-		return spark.SubmissionConfiguration{}, fmt.Errorf("failed to retrieve configuration with name %s: %w", name, err)
+		return "", fmt.Errorf("failed to retrieve configuration with name %s: %w", name, err)
 	}
-	return response, nil
+	m, err := json.Marshal(&response)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal response: %w", err)
+	}
+	return string(m), nil
 }
