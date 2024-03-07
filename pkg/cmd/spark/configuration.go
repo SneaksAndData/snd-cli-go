@@ -5,7 +5,6 @@ import (
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
-	"strings"
 )
 
 var name string
@@ -15,9 +14,6 @@ func NewCmdConfiguration(authServiceFactory *cmdutil.AuthServiceFactory, service
 		Use:   "configuration",
 		Short: "Get a deployed SparkJob configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if strings.HasPrefix(authProvider, "k8s") {
-				authProvider = strings.TrimPrefix("k8s-", authProvider)
-			}
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
