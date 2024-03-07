@@ -3,7 +3,7 @@ module snd-cli
 go 1.21.5
 
 require (
-	github.com/SneaksAndData/esd-services-api-client-go v0.0.4
+	github.com/SneaksAndData/esd-services-api-client-go v0.0.7
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 )
