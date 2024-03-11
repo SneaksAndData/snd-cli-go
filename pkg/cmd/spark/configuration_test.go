@@ -21,7 +21,7 @@ func Test_configurationRun(t *testing.T) {
 			mockResponse: spark.SubmissionConfiguration{
 				RootPath: "ExistingConfig",
 			},
-			expectedResp:  "{\"rootPath\":\"ExistingConfig\",\"projectName\":\"\",\"runnable\":\"\",\"submissionDetails\":{\"Version\":\"\",\"ExecutionGroup\":\"\",\"ExpectedParallelism\":0,\"FlexibleDriver\":false,\"AdditionalDiverNodeTolerations\":null,\"MaxRuntimeHours\":0,\"DebugMode\":{\"EventLogLocation\":\"\",\"MaxSizePerFile\":\"\"},\"SubmissionMode\":\"\",\"ExtendedCodeMount\":false,\"SubmissionJobTemplate\":\"\",\"ExecutorSpecTemplate\":\"\",\"DriverJobRetries\":0,\"DefaultArguments\":null,\"Inputs\":null,\"Outputs\":null,\"Overwrite\":false}}",
+			expectedResp:  "{\"rootPath\":\"ExistingConfig\",\"projectName\":\"\",\"runnable\":\"\",\"submissionDetails\":{\"version\":\"\",\"executionGroup\":\"\",\"expectedParallelism\":0,\"flexibleDriver\":false,\"additionalDriverNodeTolerations\":null,\"maxRuntimeHours\":0,\"debugMode\":{\"eventLogLocation\":\"\",\"maxSizePerFile\":\"\"},\"submissionMode\":\"\",\"extendedCodeMount\":false,\"submissionJobTemplate\":\"\",\"executorSpecTemplate\":\"\",\"driverJobRetries\":0,\"defaultArguments\":null,\"inputs\":null,\"outputs\":null,\"overwrite\":false}}",
 			expectedError: false,
 		},
 		{
