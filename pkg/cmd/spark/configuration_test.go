@@ -14,13 +14,14 @@ func Test_configurationRun(t *testing.T) {
 		mockResponse  spark.SubmissionConfiguration
 		mockError     error
 		expectedError bool
-		expectedResp  spark.SubmissionConfiguration
+		expectedResp  string
 	}{
 		{
 			name: "ExistingConfig",
 			mockResponse: spark.SubmissionConfiguration{
 				RootPath: "ExistingConfig",
 			},
+			expectedResp:  "{\"rootPath\":\"ExistingConfig\",\"projectName\":\"\",\"runnable\":\"\",\"submissionDetails\":{\"version\":\"\",\"executionGroup\":\"\",\"expectedParallelism\":0,\"flexibleDriver\":false,\"additionalDriverNodeTolerations\":null,\"maxRuntimeHours\":0,\"debugMode\":{\"eventLogLocation\":\"\",\"maxSizePerFile\":\"\"},\"submissionMode\":\"\",\"extendedCodeMount\":false,\"submissionJobTemplate\":\"\",\"executorSpecTemplate\":\"\",\"driverJobRetries\":0,\"defaultArguments\":null,\"inputs\":null,\"outputs\":null,\"overwrite\":false}}",
 			expectedError: false,
 		},
 		{
@@ -48,7 +49,7 @@ func Test_configurationRun(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				assert.Equal(t, tc.mockResponse, resp)
+				assert.Equal(t, tc.expectedResp, resp)
 			}
 
 			mockService.AssertExpectations(t)
