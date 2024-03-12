@@ -8,7 +8,7 @@ if [[ "$OSTYPE" =~ ^darwin  &&  "$ARCH" =~ arm64 ]]; then
 elif [[ "$OSTYPE" =~ ^linux ]]; then
   if [[ "$ARCH" =~ arm64 ]]; then
     bin_name=snd-linux-arm64
-  elif [[ "$ARCH" =~ amd64 || "$ARCH" =~ x86_64 ]]; then
+  elif [[ "$ARCH" =~ (amd64|x86_64|x64) ]]; then
     bin_name=snd-linux-amd64
   fi
 else
