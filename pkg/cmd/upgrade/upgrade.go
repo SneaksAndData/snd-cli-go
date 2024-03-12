@@ -30,7 +30,7 @@ func installationScript() {
 	case "linux":
 		if arch == "arm64" {
 			arch = "snd-linux-arm64"
-		} else if arch == "amd64" {
+		} else if arch == "amd64" || arch == "x86_64" || arch == "x64" {
 			arch = "snd-linux-amd64"
 		}
 	default:

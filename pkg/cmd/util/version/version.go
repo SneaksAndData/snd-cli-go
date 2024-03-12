@@ -24,7 +24,7 @@ func CheckIfNewVersionIsAvailable() error {
 	} else if result < 0 {
 		fmt.Printf("Your version is newer than the one present in GitHub release.\nCurrent version: %s\nLast available version in GitHub release: %s\n", currentVersion, lastTag)
 	} else {
-		fmt.Printf("The snd version is up to date. %s", currentVersion)
+		fmt.Printf("The snd version is up to date. %s\n", currentVersion)
 	}
 
 	return nil
