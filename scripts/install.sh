@@ -1,5 +1,6 @@
 #!/bin/bash
 # Installation script for SnD CLI
+set -e
 echo "Determining target OS and architecture..."
 ARCH=$(uname -m)
 if [[ "$OSTYPE" =~ ^darwin  &&  "$ARCH" =~ arm64 ]]; then
@@ -7,7 +8,7 @@ if [[ "$OSTYPE" =~ ^darwin  &&  "$ARCH" =~ arm64 ]]; then
 elif [[ "$OSTYPE" =~ ^linux ]]; then
   if [[ "$ARCH" =~ arm64 ]]; then
     bin_name=snd-linux-arm64
-  elif [[ "$ARCH" =~ amd64 ]]; then
+  elif [[ "$ARCH" =~ amd64 || "$ARCH" =~ x86_64 ]]; then
     bin_name=snd-linux-amd64
   fi
 else
