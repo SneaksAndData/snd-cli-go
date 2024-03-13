@@ -5,6 +5,7 @@ import (
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
+	"strings"
 )
 
 func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
@@ -28,10 +29,17 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 		},
 	}
 
-	cmd.Flags().StringVarP(&tag, "tag", "t", "", "Client-side submission identifier")
+	cmd.Flags().StringVarP(&id, "id", "i", "", "Specify the Crystal Job ID")
 	return cmd
 }
 
-func cancelRun(algorithmService Service, algorithm, tag string) (string, error) {
-
+func cancelRun(algorithmService Service, algorithm, id string) (string, error) {
+	response, err := algorithmService.CancelRun(algorithm, id)
+	if err != nil {
+		if strings.HasSuffix(err.Error(), "404") {
+			return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
+		}
+		return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s: %w", algorithm, id, err)
+	}
+	return response, nil
 }
