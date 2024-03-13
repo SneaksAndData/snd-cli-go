@@ -27,7 +27,7 @@ body:
 
   - type: input
     attributes:
-      label: Python version you are using
-      placeholder: python --version
+      label: SnD CLI version you are using
+      placeholder: snd version
     validations:
       required: true
