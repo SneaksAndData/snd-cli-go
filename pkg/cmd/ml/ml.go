@@ -14,6 +14,7 @@ var env, url, authProvider, algorithm string
 type Service interface {
 	RetrieveRun(runID string, algorithmName string) (string, error)
 	CreateRun(algorithmName string, input map[string]interface{}, tag string) (string, error)
+	CancelRun(algorithmName string, requestTag string) (string, error)
 }
 
 type Operations interface {
@@ -40,5 +41,6 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 
 	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdCancel(authServiceFactory, serviceFactory))
 	return cmd
 }
