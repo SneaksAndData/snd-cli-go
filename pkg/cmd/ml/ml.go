@@ -39,6 +39,8 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "", "", "Specify the algorithm name")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", crystalURL, "Specify the service url")
 
+	cmd.MarkPersistentFlagRequired("algorithm")
+
 	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdCancel(authServiceFactory, serviceFactory))

@@ -35,6 +35,8 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 	cmd.Flags().StringVarP(&initiator, "initiator", "", "", "Specify your ECCO email")
 	cmd.Flags().StringVarP(&reason, "reason", "", "", "Specify reason for cancelling the job")
 
+	cmd.MarkFlagRequired("id")
+
 	return cmd
 }
 

@@ -31,6 +31,7 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 		},
 	}
 	cmd.Flags().StringVarP(&id, "id", "i", "", "Specify the Crystal Job ID")
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
