@@ -1,6 +1,7 @@
 package ml
 
 import (
+	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/file"
@@ -39,7 +40,11 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "", "", "Specify the algorithm name")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", crystalURL, "Specify the service url")
 
-	cmd.MarkPersistentFlagRequired("algorithm")
+	err := cmd.MarkPersistentFlagRequired("algorithm")
+	if err != nil {
+		fmt.Println("failed to mark 'algorithm' as a required flag: %w", err)
+		return nil
+	}
 
 	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
