@@ -53,13 +53,14 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	}
 	defaultTag, _ := generateTag()
 	if clientTag == "" {
-		fmt.Printf("You have not provided a client tag for this submission. Using generated tag: %s", defaultTag)
+		fmt.Printf("You have not provided a client tag for this submission. Using generated tag: %s \n", defaultTag)
 		params.ClientTag = defaultTag
+	} else {
+		params.ClientTag = clientTag
 	}
-	params.ClientTag = clientTag
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
-		return "", fmt.Errorf("failed to submit job: %w", err)
+		return "", fmt.Errorf("failed to submit job: %w \n", err)
 	}
 	return response, nil
 }
@@ -70,7 +71,7 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 		ExtraArguments:      nil,
 		ProjectInputs:       nil,
 		ProjectOutputs:      nil,
-		ExpectedParallelism: 0,
+		ExpectedParallelism: nil,
 	}
 	if overrides == "" {
 		return dp, nil
