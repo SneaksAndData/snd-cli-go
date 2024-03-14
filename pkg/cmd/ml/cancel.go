@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var requestId, initiator, reason string
+
 func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "cancel",
@@ -21,7 +23,7 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 			if err != nil {
 				return err
 			}
-			resp, err := cancelRun(service.(*algorithmClient.Service), algorithm, tag)
+			resp, err := cancelRun(service.(*algorithmClient.Service), algorithm, requestId, initiator, reason)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -29,12 +31,15 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 		},
 	}
 
-	cmd.Flags().StringVarP(&id, "id", "i", "", "Specify the Crystal Job ID")
+	cmd.Flags().StringVarP(&requestId, "id", "i", "", "Specify the Crystal Job ID")
+	cmd.Flags().StringVarP(&initiator, "initiator", "", "", "Specify your ECCO email")
+	cmd.Flags().StringVarP(&reason, "reason", "", "", "Specify reason for cancelling the job")
+
 	return cmd
 }
 
-func cancelRun(algorithmService Service, algorithm, id string) (string, error) {
-	response, err := algorithmService.CancelRun(algorithm, id)
+func cancelRun(algorithmService Service, algorithm, id, initiator, reason string) (string, error) {
+	response, err := algorithmService.CancelRun(algorithm, id, initiator, reason)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
