@@ -32,7 +32,7 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 	}
 
 	cmd.Flags().StringVarP(&requestId, "id", "i", "", "Specify the Crystal Job ID")
-	cmd.Flags().StringVarP(&initiator, "initiator", "", "", "Specify your ECCO email")
+	cmd.Flags().StringVarP(&initiator, "initiator", "", "", "Provide name or work email of the person cancelling the run")
 	cmd.Flags().StringVarP(&reason, "reason", "", "", "Specify reason for cancelling the job")
 
 	err := cmd.MarkFlagRequired("id")
