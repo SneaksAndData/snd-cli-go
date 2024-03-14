@@ -1,6 +1,7 @@
 package ml
 
 import (
+	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/file"
@@ -14,6 +15,7 @@ var env, url, authProvider, algorithm string
 type Service interface {
 	RetrieveRun(runID string, algorithmName string) (string, error)
 	CreateRun(algorithmName string, input map[string]interface{}, tag string) (string, error)
+	CancelRun(algorithmName string, requestId string, initiator string, reason string) (string, error)
 }
 
 type Operations interface {
@@ -38,7 +40,14 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "", "", "Specify the algorithm name")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", crystalURL, "Specify the service url")
 
+	err := cmd.MarkPersistentFlagRequired("algorithm")
+	if err != nil {
+		fmt.Println("failed to mark 'algorithm' as a required flag: %w", err)
+		return nil
+	}
+
 	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdCancel(authServiceFactory, serviceFactory))
 	return cmd
 }

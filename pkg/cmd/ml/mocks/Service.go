@@ -9,6 +9,34 @@ type Service struct {
 	mock.Mock
 }
 
+// CancelRun provides a mock function with given fields: algorithmName, requestId, initiator, reason
+func (_m *Service) CancelRun(algorithmName string, requestId string, initiator string, reason string) (string, error) {
+	ret := _m.Called(algorithmName, requestId, initiator, reason)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CancelRun")
+	}
+
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, string, string) (string, error)); ok {
+		return rf(algorithmName, requestId, initiator, reason)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, string, string) string); ok {
+		r0 = rf(algorithmName, requestId, initiator, reason)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, string, string) error); ok {
+		r1 = rf(algorithmName, requestId, initiator, reason)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateRun provides a mock function with given fields: algorithmName, input, tag
 func (_m *Service) CreateRun(algorithmName string, input map[string]interface{}, tag string) (string, error) {
 	ret := _m.Called(algorithmName, input, tag)
