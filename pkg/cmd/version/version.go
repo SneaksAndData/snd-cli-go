@@ -15,7 +15,7 @@ func NewCmdVersion() *cobra.Command {
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			err := version.CheckIfNewVersionIsAvailable()
 			if err != nil {
-				return err
+				fmt.Printf("Unable to check if a new version is available: %v\nYou can also view the releases at: https://github.com/SneaksAndData/snd-cli-go/releases\n", err)
 			}
 			return nil
 
