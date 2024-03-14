@@ -70,7 +70,7 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 		ExtraArguments:      nil,
 		ProjectInputs:       nil,
 		ProjectOutputs:      nil,
-		ExpectedParallelism: 0,
+		ExpectedParallelism: nil,
 	}
 	if overrides == "" {
 		return dp, nil
