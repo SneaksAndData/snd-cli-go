@@ -243,8 +243,8 @@ overrides.json structure
 
 ```json
 {
-  "extra_arguments": {},
-  "project_outputs": []
+  "extraArguments": {},
+  "projectOutputs": []
 }
 ```
 
