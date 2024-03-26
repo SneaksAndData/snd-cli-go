@@ -8,8 +8,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.2.0 h1:hVeq+yCyUi+
 github.com/AzureAD/microsoft-authentication-library-for-go v1.2.0/go.mod h1:wP83P5OoQ5p6ip3ScPr0BAq0BvuPAvacpEuSzyouqAI=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
-github.com/SneaksAndData/esd-services-api-client-go v0.1.1 h1:vRu5ZR5kYnnl0c1OOyp0bqe/Erij+jtDjWUFg1+f7io=
-github.com/SneaksAndData/esd-services-api-client-go v0.1.1/go.mod h1:PjIrGbt5i/vFKK4fevowwyYuJeg6MCs78mC9vR20Yj4=
+github.com/SneaksAndData/esd-services-api-client-go v0.1.2 h1:PuOnpAvxJYecBklTg2RVVwb6/+F6XyPxxa+w/z20pgw=
+github.com/SneaksAndData/esd-services-api-client-go v0.1.2/go.mod h1:PjIrGbt5i/vFKK4fevowwyYuJeg6MCs78mC9vR20Yj4=
 github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

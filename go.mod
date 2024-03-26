@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
-	github.com/SneaksAndData/esd-services-api-client-go v0.1.1
+	github.com/SneaksAndData/esd-services-api-client-go v0.1.2
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/mod v0.15.0
