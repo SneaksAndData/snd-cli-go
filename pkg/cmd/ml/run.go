@@ -2,7 +2,6 @@ package ml
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
@@ -74,5 +73,5 @@ func readAlgorithmPayload(fileOp Operations) (algorithmClient.Payload, error) {
 		}
 		return *payload, nil
 	}
-	return p, errors.New("payload path is not valid")
+	return p, fmt.Errorf("payload path is not valid")
 }
