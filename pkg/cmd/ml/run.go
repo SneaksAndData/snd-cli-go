@@ -1,9 +1,13 @@
 package ml
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
+	"log"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
 )
@@ -23,8 +27,7 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			if err != nil {
 				return err
 			}
-			payloadPath := file.File{FilePath: payload}
-			resp, err := runRun(service.(*algorithmClient.Service), payloadPath, algorithm, tag)
+			resp, err := runRun(service.(*algorithmClient.Service), payload, algorithm, tag)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -37,15 +40,50 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 	return cmd
 }
 
-func runRun(algorithmService Service, fileOp Operations, algorithm, tag string) (string, error) {
-	payloadJSON, err := fileOp.ReadJSONFile()
+func runRun(algorithmService Service, payloadPath string, algorithm, tag string) (string, error) {
+	p, err := readAlgorithmPayload(payloadPath)
 	if err != nil {
 		return "", err
 	}
-	response, err := algorithmService.CreateRun(algorithm, payloadJSON, tag)
+	response, err := algorithmService.CreateRun(algorithm, p, tag)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
 
 	return response, nil
+}
+
+func readAlgorithmPayload(path string) (algorithmClient.Payload, error) {
+	var p = algorithmClient.Payload{
+		AlgorithmParameters: nil,
+		AlgorithmName:       "",
+		CustomConfiguration: algorithmClient.CustomConfiguration{},
+		Tag:                 "",
+	}
+	if path == "" {
+		return p, nil
+	}
+	f := file.File{FilePath: path}
+	if f.IsValidPath() {
+		content, err := f.ReadJSONFile()
+		if err != nil {
+			return p, fmt.Errorf("failed to read JSON file '%s': %w", path, err)
+		}
+		var payload *algorithmClient.Payload
+		c, err := json.Marshal(content)
+		if err != nil {
+			return p, fmt.Errorf("error marshaling content from file '%s': %w", path, err)
+		}
+		err = json.Unmarshal(c, &payload)
+		if err != nil {
+			return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
+		}
+		fmt.Println(*payload)
+		err = validator.New().Struct(payload)
+		if err != nil {
+			log.Fatalf("Validation failed%v\n", err)
+		}
+		return *payload, nil
+	}
+	return p, errors.New("payload path is not valid")
 }

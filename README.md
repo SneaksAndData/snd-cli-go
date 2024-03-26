@@ -183,6 +183,15 @@ $ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator -p
 $ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator --payload ./crystal-payload.json
 ```
 
+Payload structure
+
+```json
+{
+  "extra_arguments": {},
+  "project_outputs": []
+}
+```
+
 #### Get algorithm job result
 
 ```bash
