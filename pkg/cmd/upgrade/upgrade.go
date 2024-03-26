@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"syscall"
 )
 
 func NewCmdUpgrade() *cobra.Command {
@@ -68,8 +69,9 @@ func installationScript() {
 	}
 
 	fmt.Printf("Downloading the binary from %s\n", bundleURL)
+	tempBinaryPath := fmt.Sprintf("%s/%s.tmp", basePath, arch)
 	// Get file
-	cmd = exec.Command("az", "storage", "blob", "download", "--blob-url", bundleURL, "--auth-mode", "login", "--file", fmt.Sprintf("%s/%s", basePath, arch))
+	cmd = exec.Command("az", "storage", "blob", "download", "--blob-url", bundleURL, "--auth-mode", "login", "--file", tempBinaryPath)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -78,25 +80,68 @@ func installationScript() {
 		os.Exit(1)
 	}
 
-	if err := os.Chmod(fmt.Sprintf("%s/%s", basePath, arch), 0755); err != nil {
-		fmt.Println("Error changing file permissions:", err)
+	// Generate updater script
+	updaterScript := fmt.Sprintf(`
+		#!/bin/bash
+		while kill -0 %d 2>/dev/null; do
+			sleep 1
+		done
+		mv "%s" "%s/%s"
+		# Remove the existing symlink (if it exists)
+		if [ -L "%s/.local/bin/snd" ]; then
+			rm "%s/.local/bin/snd"
+		fi
+		# Create a new symlink to the updated binary
+		ln -s "%s/%s" "%s/.local/bin/snd"
+		`, os.Getpid(), tempBinaryPath, basePath, arch, os.Getenv("HOME"), os.Getenv("HOME"), basePath, arch, os.Getenv("HOME"))
+
+	updaterScriptPath, err := os.CreateTemp("", "updater-*.sh")
+	if err != nil {
+		fmt.Println("Error creating updater script:", err)
+		os.Exit(1)
+	}
+	defer os.Remove(updaterScriptPath.Name())
+	if _, err := updaterScriptPath.WriteString(updaterScript); err != nil {
+		fmt.Println("Error writing updater script:", err)
+		os.Exit(1)
+	}
+	if err := updaterScriptPath.Chmod(0755); err != nil {
+		fmt.Println("Error setting execute permission on updater script:", err)
+		os.Exit(1)
+	}
+	if err := updaterScriptPath.Close(); err != nil {
+		fmt.Println("Error closing updater script file:", err)
 		os.Exit(1)
 	}
 
-	if _, err := os.Lstat(fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err == nil {
-		fmt.Println("Removing symlink...")
-		if err := os.Remove(fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err != nil {
-			fmt.Println("Error removing symlink:", err)
-			os.Exit(1)
-		}
-	}
-
-	// Create a symbolic link to the application
-	fmt.Println("Creating the symlink...")
-	if err := os.Symlink(fmt.Sprintf("%s/%s", basePath, arch), fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err != nil {
-		fmt.Println("Error creating symlink:", err)
+	// Execute the updater script
+	if err := exec.Command("nohup", updaterScriptPath.Name(), "&").Start(); err != nil {
+		fmt.Println("Error executing updater script:", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Please restart your terminal for the changes to take effect.")
+	fmt.Println("Update initiated. Please wait for it to complete.")
+	syscall.Exit(0) // Use syscall.Exit to immediately exit
+
+	//if err := os.Chmod(tempBinaryPath, 0755); err != nil {
+	//	fmt.Println("Error changing file permissions:", err)
+	//	os.Exit(1)
+	//}
+	//
+	//if _, err := os.Lstat(fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err == nil {
+	//	fmt.Println("Removing symlink...")
+	//	if err := os.Remove(fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err != nil {
+	//		fmt.Println("Error removing symlink:", err)
+	//		os.Exit(1)
+	//	}
+	//}
+	//
+	//// Create a symbolic link to the application
+	//fmt.Println("Creating the symlink...")
+	//if err := os.Symlink(fmt.Sprintf("%s/%s", basePath, arch), fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err != nil {
+	//	fmt.Println("Error creating symlink:", err)
+	//	os.Exit(1)
+	//}
+	//
+	//fmt.Println("Please restart your terminal for the changes to take effect.")
 }
