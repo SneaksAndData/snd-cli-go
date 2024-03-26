@@ -12,6 +12,8 @@ github.com/SneaksAndData/esd-services-api-client-go v0.0.9 h1:Ha6kBxG5n/I9bxarNN
 github.com/SneaksAndData/esd-services-api-client-go v0.0.9/go.mod h1:StEYmGCRQ8IWA+UDcoMOTw/MpYmlFAfTTS15yeXy5Q4=
 github.com/SneaksAndData/esd-services-api-client-go v0.1.0 h1:zi0obJU6zc0CFF6h+RGhLeA+NMrB8MW/orPkIxpK9Ko=
 github.com/SneaksAndData/esd-services-api-client-go v0.1.0/go.mod h1:StEYmGCRQ8IWA+UDcoMOTw/MpYmlFAfTTS15yeXy5Q4=
+github.com/SneaksAndData/esd-services-api-client-go v0.1.1 h1:vRu5ZR5kYnnl0c1OOyp0bqe/Erij+jtDjWUFg1+f7io=
+github.com/SneaksAndData/esd-services-api-client-go v0.1.1/go.mod h1:PjIrGbt5i/vFKK4fevowwyYuJeg6MCs78mC9vR20Yj4=
 github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

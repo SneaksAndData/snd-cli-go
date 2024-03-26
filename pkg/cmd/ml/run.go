@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
-	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
-	"log"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
 )
@@ -61,7 +59,7 @@ func readAlgorithmPayload(path string) (algorithmClient.Payload, error) {
 		Tag:                 "",
 	}
 	if path == "" {
-		return p, nil
+		return p, errors.New("no payload path provided")
 	}
 	f := file.File{FilePath: path}
 	if f.IsValidPath() {
@@ -74,14 +72,8 @@ func readAlgorithmPayload(path string) (algorithmClient.Payload, error) {
 		if err != nil {
 			return p, fmt.Errorf("error marshaling content from file '%s': %w", path, err)
 		}
-		err = json.Unmarshal(c, &payload)
-		if err != nil {
+		if err = json.Unmarshal(c, &payload); err != nil {
 			return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
-		}
-		fmt.Println(*payload)
-		err = validator.New().Struct(payload)
-		if err != nil {
-			log.Fatalf("Validation failed%v\n", err)
 		}
 		return *payload, nil
 	}
