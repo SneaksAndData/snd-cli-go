@@ -19,9 +19,10 @@ type Service interface {
 	CancelRun(algorithmName string, requestId string, initiator string, reason string) (string, error)
 }
 
-//type Operations interface {
-//	ReadJSONFile() (map[string]interface{}, error)
-//}
+type Operations interface {
+	IsValidPath() bool
+	ReadJSONFile() (map[string]interface{}, error)
+}
 
 type FileServiceFactory func(path string) (file.File, error)
 

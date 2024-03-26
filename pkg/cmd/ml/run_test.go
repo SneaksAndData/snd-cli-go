@@ -61,6 +61,8 @@ func Test_runRun(t *testing.T) {
 				mockOperations.On("ReadJSONFile").Return(map[string]interface{}{}, tc.mockFileOpErr)
 			}
 
+			mockOperations.On("IsValidPath").Return(true, nil)
+
 			_, err := runRun(mockService, mockOperations, tc.algorithm, tc.tag)
 
 			if tc.expectedErr {

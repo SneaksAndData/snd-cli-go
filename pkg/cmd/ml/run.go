@@ -25,7 +25,8 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			if err != nil {
 				return err
 			}
-			resp, err := runRun(service.(*algorithmClient.Service), payload, algorithm, tag)
+			payloadPath := file.File{FilePath: payload}
+			resp, err := runRun(service.(*algorithmClient.Service), payloadPath, algorithm, tag)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -38,8 +39,8 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 	return cmd
 }
 
-func runRun(algorithmService Service, payloadPath string, algorithm, tag string) (string, error) {
-	p, err := readAlgorithmPayload(payloadPath)
+func runRun(algorithmService Service, fileOp Operations, algorithm, tag string) (string, error) {
+	p, err := readAlgorithmPayload(fileOp)
 	if err != nil {
 		return "", err
 	}
@@ -51,26 +52,22 @@ func runRun(algorithmService Service, payloadPath string, algorithm, tag string)
 	return response, nil
 }
 
-func readAlgorithmPayload(path string) (algorithmClient.Payload, error) {
+func readAlgorithmPayload(fileOp Operations) (algorithmClient.Payload, error) {
 	var p = algorithmClient.Payload{
 		AlgorithmParameters: nil,
 		AlgorithmName:       "",
 		CustomConfiguration: algorithmClient.CustomConfiguration{},
 		Tag:                 "",
 	}
-	if path == "" {
-		return p, errors.New("no payload path provided")
-	}
-	f := file.File{FilePath: path}
-	if f.IsValidPath() {
-		content, err := f.ReadJSONFile()
+	if fileOp.IsValidPath() {
+		content, err := fileOp.ReadJSONFile()
 		if err != nil {
-			return p, fmt.Errorf("failed to read JSON file '%s': %w", path, err)
+			return p, fmt.Errorf("failed to read JSON file: %w", err)
 		}
 		var payload *algorithmClient.Payload
 		c, err := json.Marshal(content)
 		if err != nil {
-			return p, fmt.Errorf("error marshaling content from file '%s': %w", path, err)
+			return p, fmt.Errorf("error marshaling content from file: %w", err)
 		}
 		if err = json.Unmarshal(c, &payload); err != nil {
 			return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
