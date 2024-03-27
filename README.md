@@ -183,6 +183,25 @@ $ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator -p
 $ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator --payload ./crystal-payload.json
 ```
 
+Payload structure - only AlgorithmParameters is required
+
+```json
+{
+  "AlgorithmParameters": {},
+  "CustomConfiguration": {
+    "imageRepository": "",
+    "imageTag": "",
+    "deadlineSeconds": 123,
+    "maximumRetries": 1,
+    "cpuLimit": "",
+    "memoryLimit": "",
+    "monitoringParameters": [],
+    "speculativeAttempts": 2,
+    ......
+  }
+}
+```
+
 #### Get algorithm job result
 
 ```bash

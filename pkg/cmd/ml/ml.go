@@ -3,6 +3,7 @@ package ml
 import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
+	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
@@ -14,11 +15,12 @@ var env, url, authProvider, algorithm string
 
 type Service interface {
 	RetrieveRun(runID string, algorithmName string) (string, error)
-	CreateRun(algorithmName string, input map[string]interface{}, tag string) (string, error)
+	CreateRun(algorithmName string, input algorithmClient.Payload, tag string) (string, error)
 	CancelRun(algorithmName string, requestId string, initiator string, reason string) (string, error)
 }
 
 type Operations interface {
+	IsValidPath() bool
 	ReadJSONFile() (map[string]interface{}, error)
 }
 
