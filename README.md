@@ -262,8 +262,23 @@ overrides.json structure
 
 ```json
 {
-  "extra_arguments": {},
-  "project_outputs": []
+  "extraArguments": {},
+  "projectInputs": [
+    {
+      "alias": "",
+      "dataPath": "",
+      "dataFormat": ""
+    }
+  ],
+  "projectOutputs": [
+    {
+      "alias": "",
+      "dataPath": "",
+      "dataFormat": ""
+    }
+  ],
+  "clientTag": "",
+  "expectedParallelism": 1
 }
 ```
 
