@@ -9,6 +9,24 @@ type Operations struct {
 	mock.Mock
 }
 
+// IsValidPath provides a mock function with given fields:
+func (_m *Operations) IsValidPath() bool {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for IsValidPath")
+	}
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
 // ReadJSONFile provides a mock function with given fields:
 func (_m *Operations) ReadJSONFile() (map[string]interface{}, error) {
 	ret := _m.Called()
