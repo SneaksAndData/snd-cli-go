@@ -31,11 +31,6 @@ chmod +x install.sh
 sh ./install.sh
 ```
 
-### Windows
-```bash
-bash ./install.sh
-```
-
 
 ## Uninstall
 
