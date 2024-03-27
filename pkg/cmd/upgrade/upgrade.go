@@ -96,7 +96,6 @@ func installationScript() {
 		ln -s "%s/%s" "%s/.local/bin/snd"
 		`, os.Getpid(), tempBinaryPath, basePath, arch, basePath, arch, os.Getenv("HOME"), os.Getenv("HOME"), basePath, arch, os.Getenv("HOME"))
 
-	fmt.Printf(updaterScript)
 	updaterScriptPath, err := os.CreateTemp("", "updater-*.sh")
 	if err != nil {
 		fmt.Println("Error creating updater script:", err)
