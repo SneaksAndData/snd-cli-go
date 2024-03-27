@@ -87,14 +87,16 @@ func installationScript() {
 			sleep 1
 		done
 		mv "%s" "%s/%s"
+		chmod +x "%s/%s"
 		# Remove the existing symlink (if it exists)
 		if [ -L "%s/.local/bin/snd" ]; then
 			rm "%s/.local/bin/snd"
 		fi
 		# Create a new symlink to the updated binary
 		ln -s "%s/%s" "%s/.local/bin/snd"
-		`, os.Getpid(), tempBinaryPath, basePath, arch, os.Getenv("HOME"), os.Getenv("HOME"), basePath, arch, os.Getenv("HOME"))
+		`, os.Getpid(), tempBinaryPath, basePath, arch, basePath, arch, os.Getenv("HOME"), os.Getenv("HOME"), basePath, arch, os.Getenv("HOME"))
 
+	fmt.Printf(updaterScript)
 	updaterScriptPath, err := os.CreateTemp("", "updater-*.sh")
 	if err != nil {
 		fmt.Println("Error creating updater script:", err)
@@ -105,7 +107,7 @@ func installationScript() {
 		fmt.Println("Error writing updater script:", err)
 		os.Exit(1)
 	}
-	if err := updaterScriptPath.Chmod(0755); err != nil {
+	if err := updaterScriptPath.Chmod(0777); err != nil {
 		fmt.Println("Error setting execute permission on updater script:", err)
 		os.Exit(1)
 	}
@@ -122,26 +124,4 @@ func installationScript() {
 
 	fmt.Println("Update initiated. Please wait for it to complete.")
 	syscall.Exit(0) // Use syscall.Exit to immediately exit
-
-	//if err := os.Chmod(tempBinaryPath, 0755); err != nil {
-	//	fmt.Println("Error changing file permissions:", err)
-	//	os.Exit(1)
-	//}
-	//
-	//if _, err := os.Lstat(fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err == nil {
-	//	fmt.Println("Removing symlink...")
-	//	if err := os.Remove(fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err != nil {
-	//		fmt.Println("Error removing symlink:", err)
-	//		os.Exit(1)
-	//	}
-	//}
-	//
-	//// Create a symbolic link to the application
-	//fmt.Println("Creating the symlink...")
-	//if err := os.Symlink(fmt.Sprintf("%s/%s", basePath, arch), fmt.Sprintf("%s/.local/bin/snd", os.Getenv("HOME"))); err != nil {
-	//	fmt.Println("Error creating symlink:", err)
-	//	os.Exit(1)
-	//}
-	//
-	//fmt.Println("Please restart your terminal for the changes to take effect.")
 }
