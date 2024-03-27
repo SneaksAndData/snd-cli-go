@@ -68,10 +68,10 @@ jobs:
         id: deployment_setup
 
       - name: Install azcopy
-        uses: SneaksAndData/github-actions/install_azcopy@v0.0.16
+        uses: SneaksAndData/github-actions/install_azcopy@v0.1.6
 
       - name: Generate SAS for upload
-        uses: SneaksAndData/github-actions/get_azure_share_sas@v0.1.5
+        uses: SneaksAndData/github-actions/get_azure_share_sas@v0.1.6
         with:
           directory_name: dist/snd-cli-go/
           account_key: ${{ steps.deployment_setup.outputs.ACCOUNT_KEY }}
