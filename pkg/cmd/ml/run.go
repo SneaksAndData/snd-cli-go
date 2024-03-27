@@ -1,6 +1,7 @@
 package ml
 
 import (
+	"encoding/json"
 	"fmt"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
@@ -38,14 +39,39 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 }
 
 func runRun(algorithmService Service, fileOp Operations, algorithm, tag string) (string, error) {
-	payloadJSON, err := fileOp.ReadJSONFile()
+	p, err := readAlgorithmPayload(fileOp)
 	if err != nil {
 		return "", err
 	}
-	response, err := algorithmService.CreateRun(algorithm, payloadJSON, tag)
+	response, err := algorithmService.CreateRun(algorithm, p, tag)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
 
 	return response, nil
+}
+
+func readAlgorithmPayload(fileOp Operations) (algorithmClient.Payload, error) {
+	var p = algorithmClient.Payload{
+		AlgorithmParameters: nil,
+		AlgorithmName:       "",
+		CustomConfiguration: algorithmClient.CustomConfiguration{},
+		Tag:                 "",
+	}
+	if fileOp.IsValidPath() {
+		content, err := fileOp.ReadJSONFile()
+		if err != nil {
+			return p, fmt.Errorf("failed to read JSON file: %w", err)
+		}
+		var payload *algorithmClient.Payload
+		c, err := json.Marshal(content)
+		if err != nil {
+			return p, fmt.Errorf("error marshaling content from file: %w", err)
+		}
+		if err = json.Unmarshal(c, &payload); err != nil {
+			return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
+		}
+		return *payload, nil
+	}
+	return p, fmt.Errorf("payload path is not valid")
 }
