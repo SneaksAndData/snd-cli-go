@@ -204,6 +204,13 @@ $ snd algorithm get -i fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-reple
 $ snd algorithm get --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
 ```
 
+#### Cancel algorithm job run
+```bash
+$ snd algorithm cancel -i fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator --initiator email@ecco.com --reason test
+$ snd algorithm cancel --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator --initiator email@ecco.com --reason test
+```
+
+
 ### Spark
 
 Retrieve information related to spark jobs by using job ID.
