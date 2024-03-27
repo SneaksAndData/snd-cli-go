@@ -55,7 +55,7 @@ jobs:
           aws_ca_repository: esd-artifacts
         id: setup_aws_ca
       - name: Configure AWS Credentials (DEV)
-        uses: aws-actions/configure-aws-credentials@v4.0.0
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           aws-access-key-id: ${{ env.ECR_DEV_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.ECR_DEV_ACCESS_KEY }}
@@ -77,7 +77,7 @@ jobs:
 
       - name: Configure AWS Credentials (PROD)
         if: startsWith(github.ref, 'refs/tags')
-        uses: aws-actions/configure-aws-credentials@v4.0.0
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           aws-access-key-id: ${{ env.ECR_PROD_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.ECR_PROD_ACCESS_KEY }}
