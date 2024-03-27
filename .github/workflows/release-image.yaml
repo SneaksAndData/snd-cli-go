@@ -25,12 +25,12 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' && always() }}
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.21'
 
       - name: Import Secrets
-        uses: hashicorp/vault-action@v2.7.3
+        uses: hashicorp/vault-action@v3.0.0
         with:
           url: https://hashicorp-vault.production.sneaksanddata.com/
           role: github
@@ -45,7 +45,7 @@ jobs:
             /secret/data/common/package-publishing/aws-ecr/production/container-user access_key | ECR_PROD_ACCESS_KEY ;
             /secret/data/common/package-publishing/aws-ecr/production/container-user access_key_id | ECR_PROD_ACCESS_KEY_ID ;
       - name: Setup AWS CA
-        uses: SneaksAndData/github-actions/setup_aws_ca@v0.1.2
+        uses: SneaksAndData/github-actions/setup_aws_ca@v0.1.6
         with:
           aws_access_key: ${{ env.ACCESS_KEY }}
           aws_access_key_id: ${{ env.ACCESS_KEY_ID }}
