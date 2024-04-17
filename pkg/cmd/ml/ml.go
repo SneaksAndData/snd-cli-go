@@ -35,6 +35,7 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 		Example: heredoc.Doc(`
 			$ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator --payload ./crystal-payload.json
 			$ snd algorithm get --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
+			$ snd algorithm payload --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
 			$ snd algorithm cancel --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator  --initiator user@ecco.com --reason test
 		`),
 		GroupID: "ml",
