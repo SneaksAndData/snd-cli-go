@@ -23,7 +23,7 @@ func NewCmdGetPayload(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 			if err != nil {
 				return err
 			}
-			resp, err := getPayloadRun(service.(*algorithmClient.Service), id, algorithm)
+			resp, err := getPayloadRun(http.DefaultClient, service.(*algorithmClient.Service), id, algorithm)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -39,7 +39,7 @@ func NewCmdGetPayload(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 	return cmd
 }
 
-func getPayloadRun(algorithmService Service, id, algorithm string) (string, error) {
+func getPayloadRun(client *http.Client, algorithmService Service, id, algorithm string) (string, error) {
 	response, err := algorithmService.RetrievePayloadUri(id, algorithm)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "404") {
@@ -47,7 +47,7 @@ func getPayloadRun(algorithmService Service, id, algorithm string) (string, erro
 		}
 		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
-	resp, err := http.Get(response.PayloadUri)
+	resp, err := client.Get(response.PayloadUri)
 	if err != nil {
 		return "", fmt.Errorf("HTTP request failed for %s: %w", response.PayloadUri, err)
 	}
