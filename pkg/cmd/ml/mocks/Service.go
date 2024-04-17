@@ -69,6 +69,36 @@ func (_m *Service) CreateRun(algorithmName string, input algorithm.Payload, tag 
 	return r0, r1
 }
 
+// RetrievePayloadUri provides a mock function with given fields: runID, algorithmName
+func (_m *Service) RetrievePayloadUri(runID string, algorithmName string) (*algorithm.PayloadResponse, error) {
+	ret := _m.Called(runID, algorithmName)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RetrievePayloadUri")
+	}
+
+	var r0 *algorithm.PayloadResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string) (*algorithm.PayloadResponse, error)); ok {
+		return rf(runID, algorithmName)
+	}
+	if rf, ok := ret.Get(0).(func(string, string) *algorithm.PayloadResponse); ok {
+		r0 = rf(runID, algorithmName)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*algorithm.PayloadResponse)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(runID, algorithmName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RetrieveRun provides a mock function with given fields: runID, algorithmName
 func (_m *Service) RetrieveRun(runID string, algorithmName string) (string, error) {
 	ret := _m.Called(runID, algorithmName)
