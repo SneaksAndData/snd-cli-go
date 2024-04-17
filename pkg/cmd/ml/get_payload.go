@@ -4,6 +4,8 @@ import (
 	"fmt"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
+	"io"
+	"net/http"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -21,7 +23,7 @@ func NewCmdGetPayload(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 			if err != nil {
 				return err
 			}
-			resp, err := getRun(service.(*algorithmClient.Service), id, algorithm)
+			resp, err := getPayloadRun(service.(*algorithmClient.Service), id, algorithm)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -45,7 +47,22 @@ func getPayloadRun(algorithmService Service, id, algorithm string) (string, erro
 		}
 		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
-	fmt.Println(response.PayloadUri)
+	resp, err := http.Get(response.PayloadUri)
+	if err != nil {
+		return "", fmt.Errorf("HTTP request failed for %s: %w", response.PayloadUri, err)
+	}
+	defer resp.Body.Close()
 
-	return response, nil
+	switch resp.StatusCode {
+	case http.StatusOK:
+		respBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", fmt.Errorf("failed to read response body: %w", err)
+		}
+		return string(respBody), nil
+	case http.StatusForbidden:
+		return "", fmt.Errorf("payload URI expired for algorithm %s with run id %s", algorithm, id)
+	default:
+		return "", fmt.Errorf("unexpected status code %d for algorithm %s with run id %s", resp.StatusCode, algorithm, id)
+	}
 }
