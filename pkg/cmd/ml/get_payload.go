@@ -45,11 +45,11 @@ func getPayloadRun(client *http.Client, algorithmService Service, id, algorithm 
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to find run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
 		}
-		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
+		return "", fmt.Errorf("failed to retrieve payload for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
 	resp, err := client.Get(response.PayloadUri)
 	if err != nil {
-		return "", fmt.Errorf("HTTP request failed for %s: %w", response.PayloadUri, err)
+		return "", fmt.Errorf("HTTP request to sas uri %s failed: %w", response.PayloadUri, err)
 	}
 	defer resp.Body.Close()
 
