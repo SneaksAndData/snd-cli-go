@@ -17,6 +17,7 @@ type Service interface {
 	RetrieveRun(runID string, algorithmName string) (string, error)
 	CreateRun(algorithmName string, input algorithmClient.Payload, tag string) (string, error)
 	CancelRun(algorithmName string, requestId string, initiator string, reason string) (string, error)
+	RetrievePayloadUri(runID string, algorithmName string) (*algorithmClient.PayloadResponse, error)
 }
 
 type Operations interface {
@@ -34,6 +35,8 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 		Example: heredoc.Doc(`
 			$ snd algorithm run --algorithm store-auto-replenishment-crystal-orchestrator --payload ./crystal-payload.json
 			$ snd algorithm get --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
+			$ snd algorithm payload --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator
+			$ snd algorithm cancel --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-replenishment-crystal-orchestrator  --initiator user@ecco.com --reason test
 		`),
 		GroupID: "ml",
 	}
@@ -51,5 +54,6 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 	cmd.AddCommand(NewCmdGet(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdCancel(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdGetPayload(authServiceFactory, serviceFactory))
 	return cmd
 }
