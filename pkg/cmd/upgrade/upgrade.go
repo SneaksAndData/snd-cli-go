@@ -1,6 +1,7 @@
 package upgrade
 
 import (
+	_ "embed"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
@@ -19,17 +20,17 @@ func NewCmdUpgrade() *cobra.Command {
 	return cmd
 }
 
+//go:embed scripts/install.sh
+var installScript string
+
 func installationScript() {
-	// Determine target OS and architecture
-	content, _ := os.ReadFile("scripts/install.sh")
-	updaterScript := string(content)
 	updaterScriptPath, err := os.CreateTemp("", "updater-*.sh")
 	if err != nil {
 		fmt.Println("Error creating updater script:", err)
 		os.Exit(1)
 	}
 	defer os.Remove(updaterScriptPath.Name())
-	if _, err := updaterScriptPath.WriteString(updaterScript); err != nil {
+	if _, err := updaterScriptPath.WriteString(installScript); err != nil {
 		fmt.Println("Error writing updater script:", err)
 		os.Exit(1)
 	}
