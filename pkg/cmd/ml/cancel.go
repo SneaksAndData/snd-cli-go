@@ -50,6 +50,9 @@ func cancelRun(algorithmService Service, algorithm, id, initiator, reason string
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
 		}
+		if strings.HasSuffix(err.Error(), "500") {
+			return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s : %v", algorithm, id, "Run not found")
+		}
 		return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
 	return response, nil

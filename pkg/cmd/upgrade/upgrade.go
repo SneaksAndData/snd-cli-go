@@ -14,23 +14,23 @@ func NewCmdUpgrade() *cobra.Command {
 		Use:   "upgrade",
 		Short: "Upgrade the CLI to the latest version",
 		Run: func(cmd *cobra.Command, args []string) {
-			installationScript()
+			upgradeRun()
 		},
 	}
 	return cmd
 }
 
-//go:embed scripts/install.sh
-var installScript string
+//go:embed scripts/upgrade.sh
+var upgradeScript string
 
-func installationScript() {
+func upgradeRun() {
 	updaterScriptPath, err := os.CreateTemp("", "updater-*.sh")
 	if err != nil {
 		fmt.Println("Error creating updater script:", err)
 		os.Exit(1)
 	}
 	defer os.Remove(updaterScriptPath.Name())
-	if _, err := updaterScriptPath.WriteString(installScript); err != nil {
+	if _, err := updaterScriptPath.WriteString(upgradeScript); err != nil {
 		fmt.Println("Error writing updater script:", err)
 		os.Exit(1)
 	}
