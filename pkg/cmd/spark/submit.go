@@ -88,8 +88,6 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	} else {
 		params.ClientTag = clientTag
 	}
-	fmt.Println("HERE")
-	fmt.Println(params)
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
 		return "", fmt.Errorf("failed to submit job: %w \n", err)
