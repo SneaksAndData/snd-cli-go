@@ -2,6 +2,7 @@ package ml
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -12,8 +13,9 @@ var requestId, initiator, reason string
 
 func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cancel",
-		Short: "Cancel a ML Algorithm run",
+		Use:     "cancel",
+		Short:   heredoc.Doc(`Cancel a ML Algorithm run"`),
+		Example: heredoc.Doc(`snd algorithm cancel --id 762b07c-c67a-4327-970a-18d923fd --algorithm rdc-auto-replenishment-crystal-orchestrator -e production`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

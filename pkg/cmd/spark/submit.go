@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"os"
@@ -17,8 +18,37 @@ var overrides string
 
 func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "submit",
-		Short: "Runs the provided Beast V3 job with optional overrides",
+		Use: "submit",
+		Short: heredoc.Doc(`Runs the provided Beast V3 job with optional overrides
+
+The overrides should be provided as a JSON file with the structure below.
+
+If the 'clientTag' is not provided, a random tag will be generated.
+
+If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism' are not provided, the job will run with the default arguments.
+
+<pre><code>
+{
+ "clientTag": "<string> (optional) - A tag for the client making the submission",
+ "extraArguments": "<object> (optional) - Any additional arguments for the job",
+ "projectInputs": [{
+	"alias": "<string> (optional) - An alias for the input",
+	"dataPath": "<string> (required) - The path to the input data",
+	"dataFormat": "<string> (required) - The format of the input data"
+	}
+		// More input objects can be added here
+	],
+ "projectOutputs": [{
+	"alias": "<string> (optional) - An alias for the output",
+	"dataPath": "<string> (required) - The path where the output data should be stored",
+	"dataFormat": "<string> (required) - The format of the output data"
+	}
+		// More output objects can be added here
+	],
+ "expectedParallelism": "<integer> (optional) - The expected level of parallelism for the job"
+}
+</code></pre>
+`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
@@ -58,6 +88,8 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	} else {
 		params.ClientTag = clientTag
 	}
+	fmt.Println("HERE")
+	fmt.Println(params)
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
 		return "", fmt.Errorf("failed to submit job: %w \n", err)

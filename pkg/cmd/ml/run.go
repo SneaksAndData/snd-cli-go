@@ -3,6 +3,7 @@ package ml
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util/file"
@@ -13,8 +14,32 @@ var payload, tag string
 
 func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "run",
-		Short: "Run a ML Algorithm",
+		Use: "run",
+		Short: heredoc.Doc(`Run a ML Algorithm.
+
+The payload should be provided as a JSON file with the structure below.
+
+<pre><code>
+{
+ "algorithmName": "<string> (required) - The name of the algorithm to run",
+ "parameters": "<object> (optional) - Any additional parameters for the algorithm",
+ "inputs": [{
+	"alias": "<string> (optional) - An alias for the input",
+	"dataPath": "<string> (required) - The path to the input data",
+	"dataFormat": "<string> (required) - The format of the input data"
+	}
+		// More input objects can be added here
+	],
+ "outputs": [{
+	"alias": "<string> (optional) - An alias for the output",
+	"dataPath": "<string> (required) - The path where the output data should be stored",
+	"dataFormat": "<string> (required) - The format of the output data"
+	}
+		// More output objects can be added here
+	]
+}
+</code></pre>
+`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
@@ -31,6 +56,7 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			}
 			return err
 		},
+		Example: heredoc.Doc(`snd algorithm run --algorithm rdc-auto-replenishment-crystal-orchestrator --payload /path/to/payload.json`),
 	}
 
 	cmd.Flags().StringVarP(&payload, "payload", "p", "", "Path to the payload JSON file")
