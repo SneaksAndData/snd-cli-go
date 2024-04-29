@@ -21,19 +21,19 @@ The payload should be provided as a JSON file with the structure below.
 
 <pre><code>
 {
- "algorithmName": "<string> (required) - The name of the algorithm to run",
- "parameters": "<object> (optional) - Any additional parameters for the algorithm",
+ "algorithmName": "<string> - The name of the algorithm to run",
+ "parameters": "<object> - Any additional parameters for the algorithm",
  "inputs": [{
-	"alias": "<string> (optional) - An alias for the input",
-	"dataPath": "<string> (required) - The path to the input data",
-	"dataFormat": "<string> (required) - The format of the input data"
+	"alias": "<string> - An alias for the input",
+	"dataPath": "<string> - The path to the input data",
+	"dataFormat": "<string> - The format of the input data"
 	}
 		// More input objects can be added here
 	],
  "outputs": [{
-	"alias": "<string> (optional) - An alias for the output",
-	"dataPath": "<string> (required) - The path where the output data should be stored",
-	"dataFormat": "<string> (required) - The format of the output data"
+	"alias": "<string> - An alias for the output",
+	"dataPath": "<string> - The path where the output data should be stored",
+	"dataFormat": "<string> - The format of the output data"
 	}
 		// More output objects can be added here
 	]
