@@ -2,6 +2,7 @@ package claim
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
 	"log"
@@ -13,8 +14,9 @@ var cr []string
 
 func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove",
-		Short: "Removes a claim from an existing user",
+		Use:     "remove",
+		Short:   heredoc.Doc(`"Removes a claim from an existing user`),
+		Example: heredoc.Doc(`snd claim remove -c "service.test.sneaksanddata.com/.*:.*" -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

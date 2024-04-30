@@ -2,6 +2,7 @@ package ml
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -12,8 +13,9 @@ var id string
 
 func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Get the result for a ML Algorithm run",
+		Use:     "get",
+		Short:   heredoc.Doc(`Get the result for a ML Algorithm run`),
+		Example: heredoc.Doc(`snd algorithm get --id 762b07c-c67a-4327-970a-18d923fd --algorithm rdc-auto-replenishment-crystal-orchestrator -e production`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

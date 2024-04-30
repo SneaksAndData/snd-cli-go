@@ -2,6 +2,7 @@ package claim
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -22,8 +23,9 @@ func NewCmdUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory c
 
 func NewCmdAddUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add",
-		Short: "Add a user",
+		Use:     "add",
+		Short:   heredoc.Doc(`Add a user`),
+		Example: heredoc.Doc(`snd claim user add -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
@@ -55,8 +57,9 @@ func addUserRun(claimService Service, userId, claimProvider string) (string, err
 
 func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove",
-		Short: "Remove a user",
+		Use:     "remove",
+		Short:   "Remove a user",
+		Example: heredoc.Doc(`snd claim user remove -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
