@@ -21,22 +21,19 @@ The payload should be provided as a JSON file with the structure below.
 
 <pre><code>
 {
- "algorithmName": "<string> - The name of the algorithm to run",
- "parameters": "<object> - Any additional parameters for the algorithm",
- "inputs": [{
-	"alias": "<string> - An alias for the input",
-	"dataPath": "<string> - The path to the input data",
-	"dataFormat": "<string> - The format of the input data"
-	}
-		// More input objects can be added here
-	],
- "outputs": [{
-	"alias": "<string> - An alias for the output",
-	"dataPath": "<string> - The path where the output data should be stored",
-	"dataFormat": "<string> - The format of the output data"
-	}
-		// More output objects can be added here
-	]
+ "AlgorithmName": "<string> (optional) - The name of the algorithm to run",
+ "AlgorithmParameters": "<object> (required) - Any additional parameters for the algorithm",
+ "CustomConfiguration": {
+	"imageRepository": "",
+    "imageTag": "",
+    "deadlineSeconds": 123,
+    "maximumRetries": 1,
+    "cpuLimit": "",
+    "memoryLimit": "",
+    "monitoringParameters": [],
+    "speculativeAttempts": 2,
+},  - <CustomConfiguration> (optional) - Custom configuration for the algorithm",
+ "Tag": "<string> (optional) - Client-side submission identifier"
 }
 </code></pre>
 `),
