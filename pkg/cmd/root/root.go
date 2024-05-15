@@ -20,9 +20,10 @@ type CacheToken func(token string) (string, error)
 func NewCmdRoot() (*cobra.Command, error) {
 	// Cmd represents the base command when called without any subcommands
 	var cmd = &cobra.Command{
-		Use:   "snd <service command group> <service command> [flags]",
-		Short: "SnD CLI",
-		Long:  `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data.`,
+		Use:          "snd <service command group> <service command> [flags]",
+		Short:        "SnD CLI",
+		Long:         `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data.`,
+		SilenceUsage: true,
 	}
 
 	cmd.AddGroup(&cobra.Group{
