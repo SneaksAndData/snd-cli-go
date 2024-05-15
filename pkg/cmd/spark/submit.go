@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
-	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	sparkClient "github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"os"
 	"snd-cli/pkg/cmd/util/file"
@@ -29,23 +29,23 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 
 <pre><code>
 {
- "clientTag": "<string> - A tag for the client making the submission",
- "extraArguments": "<object> - Any additional arguments for the job",
- "projectInputs": [{
+ "client_tag": "<string> - A tag for the client making the submission",
+ "extra_arguments": "<object> - Any additional arguments for the job",
+ "project_inputs": [{
 	"alias": "<string>  - An alias for the input",
-	"dataPath": "<string> - The path to the input data",
-	"dataFormat": "<string> - The format of the input data"
+	"data_path": "<string> - The path to the input data",
+	"data_format": "<string> - The format of the input data"
 	}
 		// More input objects can be added here
 	],
- "projectOutputs": [{
+ "project_outputs": [{
 	"alias": "<string> - An alias for the output",
-	"dataPath": "<string> - The path where the output data should be stored",
-	"dataFormat": "<string> - The format of the output data"
+	"data_path": "<string> - The path where the output data should be stored",
+	"data_format": "<string> - The format of the output data"
 	}
 		// More output objects can be added here
 	],
- "expectedParallelism": "<integer> - The expected level of parallelism for the job"
+ "expected_parallelism": "<integer> - The expected level of parallelism for the job"
 }
 </code></pre>
 `),
@@ -61,7 +61,7 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 			if err != nil {
 				return err
 			}
-			resp, err := submitRun(service.(*spark.Service), overrides, jobName)
+			resp, err := submitRun(service.(*sparkClient.Service), overrides, jobName)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -95,8 +95,8 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	return response, nil
 }
 
-func getOverrides(overrides string) (spark.JobParams, error) {
-	var dp = spark.JobParams{
+func getOverrides(overrides string) (sparkClient.JobParams, error) {
+	var dp = sparkClient.JobParams{
 		ClientTag:           "",
 		ExtraArguments:      nil,
 		ProjectInputs:       nil,
@@ -106,6 +106,7 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 	if overrides == "" {
 		return dp, nil
 	}
+	fmt.Println(overrides)
 	f := file.File{FilePath: overrides}
 
 	if f.IsValidPath() {
@@ -113,18 +114,26 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 		if err != nil {
 			return dp, fmt.Errorf("failed to read JSON file '%s': %w", overrides, err)
 		}
-		var params *spark.JobParams
 		c, err := json.Marshal(content)
 		if err != nil {
 			return dp, fmt.Errorf("error marshaling content from file '%s': %w", overrides, err)
 		}
-		err = json.Unmarshal(c, &params)
+		var userParams *JobParams
+		err = json.Unmarshal(c, &userParams)
 		if err != nil {
-			return dp, fmt.Errorf("error unmarshaling content to spark.JobParams: %w", err)
+			return dp, fmt.Errorf("error unmarshaling content to JobParams: %w", err)
 		}
-		return *params, nil
+		beastPayload, _ := json.Marshal(userParams)
+		var payload *sparkClient.JobParams
+
+		if err = json.Unmarshal(beastPayload, &payload); err != nil {
+			return dp, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
+		}
+		fmt.Println(string(beastPayload))
+
+		return *payload, nil
 	}
-	var params *spark.JobParams
+	var params *sparkClient.JobParams
 	c, err := json.Marshal(overrides)
 	if err != nil {
 		return dp, fmt.Errorf(err.Error())
