@@ -74,7 +74,7 @@ func runRun(algorithmService Service, fileOp Operations, algorithm, tag string) 
 	}
 	response, err := algorithmService.CreateRun(algorithm, p, tag)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
+		return "", fmt.Errorf("failed to create run for algorithm %s: %w", algorithm, err)
 	}
 
 	return response, nil
