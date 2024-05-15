@@ -1,6 +1,7 @@
 FROM golang:1.21-bookworm
 
 ARG KUBECTL_VERSION="v1.29.2"
+ARG SND_CLI_VERSION
 
 # aws-cli, azure-cli and kubectl
 RUN apt-get update \
@@ -25,7 +26,7 @@ COPY . /app
 WORKDIR /app
 
 # Build binary
-RUN go build -o snd ./cmd/snd-cli/
+RUN go build -ldflags="-X 'snd-cli/cmd.Version=$SND_CLI_VERSION'" -o snd ./cmd/snd-cli/
 
 # Create symlink
 RUN ln -s "/app/snd" "/bin/snd"
