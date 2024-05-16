@@ -106,12 +106,19 @@ func getOverrides(overrides string) (sparkClient.JobParams, error) {
 		return dp, nil
 	}
 	f := file.File{FilePath: overrides}
-	var payload sparkClient.JobParams
+	var userPayload *JobParams
 
-	err := f.ReadAndUnmarshal(&payload)
+	err := f.ReadAndUnmarshal(&userPayload)
 	if err != nil {
-		return dp, fmt.Errorf("error unmarshaling content to sparkClient.JobParams: %w", err)
+		return dp, err
 	}
+
+	var payload sparkClient.JobParams
+	err = file.ConvertStruct(*userPayload, &payload)
+	if err != nil {
+		return dp, err
+	}
+
 	return payload, nil
 }
 

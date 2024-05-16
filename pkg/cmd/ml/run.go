@@ -5,13 +5,19 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
+	"log/slog"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
 )
 
-var payload, tag string
+// CommandConfig holds the configuration for the run command.
+type CommandConfig struct {
+	Payload string
+	Tag     string
+}
 
 func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
+	var config CommandConfig
 	cmd := &cobra.Command{
 		Use: "run",
 		Short: heredoc.Doc(`Run a ML Algorithm.
@@ -43,29 +49,41 @@ The payload should be provided as a JSON file with the structure below.
 </code></pre>
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
-			if err != nil {
-				return err
-			}
-			service, err := serviceFactory.CreateService("algorithm", env, url, authService)
-			if err != nil {
-				return err
-			}
-			resp, err := runRun(service.(*algorithmClient.Service), payload, algorithm, tag)
-			if err == nil {
-				fmt.Println(resp)
-			}
-			return err
+			return runRun(config, authServiceFactory, serviceFactory)
 		},
 		Example: heredoc.Doc(`snd algorithm run --algorithm rdc-auto-replenishment-crystal-orchestrator --payload /path/to/payload.json`),
 	}
 
-	cmd.Flags().StringVarP(&payload, "payload", "p", "", "Path to the payload JSON file")
-	cmd.Flags().StringVarP(&tag, "tag", "t", "", "Client-side submission identifier")
+	cmd.Flags().StringVarP(&config.Payload, "payload", "p", "", "Path to the payload JSON file")
+	cmd.Flags().StringVarP(&config.Tag, "tag", "t", "", "Client-side submission identifier")
 	return cmd
 }
 
-func runRun(algorithmService Service, payloadPath, algorithm, tag string) (string, error) {
+func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) error {
+	authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+	if err != nil {
+		return err
+	}
+
+	service, err := serviceFactory.CreateService("algorithm", env, url, authService)
+	if err != nil {
+		return err
+	}
+	fmt.Println("config")
+	fmt.Println(config)
+
+	resp, err := runAlgorithm(service.(*algorithmClient.Service), config.Payload, algorithm, config.Tag)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(resp)
+	slog.Info("Run completed successfully", "response", resp)
+	return nil
+}
+
+// runAlgorithm runs the algorithm service with the provided parameters.
+func runAlgorithm(algorithmService Service, payloadPath, algorithm, tag string) (string, error) {
 	p, err := readAlgorithmPayload(payloadPath)
 	if err != nil {
 		return "", err
@@ -78,6 +96,7 @@ func runRun(algorithmService Service, payloadPath, algorithm, tag string) (strin
 	return response, nil
 }
 
+// readAlgorithmPayload reads and unmarshal the algorithm payload from the provided path.
 func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 	var p = algorithmClient.Payload{
 		AlgorithmParameters: nil,
@@ -89,10 +108,20 @@ func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 		return p, nil
 	}
 	f := file.File{FilePath: payloadPath}
-	var payload algorithmClient.Payload
-	err := f.ReadAndUnmarshal(&payload)
+
+	var userPayload *Payload
+
+	err := f.ReadAndUnmarshal(&userPayload)
 	if err != nil {
-		return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
+		return p, err
 	}
+
+	var payload algorithmClient.Payload
+	err = file.ConvertStruct(*userPayload, &payload)
+	if err != nil {
+		return p, err
+	}
+
 	return payload, nil
+
 }

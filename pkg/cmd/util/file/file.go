@@ -10,10 +10,12 @@ import (
 	"reflect"
 )
 
+// File represents a file on the filesystem.
 type File struct {
 	FilePath string
 }
 
+// ReadJSONFile reads the JSON file from the file path.
 func (f File) ReadJSONFile() (map[string]interface{}, error) {
 	data, err := os.ReadFile(f.FilePath)
 	if err != nil {
@@ -38,7 +40,7 @@ func (f File) IsValidPath() bool {
 
 // CreateDirectory creates a directory by using the specified path.
 func (f File) CreateDirectory() error {
-	err := os.MkdirAll(path.Dir(f.FilePath), 0755) // Use MkdirAll to simplify
+	err := os.MkdirAll(path.Dir(f.FilePath), 0755)
 	if err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
@@ -112,6 +114,26 @@ func (f File) ReadAndUnmarshal(v interface{}) error {
 	err = json.Unmarshal(c, v)
 	if err != nil {
 		return fmt.Errorf("error unmarshaling content: %w", err)
+	}
+	fmt.Println("Payload content")
+	fmt.Println(string(c))
+
+	return nil
+}
+
+// ConvertStruct is a function that converts one struct to another struct.
+// It takes two parameters: the original struct and the target struct.
+// The function first marshals the original struct into a JSON string, then it unmarshals that JSON string into the target struct.
+// This function is useful when you have two structs with the same structure but different JSON keys.
+func ConvertStruct(original interface{}, target interface{}) error {
+	originalJSON, err := json.Marshal(original)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(originalJSON, target)
+	if err != nil {
+		return err
 	}
 
 	return nil
