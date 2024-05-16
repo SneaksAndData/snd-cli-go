@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 )
 
 type File struct {
@@ -75,4 +76,43 @@ func GenerateFilePathWithBaseHome(folderName, fileName string) (string, error) {
 	}
 	dirPath := filepath.Join(homeDir, folderName) // Use the provided folder name
 	return filepath.Join(dirPath, fileName), nil  // Use the provided file name
+}
+
+// ReadAndUnmarshal reads a JSON file from the provided path,
+// marshals the content into a JSON string, and then unmarshal into the provided interface{}.
+// The function checks if the provided path is valid, reads the JSON file,
+// marshals the content, checks if the provided interface{} is a non-nil pointer,
+// and finally unmarshal the content into the provided interface{}.
+//
+// Parameters:
+// v: An interface{} that should be a non-nil pointer to the structure into which the content will be unmarshalled.
+//
+// Returns:
+// error: An error that will be nil if no errors occurred during the process.
+func (f File) ReadAndUnmarshal(v interface{}) error {
+	if !f.IsValidPath() {
+		return fmt.Errorf("invalid file path")
+	}
+
+	content, err := f.ReadJSONFile()
+	if err != nil {
+		return fmt.Errorf("failed to read JSON file: %w", err)
+	}
+
+	c, err := json.Marshal(content)
+	if err != nil {
+		return fmt.Errorf("error marshaling content from file: %w", err)
+	}
+
+	rv := reflect.ValueOf(v)
+	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+		return fmt.Errorf("non-nil pointer required for unmarshaling")
+	}
+
+	err = json.Unmarshal(c, v)
+	if err != nil {
+		return fmt.Errorf("error unmarshaling content: %w", err)
+	}
+
+	return nil
 }

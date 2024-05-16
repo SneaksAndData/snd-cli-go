@@ -2,7 +2,6 @@ package spark
 
 import (
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	sparkClient "github.com/SneaksAndData/esd-services-api-client-go/spark"
@@ -106,43 +105,14 @@ func getOverrides(overrides string) (sparkClient.JobParams, error) {
 	if overrides == "" {
 		return dp, nil
 	}
-	fmt.Println(overrides)
 	f := file.File{FilePath: overrides}
+	var payload sparkClient.JobParams
 
-	if f.IsValidPath() {
-		content, err := f.ReadJSONFile()
-		if err != nil {
-			return dp, fmt.Errorf("failed to read JSON file '%s': %w", overrides, err)
-		}
-		c, err := json.Marshal(content)
-		if err != nil {
-			return dp, fmt.Errorf("error marshaling content from file '%s': %w", overrides, err)
-		}
-		var userParams *JobParams
-		err = json.Unmarshal(c, &userParams)
-		if err != nil {
-			return dp, fmt.Errorf("error unmarshaling content to JobParams: %w", err)
-		}
-		beastPayload, _ := json.Marshal(userParams)
-		var payload *sparkClient.JobParams
-
-		if err = json.Unmarshal(beastPayload, &payload); err != nil {
-			return dp, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
-		}
-		fmt.Println(string(beastPayload))
-
-		return *payload, nil
-	}
-	var params *sparkClient.JobParams
-	c, err := json.Marshal(overrides)
+	err := f.ReadAndUnmarshal(&payload)
 	if err != nil {
-		return dp, fmt.Errorf(err.Error())
+		return dp, fmt.Errorf("error unmarshaling content to sparkClient.JobParams: %w", err)
 	}
-	err = json.Unmarshal(c, &params)
-	if err != nil {
-		return dp, fmt.Errorf(err.Error())
-	}
-	return *params, nil
+	return payload, nil
 }
 
 func generateTag() (string, error) {

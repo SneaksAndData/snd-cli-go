@@ -1,7 +1,6 @@
 package ml
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
@@ -52,8 +51,7 @@ The payload should be provided as a JSON file with the structure below.
 			if err != nil {
 				return err
 			}
-			payloadPath := file.File{FilePath: payload}
-			resp, err := runRun(service.(*algorithmClient.Service), payloadPath, algorithm, tag)
+			resp, err := runRun(service.(*algorithmClient.Service), payload, algorithm, tag)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -67,8 +65,8 @@ The payload should be provided as a JSON file with the structure below.
 	return cmd
 }
 
-func runRun(algorithmService Service, fileOp Operations, algorithm, tag string) (string, error) {
-	p, err := readAlgorithmPayload(fileOp)
+func runRun(algorithmService Service, payloadPath, algorithm, tag string) (string, error) {
+	p, err := readAlgorithmPayload(payloadPath)
 	if err != nil {
 		return "", err
 	}
@@ -80,36 +78,21 @@ func runRun(algorithmService Service, fileOp Operations, algorithm, tag string) 
 	return response, nil
 }
 
-func readAlgorithmPayload(fileOp Operations) (algorithmClient.Payload, error) {
+func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 	var p = algorithmClient.Payload{
 		AlgorithmParameters: nil,
 		AlgorithmName:       "",
 		CustomConfiguration: algorithmClient.CustomConfiguration{},
 		Tag:                 "",
 	}
-	if fileOp.IsValidPath() {
-		content, err := fileOp.ReadJSONFile()
-		if err != nil {
-			return p, fmt.Errorf("failed to read JSON file: %w", err)
-		}
-		c, err := json.Marshal(content)
-		if err != nil {
-			return p, fmt.Errorf("error marshaling content from file: %w", err)
-		}
-		var userPayload *Payload
-		if err = json.Unmarshal(c, &userPayload); err != nil {
-			return p, fmt.Errorf("error unmarshaling content to algorithm.userPayload: %w", err)
-		}
-
-		crystalPayload, _ := json.Marshal(userPayload)
-		fmt.Println(string(crystalPayload))
-
-		var payload *algorithmClient.Payload
-
-		if err = json.Unmarshal(crystalPayload, &payload); err != nil {
-			return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
-		}
-		return *payload, nil
+	if payloadPath == "" {
+		return p, nil
 	}
-	return p, fmt.Errorf("payload path is not valid")
+	f := file.File{FilePath: payloadPath}
+	var payload algorithmClient.Payload
+	err := f.ReadAndUnmarshal(&payload)
+	if err != nil {
+		return p, fmt.Errorf("error unmarshaling content to algorithm.Payload: %w", err)
+	}
+	return payload, nil
 }
