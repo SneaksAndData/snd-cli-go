@@ -54,23 +54,23 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 
 <pre><code>
 {
- "client_tag": "<string> - A tag for the client making the submission",
- "extra_arguments": "<object> - Any additional arguments for the job",
+ "client_tag": "&lt;string&gt; - A tag for the client making the submission",
+ "extra_arguments": "&lt;object&gt; - Any additional arguments for the job",
  "project_inputs": [{
-	"alias": "<string>  - An alias for the input",
-	"data_path": "<string> - The path to the input data",
-	"data_format": "<string> - The format of the input data"
+	"alias": "&lt;string&gt;  - An alias for the input",
+	"data_path": "&lt;string&gt; - The path to the input data",
+	"data_format": "&lt;string&gt; - The format of the input data"
 	}
 		// More input objects can be added here
 	],
  "project_outputs": [{
-	"alias": "<string> - An alias for the output",
-	"data_path": "<string> - The path where the output data should be stored",
-	"data_format": "<string> - The format of the output data"
+	"alias": "&lt;string&gt; - An alias for the output",
+	"data_path": "&lt;string&gt; - The path where the output data should be stored",
+	"data_format": "&lt;string&gt; - The format of the output data"
 	}
 		// More output objects can be added here
 	],
- "expected_parallelism": "<integer> - The expected level of parallelism for the job"
+ "expected_parallelism": "&lt;integer&gt; - The expected level of parallelism for the job"
 }
 </code></pre>
 

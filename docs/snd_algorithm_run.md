@@ -6,25 +6,26 @@ The payload should be provided as a JSON file with the structure below.
 
 <pre><code>
 {
- "algorithm_name": "<i>&lt;string&gt;</i>  (optional) - The name of the algorithm to run",
- "algorithm_parameters": "<object> (required) - Any additional parameters for the algorithm",
+ "algorithm_name": "&lt;string&gt;  (optional) - The name of the algorithm to run",
+ "algorithm_parameters": "&lt;object&gt; (required) - Any additional parameters for the algorithm",
  "custom_configuration": {
-	"image_repository": <i>&lt;string&gt;</i>,
-    "image_tag": <i>&lt;string&gt;</i>,
-    "deadline_seconds": <i>&lt;int&gt;</i>,
-    "maximum_retries": <i>&lt;int&gt;</i>,
-	"env": {"name": <i>&lt;string&gt;</i>, "value": <i>&lt;string&gt;</i>, "value_from": "PLAIN" | "RELATIVE_REFERENCE"}
-	"secrets": <string[]>,
-	"args": {"name": <i>&lt;string&gt;</i>, "value": <i>&lt;string&gt;</i>, "value_from": "PLAIN" | "RELATIVE_REFERENCE"},
-    "cpu_limit": <i>&lt;string&gt;</i>,
-    "memory_limit": <i>&lt;string&gt;</i>,
-	"workgroup": <i>&lt;string&gt;</i>,
-	"additional_workgroups": <map[string]string>,
-	"version": <i>&lt;string&gt;</i>,
-    "monitoring_parameters": <i>&lt;[]string&gt;</i>,
-	"custom_resources": <i>&lt;map[string]string&gt;</i>,
-    "speculative_attempts": int,},- <CustomConfiguration> (optional) - Custom configuration for the algorithm",
- "tag": "<i>&lt;string&gt;</i> (optional) - Client-side submission identifier"
+	"image_repository": &lt;string&gt;,
+	"image_tag": &lt;string&gt;,
+	"deadline_seconds": &lt;int&gt;,
+	"maximum_retries": &lt;int&gt;,
+	"env": {"name": &lt;string&gt;, "value": &lt;string&gt;, "value_from": "PLAIN" | "RELATIVE_REFERENCE"}
+	"secrets":  &lt;string[]&gt;,
+	"args": {"name": &lt;string&gt;, "value": &lt;string&gt;, "value_from": "PLAIN" | "RELATIVE_REFERENCE"},
+	"cpu_limit": &lt;string&gt;,
+	"memory_limit": &lt;string&gt;,
+	"workgroup": &lt;string&gt;,
+	"additional_workgroups": &lt;map[string]string&gt;,
+	"version": &lt;string&gt;,
+	"monitoring_parameters": &lt;string[]&gt;,
+	"custom_resources": &lt;map[string]string&gt;,
+	"speculative_attempts": int
+} - &lt;CustomConfiguration&gt; (optional) - Custom configuration for the algorithm",
+ "tag": "&lt;string&gt; (optional) - Client-side submission identifier"
 }
 </code></pre>
 
