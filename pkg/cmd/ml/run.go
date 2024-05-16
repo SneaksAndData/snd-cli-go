@@ -5,7 +5,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
-	"log/slog"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
 )
@@ -56,6 +56,13 @@ The payload should be provided as a JSON file with the structure below.
 
 	cmd.Flags().StringVarP(&config.Payload, "payload", "p", "", "Path to the payload JSON file")
 	cmd.Flags().StringVarP(&config.Tag, "tag", "t", "", "Client-side submission identifier")
+
+	err := cmd.MarkFlagRequired("payload")
+	if err != nil {
+		fmt.Println("failed to mark 'payload' as a required flag: %w", err)
+		return nil
+	}
+
 	return cmd
 }
 
@@ -69,8 +76,6 @@ func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory
 	if err != nil {
 		return err
 	}
-	fmt.Println("config")
-	fmt.Println(config)
 
 	resp, err := runAlgorithm(service.(*algorithmClient.Service), config.Payload, algorithm, config.Tag)
 	if err != nil {
@@ -78,7 +83,6 @@ func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory
 	}
 
 	fmt.Println(resp)
-	slog.Info("Run completed successfully", "response", resp)
 	return nil
 }
 
@@ -110,14 +114,13 @@ func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 	f := file.File{FilePath: payloadPath}
 
 	var userPayload *Payload
-
 	err := f.ReadAndUnmarshal(&userPayload)
 	if err != nil {
 		return p, err
 	}
 
 	var payload algorithmClient.Payload
-	err = file.ConvertStruct(*userPayload, &payload)
+	err = util.ConvertStruct(*userPayload, &payload)
 	if err != nil {
 		return p, err
 	}

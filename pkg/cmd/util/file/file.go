@@ -82,15 +82,6 @@ func GenerateFilePathWithBaseHome(folderName, fileName string) (string, error) {
 
 // ReadAndUnmarshal reads a JSON file from the provided path,
 // marshals the content into a JSON string, and then unmarshal into the provided interface{}.
-// The function checks if the provided path is valid, reads the JSON file,
-// marshals the content, checks if the provided interface{} is a non-nil pointer,
-// and finally unmarshal the content into the provided interface{}.
-//
-// Parameters:
-// v: An interface{} that should be a non-nil pointer to the structure into which the content will be unmarshalled.
-//
-// Returns:
-// error: An error that will be nil if no errors occurred during the process.
 func (f File) ReadAndUnmarshal(v interface{}) error {
 	if !f.IsValidPath() {
 		return fmt.Errorf("invalid file path")
@@ -114,26 +105,6 @@ func (f File) ReadAndUnmarshal(v interface{}) error {
 	err = json.Unmarshal(c, v)
 	if err != nil {
 		return fmt.Errorf("error unmarshaling content: %w", err)
-	}
-	fmt.Println("Payload content")
-	fmt.Println(string(c))
-
-	return nil
-}
-
-// ConvertStruct is a function that converts one struct to another struct.
-// It takes two parameters: the original struct and the target struct.
-// The function first marshals the original struct into a JSON string, then it unmarshals that JSON string into the target struct.
-// This function is useful when you have two structs with the same structure but different JSON keys.
-func ConvertStruct(original interface{}, target interface{}) error {
-	originalJSON, err := json.Marshal(original)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(originalJSON, target)
-	if err != nil {
-		return err
 	}
 
 	return nil

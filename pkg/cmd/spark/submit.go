@@ -7,6 +7,7 @@ import (
 	sparkClient "github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"os"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
 	"strings"
@@ -72,6 +73,12 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 	cmd.Flags().StringVarP(&overrides, "overrides", "o", "", "Overrides for the provided job name")
 	cmd.Flags().StringVarP(&clientTag, "client-tag", "t", "", "Client tag for this submission")
 
+	err := cmd.MarkFlagRequired("job-name")
+	if err != nil {
+		fmt.Println("failed to mark 'job-name' as a required flag: %w", err)
+		return nil
+	}
+
 	return cmd
 }
 
@@ -89,7 +96,7 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	}
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
-		return "", fmt.Errorf("failed to submit job: %w \n", err)
+		return "", err
 	}
 	return response, nil
 }
@@ -106,15 +113,15 @@ func getOverrides(overrides string) (sparkClient.JobParams, error) {
 		return dp, nil
 	}
 	f := file.File{FilePath: overrides}
-	var userPayload *JobParams
 
+	var userPayload *JobParams
 	err := f.ReadAndUnmarshal(&userPayload)
 	if err != nil {
 		return dp, err
 	}
 
 	var payload sparkClient.JobParams
-	err = file.ConvertStruct(*userPayload, &payload)
+	err = util.ConvertStruct(*userPayload, &payload)
 	if err != nil {
 		return dp, err
 	}
