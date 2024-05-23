@@ -84,7 +84,7 @@ func GenerateFilePathWithBaseHome(folderName, fileName string) (string, error) {
 // marshals the content into a JSON string, and then unmarshal into the provided interface{}.
 func (f File) ReadAndUnmarshal(v interface{}) error {
 	if !f.IsValidPath() {
-		return fmt.Errorf("invalid file path")
+		return fmt.Errorf("invalid file path %s", f.FilePath)
 	}
 
 	content, err := f.ReadJSONFile()
