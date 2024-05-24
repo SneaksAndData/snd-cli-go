@@ -38,8 +38,8 @@ type tokenCache struct {
 }
 
 // NewProvider creates a new instance of Provider using the provided AuthService.
-// The AuthService is used to obtain authentication tokens when they are not
-// available in the cache or have expired.
+// The AuthService is used to obtain authentication tokens when they are not available in the cache or have expired.
+// The env parameter is used to ensure that the token is valid for the correct environment.
 func NewProvider(authService AuthService, env string) (*Provider, error) {
 	filePath, err := file.GenerateFilePathWithBaseHome(folder, tokenFileName)
 	if err != nil {
@@ -84,7 +84,7 @@ func (p *Provider) getTokenFromCache() error {
 		return err // Invalid cache, possibly corrupted.
 	}
 
-	// Check if the token in cache is still valid.
+	// Check if the token in cache is still valid and for the correct environment.
 	if time.Now().Before(cache.TTL) && cache.Env == p.env {
 		p.token = cache.Token
 		p.ttl = cache.TTL
