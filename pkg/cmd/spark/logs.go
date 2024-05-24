@@ -2,6 +2,7 @@ package spark
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"snd-cli/pkg/cmdutil"
 	"strings"
@@ -13,8 +14,9 @@ var trimLog bool
 
 func NewCmdLogs(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "logs",
-		Short: "Get logs from a Spark Job",
+		Use:     "logs",
+		Short:   heredoc.Doc(`Get logs from a Spark Job`),
+		Example: heredoc.Doc(`snd spark logs --id 14abbec-e517-4135-bf01-fc041a4e`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

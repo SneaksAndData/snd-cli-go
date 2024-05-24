@@ -2,6 +2,7 @@ package spark
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -9,8 +10,9 @@ import (
 
 func NewCmdRequestStatus(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "request-status",
-		Short: "Get the status of a Spark Job",
+		Use:     "request-status",
+		Short:   heredoc.Doc(`Get the status of a Spark Job`),
+		Example: heredoc.Doc(`snd spark request-status --id 14abbec-e517-4135-bf01-fc041a4e`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

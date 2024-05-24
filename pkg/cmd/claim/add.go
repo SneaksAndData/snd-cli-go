@@ -2,6 +2,7 @@ package claim
 
 import (
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -12,8 +13,9 @@ var ca []string
 
 func NewCmdAddClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add",
-		Short: "Add a new claim to an existing user",
+		Use:     "add",
+		Short:   heredoc.Doc(`Add a new claim to an existing user`),
+		Example: heredoc.Doc(`snd claim add -c "service.test.sneaksanddata.com/.*:.*" -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

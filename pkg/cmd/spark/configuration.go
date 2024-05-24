@@ -3,6 +3,7 @@ package spark
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
@@ -12,8 +13,12 @@ var name string
 
 func NewCmdConfiguration(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configuration",
-		Short: "Get a deployed SparkJob configuration",
+		Use: "configuration",
+		Short: heredoc.Doc(`Get a deployed SparkJob configuration.
+
+The name of the SparkJob should be provided as an argument.
+`),
+		Example: heredoc.Doc(`snd spark configuration --name common-kit-hive-publish`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {

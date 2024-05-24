@@ -3,12 +3,8 @@
 set -e
 echo "Determining target OS and architecture..."
 ARCH=$(uname -m)
-if [[ "$OSTYPE" =~ ^darwin ]]; then
-     if [[ "$ARCH" =~ arm64 ]]; then
-        bin_name=snd-darwin-arm64
-      elif [[ "$ARCH" =~ (amd64|x86_64|x64) ]]; then
-        bin_name=snd-darwin-amd64
-      fi
+if [[ "$OSTYPE" =~ ^darwin  &&  "$ARCH" =~ arm64 ]]; then
+    bin_name=snd-darwin-arm64
 elif [[ "$OSTYPE" =~ ^linux ]]; then
   if [[ "$ARCH" =~ arm64 ]]; then
     bin_name=snd-linux-arm64

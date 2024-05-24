@@ -2,11 +2,12 @@ package spark
 
 import (
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
-	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"github.com/MakeNowJust/heredoc"
+	sparkClient "github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
 	"os"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
 	"strings"
@@ -17,8 +18,37 @@ var overrides string
 
 func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "submit",
-		Short: "Runs the provided Beast V3 job with optional overrides",
+		Use: "submit",
+		Short: heredoc.Doc(`Runs the provided Beast V3 job with optional overrides
+
+The overrides should be provided as a JSON file with the structure below.
+
+If the 'clientTag' is not provided, a random tag will be generated.
+
+If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism' are not provided, the job will run with the default arguments.
+
+<pre><code>
+{
+ "client_tag": "&lt;string&gt; - A tag for the client making the submission",
+ "extra_arguments": "&lt;object&gt; - Any additional arguments for the job",
+ "project_inputs": [{
+	"alias": "&lt;string&gt;  - An alias for the input",
+	"data_path": "&lt;string&gt; - The path to the input data",
+	"data_format": "&lt;string&gt; - The format of the input data"
+	}
+		// More input objects can be added here
+	],
+ "project_outputs": [{
+	"alias": "&lt;string&gt; - An alias for the output",
+	"data_path": "&lt;string&gt; - The path where the output data should be stored",
+	"data_format": "&lt;string&gt; - The format of the output data"
+	}
+		// More output objects can be added here
+	],
+ "expected_parallelism": "&lt;integer&gt; - The expected level of parallelism for the job"
+}
+</code></pre>
+`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
 			if err != nil {
@@ -31,7 +61,7 @@ func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 			if err != nil {
 				return err
 			}
-			resp, err := submitRun(service.(*spark.Service), overrides, jobName)
+			resp, err := submitRun(service.(*sparkClient.Service), overrides, jobName)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -42,6 +72,12 @@ func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 	cmd.Flags().StringVarP(&jobName, "job-name", "n", "", "Beast SparkJob or SparkJobReference resource name")
 	cmd.Flags().StringVarP(&overrides, "overrides", "o", "", "Overrides for the provided job name")
 	cmd.Flags().StringVarP(&clientTag, "client-tag", "t", "", "Client tag for this submission")
+
+	err := cmd.MarkFlagRequired("job-name")
+	if err != nil {
+		fmt.Println("failed to mark 'job-name' as a required flag: %w", err)
+		return nil
+	}
 
 	return cmd
 }
@@ -60,13 +96,13 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	}
 	response, err := sparkService.RunJob(params, jobName)
 	if err != nil {
-		return "", fmt.Errorf("failed to submit job: %w \n", err)
+		return "", err
 	}
 	return response, nil
 }
 
-func getOverrides(overrides string) (spark.JobParams, error) {
-	var dp = spark.JobParams{
+func getOverrides(overrides string) (sparkClient.JobParams, error) {
+	var dp = sparkClient.JobParams{
 		ClientTag:           "",
 		ExtraArguments:      nil,
 		ProjectInputs:       nil,
@@ -78,32 +114,19 @@ func getOverrides(overrides string) (spark.JobParams, error) {
 	}
 	f := file.File{FilePath: overrides}
 
-	if f.IsValidPath() {
-		content, err := f.ReadJSONFile()
-		if err != nil {
-			return dp, fmt.Errorf("failed to read JSON file '%s': %w", overrides, err)
-		}
-		var params *spark.JobParams
-		c, err := json.Marshal(content)
-		if err != nil {
-			return dp, fmt.Errorf("error marshaling content from file '%s': %w", overrides, err)
-		}
-		err = json.Unmarshal(c, &params)
-		if err != nil {
-			return dp, fmt.Errorf("error unmarshaling content to spark.JobParams: %w", err)
-		}
-		return *params, nil
-	}
-	var params *spark.JobParams
-	c, err := json.Marshal(overrides)
+	var userPayload *JobParams
+	err := f.ReadAndUnmarshal(&userPayload)
 	if err != nil {
-		return dp, fmt.Errorf(err.Error())
+		return dp, err
 	}
-	err = json.Unmarshal(c, &params)
+
+	var payload sparkClient.JobParams
+	err = util.ConvertStruct(*userPayload, &payload)
 	if err != nil {
-		return dp, fmt.Errorf(err.Error())
+		return dp, err
 	}
-	return *params, nil
+
+	return payload, nil
 }
 
 func generateTag() (string, error) {
