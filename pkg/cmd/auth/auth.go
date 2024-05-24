@@ -44,7 +44,7 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 }
 
 func loginRun(authService token.AuthService) error {
-	tokenProvider, err := token.NewProvider(authService)
+	tokenProvider, err := token.NewProvider(authService, env)
 	if err != nil {
 		return fmt.Errorf("unable to create token provider: %w", err)
 	}

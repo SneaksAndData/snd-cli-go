@@ -102,7 +102,7 @@ func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl stri
 }
 
 func initClaimService(env, boxerClaimURL string, authService token.AuthService) (*claim.Service, error) {
-	tp, err := token.NewProvider(authService)
+	tp, err := token.NewProvider(authService, env)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
@@ -119,7 +119,7 @@ func initClaimService(env, boxerClaimURL string, authService token.AuthService) 
 }
 
 func initAlgorithmService(env, crystalURL string, authService token.AuthService) (*algorithm.Service, error) {
-	tp, err := token.NewProvider(authService)
+	tp, err := token.NewProvider(authService, env)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
@@ -138,7 +138,7 @@ func initAlgorithmService(env, crystalURL string, authService token.AuthService)
 }
 
 func initSparkService(env, beastURL string, authService token.AuthService) (*spark.Service, error) {
-	tp, err := token.NewProvider(authService)
+	tp, err := token.NewProvider(authService, env)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
