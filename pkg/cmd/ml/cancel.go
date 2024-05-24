@@ -42,6 +42,17 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 		fmt.Println("failed to mark 'id' as a required flag: %w", err)
 		return nil
 	}
+	err = cmd.MarkFlagRequired("initiator")
+	if err != nil {
+		fmt.Println("failed to mark 'initiator' as a required flag: %w", err)
+		return nil
+	}
+
+	err = cmd.MarkFlagRequired("reason")
+	if err != nil {
+		fmt.Println("failed to mark 'reason' as a required flag: %w", err)
+		return nil
+	}
 
 	return cmd
 }

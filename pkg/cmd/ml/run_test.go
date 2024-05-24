@@ -13,6 +13,7 @@ func Test_runRun(t *testing.T) {
 		name               string
 		algorithm          string
 		tag                string
+		payloadPath        string
 		mockFileOpErr      error
 		mockFileOpResponse map[string]interface{}
 		mockResponse       string
@@ -24,9 +25,10 @@ func Test_runRun(t *testing.T) {
 			name:               "Success Case",
 			algorithm:          "replenishment",
 			tag:                "tag1",
+			payloadPath:        "",
 			mockFileOpErr:      nil,
 			mockFileOpResponse: map[string]interface{}{"request": "request1"},
-			mockResponse:       "{\"requestId\":\"abc-123\",\"status\":\"FAILED\",\"resultUri\":null,\"runErrorMessage\":\"CB000: Scheduling timeout.\"}\n",
+			mockResponse:       "Run successful",
 			mockServiceErr:     nil,
 			expectedErr:        false,
 			expectedResp:       "Run successful",
@@ -35,6 +37,7 @@ func Test_runRun(t *testing.T) {
 			name:               "Failure Case - Service Error",
 			algorithm:          "replenishment",
 			tag:                "",
+			payloadPath:        "",
 			mockFileOpResponse: map[string]interface{}{},
 			mockResponse:       "",
 			mockFileOpErr:      nil,
@@ -46,32 +49,17 @@ func Test_runRun(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Mock the Service interface
 			mockService := new(mocks.Service)
-			mockOperations := new(mocks.Operations)
+			mockService.On("CreateRun", tc.algorithm, mock.Anything, tc.tag).Return(tc.mockResponse, tc.mockServiceErr)
 
-			if tc.mockServiceErr == nil {
-				mockService.On("CreateRun", tc.algorithm, mock.Anything, tc.tag).Return(tc.mockResponse, nil)
-			} else {
-				mockService.On("CreateRun", tc.algorithm, mock.Anything, tc.tag).Return("", tc.mockServiceErr)
-			}
-
-			// Configure mock behavior
-			if tc.mockFileOpErr == nil {
-				mockOperations.On("ReadJSONFile").Return(tc.mockFileOpResponse, nil)
-			} else {
-				mockOperations.On("ReadJSONFile").Return(map[string]interface{}{}, tc.mockFileOpErr)
-			}
-
-			mockOperations.On("IsValidPath").Return(true, nil)
-
-			_, err := runRun(mockService, mockOperations, tc.algorithm, tc.tag)
+			resp, err := runAlgorithm(mockService, tc.payloadPath, tc.algorithm, tc.tag)
 
 			if tc.expectedErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
+				assert.Equal(t, tc.expectedResp, resp)
 			}
 
-			mockOperations.AssertExpectations(t)
 			mockService.AssertExpectations(t)
 		})
 	}
