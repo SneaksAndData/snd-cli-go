@@ -14,7 +14,7 @@ var requestId, initiator, reason string
 func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "cancel",
-		Short:   heredoc.Doc(`Cancel a ML Algorithm run"`),
+		Short:   heredoc.Doc(`Cancel a ML Algorithm run`),
 		Example: heredoc.Doc(`snd algorithm cancel --id 762b07c-c67a-4327-970a-18d923fd --algorithm rdc-auto-replenishment-crystal-orchestrator -e production`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
@@ -40,6 +40,17 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 	err := cmd.MarkFlagRequired("id")
 	if err != nil {
 		fmt.Println("failed to mark 'id' as a required flag: %w", err)
+		return nil
+	}
+	err = cmd.MarkFlagRequired("initiator")
+	if err != nil {
+		fmt.Println("failed to mark 'initiator' as a required flag: %w", err)
+		return nil
+	}
+
+	err = cmd.MarkFlagRequired("reason")
+	if err != nil {
+		fmt.Println("failed to mark 'reason' as a required flag: %w", err)
 		return nil
 	}
 

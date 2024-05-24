@@ -7,12 +7,15 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 )
 
+// File represents a file on the filesystem.
 type File struct {
 	FilePath string
 }
 
+// ReadJSONFile reads the JSON file from the file path.
 func (f File) ReadJSONFile() (map[string]interface{}, error) {
 	data, err := os.ReadFile(f.FilePath)
 	if err != nil {
@@ -37,7 +40,7 @@ func (f File) IsValidPath() bool {
 
 // CreateDirectory creates a directory by using the specified path.
 func (f File) CreateDirectory() error {
-	err := os.MkdirAll(path.Dir(f.FilePath), 0755) // Use MkdirAll to simplify
+	err := os.MkdirAll(path.Dir(f.FilePath), 0755)
 	if err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
@@ -75,4 +78,34 @@ func GenerateFilePathWithBaseHome(folderName, fileName string) (string, error) {
 	}
 	dirPath := filepath.Join(homeDir, folderName) // Use the provided folder name
 	return filepath.Join(dirPath, fileName), nil  // Use the provided file name
+}
+
+// ReadAndUnmarshal reads a JSON file from the provided path,
+// marshals the content into a JSON string, and then unmarshal into the provided interface{}.
+func (f File) ReadAndUnmarshal(v interface{}) error {
+	if !f.IsValidPath() {
+		return fmt.Errorf("invalid file path %s", f.FilePath)
+	}
+
+	content, err := f.ReadJSONFile()
+	if err != nil {
+		return fmt.Errorf("failed to read JSON file: %w", err)
+	}
+
+	c, err := json.Marshal(content)
+	if err != nil {
+		return fmt.Errorf("error marshaling content from file: %w", err)
+	}
+
+	rv := reflect.ValueOf(v)
+	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+		return fmt.Errorf("non-nil pointer required for unmarshaling")
+	}
+
+	err = json.Unmarshal(c, v)
+	if err != nil {
+		return fmt.Errorf("error unmarshaling content: %w", err)
+	}
+
+	return nil
 }
