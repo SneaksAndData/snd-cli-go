@@ -102,9 +102,9 @@ func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl stri
 }
 
 func initClaimService(env, boxerClaimURL string, authService token.AuthService) (*claim.Service, error) {
-	tp, err := token.NewProvider(authService)
+	tp, err := createTokenProvider(env, authService)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create token provider: %w", err)
+		return nil, err
 	}
 	url := processURL(boxerClaimURL, env)
 	config := claim.Config{
@@ -119,9 +119,9 @@ func initClaimService(env, boxerClaimURL string, authService token.AuthService) 
 }
 
 func initAlgorithmService(env, crystalURL string, authService token.AuthService) (*algorithm.Service, error) {
-	tp, err := token.NewProvider(authService)
+	tp, err := createTokenProvider(env, authService)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create token provider: %w", err)
+		return nil, err
 	}
 	url := processURL(crystalURL, env)
 	config := algorithm.Config{
@@ -138,9 +138,9 @@ func initAlgorithmService(env, crystalURL string, authService token.AuthService)
 }
 
 func initSparkService(env, beastURL string, authService token.AuthService) (*spark.Service, error) {
-	tp, err := token.NewProvider(authService)
+	tp, err := createTokenProvider(env, authService)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create token provider: %w", err)
+		return nil, err
 	}
 	url := processURL(beastURL, env)
 	config := spark.Config{
@@ -173,4 +173,13 @@ func containsSubdomain(url string, subdomainMap map[string]string) (string, stri
 		}
 	}
 	return "", "" // No match found
+}
+
+// createTokenProvider initializes a token.Provider with the given environment and AuthService.
+func createTokenProvider(env string, authService token.AuthService) (*token.Provider, error) {
+	tp, err := token.NewProvider(authService, env)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create token provider: %w", err)
+	}
+	return tp, nil
 }

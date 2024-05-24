@@ -24,6 +24,7 @@ type AuthService interface {
 type Provider struct {
 	token       string      // token holds the most recent authentication token obtained.
 	ttl         time.Time   // ttl represents the time-to-live for the current token.
+	env         string      // env represents the environment for which the token was obtained.
 	authService AuthService // authService is an instance of AuthService used to obtain authentication tokens when required.
 	cachePath   file.File   // path to the file where the token will be cached
 }
@@ -33,12 +34,13 @@ type Provider struct {
 type tokenCache struct {
 	Token string    `json:"token"`
 	TTL   time.Time `json:"ttl"`
+	Env   string    `json:"env"`
 }
 
 // NewProvider creates a new instance of Provider using the provided AuthService.
-// The AuthService is used to obtain authentication tokens when they are not
-// available in the cache or have expired.
-func NewProvider(authService AuthService) (*Provider, error) {
+// The AuthService is used to obtain authentication tokens when they are not available in the cache or have expired.
+// The env parameter is used to ensure that the token is valid for the correct environment.
+func NewProvider(authService AuthService, env string) (*Provider, error) {
 	filePath, err := file.GenerateFilePathWithBaseHome(folder, tokenFileName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate the path for token cache: %w", err)
@@ -46,6 +48,7 @@ func NewProvider(authService AuthService) (*Provider, error) {
 	return &Provider{
 		authService: authService,
 		cachePath:   file.File{FilePath: filePath},
+		env:         env,
 	}, nil
 }
 
@@ -54,6 +57,7 @@ func (p *Provider) saveTokenToCache() error {
 	t := tokenCache{
 		Token: p.token,
 		TTL:   p.ttl,
+		Env:   p.env,
 	}
 	data, err := json.Marshal(t)
 	if err != nil {
@@ -80,14 +84,14 @@ func (p *Provider) getTokenFromCache() error {
 		return err // Invalid cache, possibly corrupted.
 	}
 
-	// Check if the token in cache is still valid.
-	if time.Now().Before(cache.TTL) {
+	// Check if the token in cache is still valid and for the correct environment.
+	if time.Now().Before(cache.TTL) && cache.Env == p.env {
 		p.token = cache.Token
 		p.ttl = cache.TTL
 		return nil
 	}
 
-	return errors.New("token expired")
+	return errors.New("token expired or environment mismatch")
 }
 
 // GetToken checks the current token's validity and returns it if it's still valid.
