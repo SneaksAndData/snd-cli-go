@@ -53,7 +53,7 @@ func TestSubmitRun(t *testing.T) {
 
 			mockService.On("RunJob", mock.AnythingOfType("spark.JobParams"), tc.jobName).Return(tc.mockRunJobResp, tc.mockRunJobErr)
 
-			resp, err := submitRun(mockService, tc.overrides, tc.jobName)
+			resp, err := submitRun(mockService, tc.overrides, tc.jobName, "")
 
 			if tc.expectedError {
 				assert.Error(t, err)
