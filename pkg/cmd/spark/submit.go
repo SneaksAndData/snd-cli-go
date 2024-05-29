@@ -10,11 +10,12 @@ import (
 	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmd/util/file"
 	"snd-cli/pkg/cmdutil"
+	"strconv"
 	"strings"
 )
 
-var jobName, clientTag string
-var overrides string
+var jobName, clientTag, overrides string
+var overwrite bool
 
 func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
@@ -58,10 +59,11 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 			if err != nil {
 				return err
 			}
-			if err != nil {
-				return err
+			overwriteFlagValue := ""
+			if cmd.Flags().Changed("overwrite") {
+				overwriteFlagValue = strconv.FormatBool(overwrite)
 			}
-			resp, err := submitRun(service.(*sparkClient.Service), overrides, jobName)
+			resp, err := submitRun(service.(*sparkClient.Service), overrides, jobName, overwriteFlagValue)
 			if err == nil {
 				fmt.Println(resp)
 			}
@@ -72,6 +74,7 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 	cmd.Flags().StringVarP(&jobName, "job-name", "n", "", "Beast SparkJob or SparkJobReference resource name")
 	cmd.Flags().StringVarP(&overrides, "overrides", "o", "", "Overrides for the provided job name")
 	cmd.Flags().StringVarP(&clientTag, "client-tag", "t", "", "Client tag for this submission")
+	cmd.Flags().BoolVarP(&overwrite, "overwrite", "", false, "Overwrite the existing job if it exists")
 
 	err := cmd.MarkFlagRequired("job-name")
 	if err != nil {
@@ -82,8 +85,8 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 	return cmd
 }
 
-func submitRun(sparkService Service, overrides, jobName string) (string, error) {
-	params, err := getOverrides(overrides)
+func submitRun(sparkService Service, overrides, jobName, overwrite string) (string, error) {
+	params, err := getOverrides(overrides, overwrite)
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +104,7 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	return response, nil
 }
 
-func getOverrides(overrides string) (sparkClient.JobParams, error) {
+func getOverrides(overrides, overwrite string) (sparkClient.JobParams, error) {
 	var dp = sparkClient.JobParams{
 		ClientTag:           "",
 		ExtraArguments:      nil,
@@ -119,11 +122,13 @@ func getOverrides(overrides string) (sparkClient.JobParams, error) {
 	if err != nil {
 		return dp, err
 	}
-
 	var payload sparkClient.JobParams
 	err = util.ConvertStruct(*userPayload, &payload)
 	if err != nil {
 		return dp, err
+	}
+	if overwrite != "" {
+		payload.ExtraArguments["overwrite"] = overwrite
 	}
 
 	return payload, nil
