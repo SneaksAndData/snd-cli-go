@@ -54,7 +54,7 @@ snd algorithm run --algorithm rdc-auto-replenishment-crystal-orchestrator --payl
       --algorithm string            Specify the algorithm name
   -a, --auth-provider string        Specify the OAuth provider name (default "azuread")
       --custom-service-url string   Specify the service url (default "https://crystal.%s.sneaksanddata.com")
-  -e, --env string                  Target environment (default "test")
+  -e, --env string                  Target environment (default "awsd")
       --gen-docs                    Generate Markdown documentation for all commands
 ```
 

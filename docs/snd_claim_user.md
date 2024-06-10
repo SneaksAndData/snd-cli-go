@@ -14,7 +14,7 @@ Manage (add/remove) a user
   -a, --auth-provider string        Specify the OAuth provider name (default "azuread")
       --claims-provider string      Specify the claim provider
       --custom-service-url string   Specify the service url (default "https://boxer-claim.%s.sneaksanddata.com")
-  -e, --env string                  Target environment (default "test")
+  -e, --env string                  Target environment (default "awsd")
       --gen-docs                    Generate Markdown documentation for all commands
   -u, --user string                 Specify the user ID
 ```

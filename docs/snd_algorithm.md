@@ -22,7 +22,7 @@ $ snd algorithm cancel --id fa1d02af-c294-4bf6-989f-1234 --algorithm store-auto-
       --algorithm string            Specify the algorithm name
   -a, --auth-provider string        Specify the OAuth provider name (default "azuread")
       --custom-service-url string   Specify the service url (default "https://crystal.%s.sneaksanddata.com")
-  -e, --env string                  Target environment (default "test")
+  -e, --env string                  Target environment (default "awsd")
   -h, --help                        help for algorithm
 ```
 

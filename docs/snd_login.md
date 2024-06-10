@@ -13,8 +13,8 @@ snd login [flags]
 ### Examples
 
 ```
-$ snd login -a azuread -e test
-$ snd login --auth-provider azuread --env production
+$ snd login -a azuread -e awsd
+$ snd login --auth-provider azuread --env awsp
 
 ```
 
@@ -24,7 +24,7 @@ $ snd login --auth-provider azuread --env production
   -a, --auth-provider k8s   Specify the OAuth provider name 
                             For in-cluster Kubernetes auth specify name of your kubernetes cluster context prefixed with k8s
                             for example `k8s-esd-airflow-dev-0` (default "azuread")
-  -e, --env string          Target environment (default "test")
+  -e, --env string          Target environment (default "awsd")
   -h, --help                help for login
 ```
 
