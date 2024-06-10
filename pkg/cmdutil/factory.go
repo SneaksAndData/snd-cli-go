@@ -10,13 +10,6 @@ import (
 	"strings"
 )
 
-var EnvironmentToSubdomain = map[string]string{
-	"test":       "awsd",
-	"production": "awsp",
-	"awsd":       "awsd",
-	"awsp":       "awsp",
-}
-
 const boxerURL = "https://boxer.%s.sneaksanddata.com"
 
 // AuthServiceFactory is responsible for creating instances of AuthService.
@@ -48,10 +41,6 @@ func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Serv
 // InitializeAuthService initializes the AuthService based on a URL and an AuthProvider.
 // It checks the URL for a known subdomain to determine the environment.
 func InitializeAuthService(url, env, authProvider string, authServiceFactory AuthServiceFactory) (*auth.Service, error) {
-	matchedUrl, matchedEnv := containsSubdomain(url, EnvironmentToSubdomain)
-	if matchedUrl != "" {
-		env = matchedEnv
-	}
 	return authServiceFactory.CreateAuthService(env, authProvider)
 }
 
@@ -77,7 +66,7 @@ func NewConcreteServiceFactory() *ConcreteServiceFactory {
 // Parameters:
 //
 //	serviceType: A string identifier for the type of service to create (e.g., "claim", "algorithm", "spark").
-//	env: The environment in which the service will operate (e.g., "test", "production").
+//	env: The environment in which the service will operate (e.g., "awsd", "awsp", "test", "production").
 //	authService: An instance of AuthService used for authenticating the service's requests.
 //
 // Returns:
@@ -159,16 +148,6 @@ func processURL(url, env string) string {
 		return fmt.Sprintf(url, env)
 	}
 	return url
-}
-
-// containsSubdomain checks if the given URL contains any subdomain as defined in the subdomainMap.
-func containsSubdomain(url string, subdomainMap map[string]string) (string, string) {
-	for key, value := range subdomainMap {
-		if strings.Contains(url, key) {
-			return url, value // Found a match, return the url and environment
-		}
-	}
-	return "", "" // No match found
 }
 
 // createTokenProvider initializes a token.Provider with the given environment and AuthService.

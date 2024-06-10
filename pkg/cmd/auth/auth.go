@@ -37,7 +37,7 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 		"for example `k8s-esd-airflow-dev-0`",
 	}
 
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", strings.Join(helpStr, "\n"))
 
 	return cmd

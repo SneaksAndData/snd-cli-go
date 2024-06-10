@@ -36,7 +36,7 @@ func NewCmdClaim(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 		`),
 		GroupID: "claim",
 	}
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&userId, "user", "u", "", "Specify the user ID")
 	cmd.PersistentFlags().StringVarP(&claimProvider, "claims-provider", "", "", "Specify the claim provider")

@@ -33,7 +33,7 @@ func NewCmdSpark(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 		`),
 		GroupID: "spark",
 	}
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&id, "id", "i", "", "Specify the  Job ID")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", beastURL, "Specify the service url")
