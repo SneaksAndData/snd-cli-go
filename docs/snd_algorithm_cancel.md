@@ -26,6 +26,7 @@ snd algorithm cancel --id 762b07c-c67a-4327-970a-18d923fd --algorithm rdc-auto-r
 ```
       --algorithm string            Specify the algorithm name
   -a, --auth-provider string        Specify the OAuth provider name (default "azuread")
+      --custom-auth-url string      Specify the auth service uri
       --custom-service-url string   Specify the service url (default "https://crystal.%s.sneaksanddata.com")
   -e, --env string                  Target environment (default "awsd")
       --gen-docs                    Generate Markdown documentation for all commands

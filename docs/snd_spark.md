@@ -21,7 +21,8 @@ $ snd spark configuration --name configuration-name
 
 ```
   -a, --auth-provider string        Specify the OAuth provider name (default "azuread")
-      --custom-service-url string   Specify the service url (default "https://beast-v3.%s.sneaksanddata.com")
+      --custom-auth-url string      Specify the auth service uri
+      --custom-service-url string   Specify the service url (default "https://beast.%s.sneaksanddata.com")
   -e, --env string                  Target environment (default "awsd")
   -h, --help                        help for spark
   -i, --id string                   Specify the  Job ID

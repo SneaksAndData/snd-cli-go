@@ -68,7 +68,7 @@ The payload should be provided as a JSON file with the structure below.
 }
 
 func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) error {
-	authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+	authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 	if err != nil {
 		return err
 	}

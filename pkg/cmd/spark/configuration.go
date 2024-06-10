@@ -20,7 +20,7 @@ The name of the SparkJob should be provided as an argument.
 `),
 		Example: heredoc.Doc(`snd spark configuration --name common-kit-hive-publish`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

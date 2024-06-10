@@ -9,7 +9,7 @@ import (
 
 const boxerClaimURL = "https://boxer-claim.%s.sneaksanddata.com"
 
-var env, url, authProvider, userId, claimProvider string
+var env, url, authProvider, userId, claimProvider, authUrl string
 
 type Service interface {
 	AddClaim(user string, provider string, claims []string) (string, error)
@@ -41,6 +41,7 @@ func NewCmdClaim(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 	cmd.PersistentFlags().StringVarP(&userId, "user", "u", "", "Specify the user ID")
 	cmd.PersistentFlags().StringVarP(&claimProvider, "claims-provider", "", "", "Specify the claim provider")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", boxerClaimURL, "Specify the service url")
+	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri")
 
 	cmd.AddCommand(NewCmdUser(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRemoveClaim(authServiceFactory, serviceFactory))

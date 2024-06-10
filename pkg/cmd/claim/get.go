@@ -15,7 +15,7 @@ func NewCmdGetClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 		Short:   heredoc.Doc(`Retrieves claims assigned to an existing user`),
 		Example: heredoc.Doc(`snd claim get -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

@@ -23,7 +23,7 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 		GroupID: "auth",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService(env, provider)
+			authService, err := authServiceFactory.CreateAuthService("", env, provider)
 			if err != nil {
 				return fmt.Errorf("failed to initialize auth service: %w", err)
 			}

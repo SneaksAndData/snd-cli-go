@@ -23,6 +23,7 @@ snd claim get -u user@ecco.com --claims-provider azuread
 ```
   -a, --auth-provider string        Specify the OAuth provider name (default "azuread")
       --claims-provider string      Specify the claim provider
+      --custom-auth-url string      Specify the auth service uri
       --custom-service-url string   Specify the service url (default "https://boxer-claim.%s.sneaksanddata.com")
   -e, --env string                  Target environment (default "awsd")
       --gen-docs                    Generate Markdown documentation for all commands
