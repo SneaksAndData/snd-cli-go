@@ -17,7 +17,7 @@ func NewCmdAddClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 		Short:   heredoc.Doc(`Add a new claim to an existing user`),
 		Example: heredoc.Doc(`snd claim add -c "service.test.sneaksanddata.com/.*:.*" -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

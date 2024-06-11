@@ -11,7 +11,7 @@ import (
 
 const crystalURL = "https://crystal.%s.sneaksanddata.com"
 
-var env, url, authProvider, algorithm string
+var env, url, authProvider, algorithm, authUrl string
 
 type Service interface {
 	RetrieveRun(runID string, algorithmName string) (string, error)
@@ -40,10 +40,11 @@ func NewCmdAlgorithm(serviceFactory cmdutil.ServiceFactory, authServiceFactory *
 		`),
 		GroupID: "ml",
 	}
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&algorithm, "algorithm", "", "", "Specify the algorithm name")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", crystalURL, "Specify the service url")
+	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri")
 
 	err := cmd.MarkPersistentFlagRequired("algorithm")
 	if err != nil {

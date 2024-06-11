@@ -17,7 +17,7 @@ func NewCmdGetPayload(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 		Short:   heredoc.Doc(`Get the payload for a ML Algorithm run`),
 		Example: heredoc.Doc(`snd algorithm payload --id 762b07c-c67a-4327-970a-18d923fd --algorithm rdc-auto-replenishment-crystal-orchestrator -e production`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

@@ -25,9 +25,13 @@ func NewAuthServiceFactory() *AuthServiceFactory {
 // environment (env) and provider. This method configures the AuthService with environment-
 // specific settings, such as the TokenURL, ensuring the AuthService is tailored to operate
 // within the specified environment.
-func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Service, error) {
+func (f *AuthServiceFactory) CreateAuthService(authUrl, env, provider string) (*auth.Service, error) {
+	tokenURL := fmt.Sprintf(boxerURL, env)
+	if authUrl != "" {
+		tokenURL = authUrl
+	}
 	config := auth.Config{
-		TokenURL: fmt.Sprintf(boxerURL, env),
+		TokenURL: tokenURL,
 		Env:      env,
 		Provider: provider,
 	}
@@ -40,8 +44,8 @@ func (f *AuthServiceFactory) CreateAuthService(env, provider string) (*auth.Serv
 
 // InitializeAuthService initializes the AuthService based on a URL and an AuthProvider.
 // It checks the URL for a known subdomain to determine the environment.
-func InitializeAuthService(url, env, authProvider string, authServiceFactory AuthServiceFactory) (*auth.Service, error) {
-	return authServiceFactory.CreateAuthService(env, authProvider)
+func InitializeAuthService(authUrl, env, authProvider string, authServiceFactory AuthServiceFactory) (*auth.Service, error) {
+	return authServiceFactory.CreateAuthService(authUrl, env, authProvider)
 }
 
 // ServiceFactory defines an interface for factories capable of creating different types of services.
@@ -66,7 +70,7 @@ func NewConcreteServiceFactory() *ConcreteServiceFactory {
 // Parameters:
 //
 //	serviceType: A string identifier for the type of service to create (e.g., "claim", "algorithm", "spark").
-//	env: The environment in which the service will operate (e.g., "test", "production").
+//	env: The environment in which the service will operate (e.g., "awsd", "awsp", "test", "production").
 //	authService: An instance of AuthService used for authenticating the service's requests.
 //
 // Returns:

@@ -18,7 +18,7 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		Short:   heredoc.Doc(`Removes a claim from an existing user`),
 		Example: heredoc.Doc(`snd claim remove -c "service.test.sneaksanddata.com/.*:.*" -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

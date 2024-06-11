@@ -27,7 +27,7 @@ func NewCmdAddUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 		Short:   heredoc.Doc(`Add a user`),
 		Example: heredoc.Doc(`snd claim user add -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 		Short:   "Remove a user",
 		Example: heredoc.Doc(`snd claim user remove -u user@ecco.com --claims-provider azuread`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

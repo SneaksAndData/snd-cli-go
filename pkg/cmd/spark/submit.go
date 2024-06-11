@@ -50,7 +50,7 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 </code></pre>
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := cmdutil.InitializeAuthService(url, env, authProvider, *authServiceFactory)
+			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
 				return err
 			}

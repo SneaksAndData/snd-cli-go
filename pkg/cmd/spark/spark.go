@@ -7,9 +7,9 @@ import (
 	"snd-cli/pkg/cmdutil"
 )
 
-const beastURL = "https://beast-v3.%s.sneaksanddata.com"
+const beastURL = "https://beast.%s.sneaksanddata.com"
 
-var env, url, authProvider, id string
+var env, url, authProvider, id, authUrl string
 
 type Service interface {
 	GetConfiguration(name string) (spark.SubmissionConfiguration, error)
@@ -33,10 +33,11 @@ func NewCmdSpark(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 		`),
 		GroupID: "spark",
 	}
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", "test", "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&id, "id", "i", "", "Specify the  Job ID")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", beastURL, "Specify the service url")
+	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri")
 
 	cmd.AddCommand(NewCmdSubmit(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdRuntimeInfo(authServiceFactory, serviceFactory))
