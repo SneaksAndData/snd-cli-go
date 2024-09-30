@@ -9,8 +9,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  release_container_image:
-    name: Release container image
+  release_snd_cli_binary:
+    name: Release Snd-cli binary
 
     permissions:
       contents: read
@@ -18,6 +18,11 @@ jobs:
       pull-requests: write
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ linux, windows, darwin ]
+        arch: [ amd64, arm64 ]
+        
     steps:
       - uses: actions/checkout@v4
         name: Checkout head commit
@@ -38,18 +43,31 @@ jobs:
         uses: SneaksAndData/github-actions/generate_version@v0.1.9
         id: version
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.4.0
+      - name: Cache Go modules
+        uses: actions/cache@v3
         with:
-          use: true
-          platforms: linux/amd64
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6.2.0
+      - name: Setup environment variables
+        run: |
+          echo "GOOS=${{ matrix.os }}" >> $GITHUB_ENV
+          echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+          
+      - name: Build Go binary
+        run: |
+          version=$(git describe --tags --abbrev=7)
+          go build -ldflags="-X 'snd-cli/cmd.Version=$version'" -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli
+      
+      - name: Archive binary
+        run: tar -czvf snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz snd-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Upload binary as artifact
+        uses: actions/upload-artifact@v3
         with:
-          context: .
-          file: .container/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
+          name: snd-${{ matrix.os }}-${{ matrix.arch }}
+          path: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
