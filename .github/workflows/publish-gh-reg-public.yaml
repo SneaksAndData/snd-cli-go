@@ -69,7 +69,16 @@ jobs:
       - name: Archive binary
         run: zip snd-${{ matrix.os }}-${{ matrix.arch }}.zip snd-${{ matrix.os }}-${{ matrix.arch }}
 
-    
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release Snd-Cli ${{ github.ref }}
+          draft: true
+          prerelease: true
           
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -79,4 +88,4 @@ jobs:
           asset_path: snd-${{ matrix.os }}-${{ matrix.arch }}.zip
           asset_name: snd-${{ matrix.os }}-${{ matrix.arch }}.zip
           asset_content_type: application/zip
-          upload_url: oci://ghcr.io/sneaksanddata/snd-cli
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
