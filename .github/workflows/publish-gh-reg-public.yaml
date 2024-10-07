@@ -1,10 +1,10 @@
 name: Publish snd-cli image to GitHub public registry
 run-name: Publish ${{github.ref_name}} to GitHub registry by @${{ github.actor }}
 
-on: workflow_dispatch
-    pull_request:
-      branches:
-        - '**'
+on: 
+  pull_request:
+    branches:
+      - '**'
 
 env:
   PROJECT_NAME: Snd-Cli-Go
