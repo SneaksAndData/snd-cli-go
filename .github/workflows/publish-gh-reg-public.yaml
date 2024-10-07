@@ -70,10 +70,12 @@ jobs:
         run: tar -czvf snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz snd-${{ matrix.os }}-${{ matrix.arch }}
 
       - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.token }}
         with:
           tag_name: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
@@ -83,7 +85,7 @@ jobs:
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
