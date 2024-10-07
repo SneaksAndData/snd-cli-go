@@ -54,7 +54,7 @@ jobs:
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('**/go.sum') }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-${{ matrix.os }}-${{ matrix.arch }}-
 
       - name: Setup environment variables
         run: |
