@@ -69,8 +69,23 @@ jobs:
       - name: Archive binary
         run: tar -czvf snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz snd-${{ matrix.os }}-${{ matrix.arch }}
 
-      - name: Upload binary as artifact
-        uses: actions/upload-artifact@v3
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: snd-${{ matrix.os }}-${{ matrix.arch }}
-          path: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: true
+          prerelease: true
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_name: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_content_type: application/gzip
