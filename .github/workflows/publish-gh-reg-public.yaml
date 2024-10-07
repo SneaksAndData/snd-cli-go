@@ -67,14 +67,16 @@ jobs:
           go build -ldflags="-X 'snd-cli/cmd.Version=$version'" -o snd-${{ matrix.os }}-${{ matrix.arch }} ./cmd/snd-cli
       
       - name: Archive binary
-        run: tar -czvf snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz snd-${{ matrix.os }}-${{ matrix.arch }}
+        run: zip snd-${{ matrix.os }}-${{ matrix.arch }}.zip snd-${{ matrix.os }}-${{ matrix.arch }}
 
+    
+          
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ghcr.io/sneaksanddata/
-          asset_path: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
-          asset_name: snd-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
-          asset_content_type: application/gzip
+          asset_path: snd-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_name: snd-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_content_type: application/zip
