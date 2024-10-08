@@ -1,35 +1,32 @@
-name: Publish snd-cli image to GitHub public registry
-run-name: Publish ${{github.ref_name}} by @${{ github.actor }}
+name: Release Snd-cli binary
 
 on:
-  pull_request:
-    branches: [ main ]
+  push:
+    tags:
+      - 'v*.*.*'
 
-env:
-  PROJECT_NAME: Snd-Cli-Go
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+permissions:
+  contents: write
 
 jobs:
-  releases-matrix:
-    name: Release Go Binary
+  goreleaser:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        goos: [ linux, windows, darwin ]
-        goarch: [ amd64, arm64 ]
-        exclude:
-          - goarch: arm64
-            goos: windows
-            
     steps:
-      - uses: actions/checkout@v4
-      - uses: wangyoucao577/go-release-action@v1
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: ${{ matrix.goos }}
-          goarch: ${{ matrix.goarch }}
-          goversion: '1.21'
-          project_path: "./cmd/snd-cli"
-          binary_name: "snd-${{ matrix.goos }}-${{ matrix.goarch }}"
-          extra_files: README.md
+          fetch-depth: 0
+          
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
