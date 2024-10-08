@@ -1,7 +1,7 @@
 name: Publish snd-cli image to GitHub public registry
-run-name: Publish ${{github.ref_name}} to GitHub registry by @${{ github.actor }}
+run-name: Publish ${{github.ref_name}} by @${{ github.actor }}
 
-on: 
+on:
   pull_request:
     branches: [ main ]
 
