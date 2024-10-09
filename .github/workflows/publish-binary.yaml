@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 jobs:
-  goreleaser:
+  release_binary:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,5 +26,6 @@ jobs:
           distribution: goreleaser
           version: '~> v2'
           args: release --clean
+          workdir: ./cmd/snd-cli
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
