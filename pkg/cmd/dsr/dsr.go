@@ -24,7 +24,7 @@ func NewCmdDsr(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmduti
 		`),
 		GroupID: "dsr",
 	}
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", "awsp", "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", dsrURL, "Specify the service url")
 	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri")
