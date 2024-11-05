@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	authCmd "snd-cli/pkg/cmd/auth"
 	claimCmd "snd-cli/pkg/cmd/claim"
+	dsrCmd "snd-cli/pkg/cmd/dsr"
 	mlCmd "snd-cli/pkg/cmd/ml"
 	sparkCmd "snd-cli/pkg/cmd/spark"
 	upgradeCmd "snd-cli/pkg/cmd/upgrade"
@@ -46,6 +47,11 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Title: "SPARK COMMANDS",
 	})
 
+	cmd.AddGroup(&cobra.Group{
+		ID:    "dsr",
+		Title: "DSR  COMMANDS",
+	})
+
 	authServiceFactory := cmdutil.NewAuthServiceFactory()
 	serviceFactory := cmdutil.NewConcreteServiceFactory()
 
@@ -54,6 +60,7 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
 	cmd.AddCommand(mlCmd.NewCmdAlgorithm(serviceFactory, authServiceFactory))
 	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
+	cmd.AddCommand(dsrCmd.NewCmdDsr(serviceFactory, authServiceFactory))
 
 	cmd.AddCommand(upgradeCmd.NewCmdUpgrade())
 	cmd.AddCommand(versionCmd.NewCmdVersion())

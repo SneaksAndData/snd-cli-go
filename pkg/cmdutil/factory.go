@@ -5,6 +5,7 @@ import (
 	"github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
+	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"snd-cli/pkg/cmd/util/token"
 	"strings"
@@ -85,6 +86,8 @@ func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl stri
 		return initAlgorithmService(env, serviceUrl, authService)
 	case "spark":
 		return initSparkService(env, serviceUrl, authService)
+	case "dsr":
+		return initDsrService(env, serviceUrl, authService)
 	default:
 		return nil, fmt.Errorf("unknown service type: %s", serviceType)
 	}
@@ -142,6 +145,24 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 		return nil, fmt.Errorf("failed to create spark service: %w", err)
 	}
 	return sparkService, nil
+}
+
+func initDsrService(env, dsrURL string, authService token.AuthService) (*dsr.Service, error) {
+	tp, err := createTokenProvider(env, authService)
+	if err != nil {
+		return nil, err
+	}
+	url := processURL(dsrURL, env)
+	config := dsr.Config{
+		DsrBaseUrl:   url,
+		GetTokenFunc: tp.GetToken,
+	}
+
+	dsrService, err := dsr.New(config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create dsr service: %w", err)
+	}
+	return dsrService, nil
 }
 
 // processURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
