@@ -45,7 +45,7 @@ jobs:
             /secret/data/common/package-publishing/aws-ecr/production/container-user access_key | ECR_PROD_ACCESS_KEY ;
             /secret/data/common/package-publishing/aws-ecr/production/container-user access_key_id | ECR_PROD_ACCESS_KEY_ID ;
       - name: Setup AWS CA
-        uses: SneaksAndData/github-actions/setup_aws_ca@v0.1.8
+        uses: SneaksAndData/github-actions/setup_aws_ca@v0.1.9
         with:
           aws_access_key: ${{ env.ACCESS_KEY }}
           aws_access_key_id: ${{ env.ACCESS_KEY_ID }}
