@@ -11,3 +11,10 @@ builds:
     main: ./cmd/snd-cli
     ldflags:
       - -s -w -X "snd-cli/cmd.Version={{.Version}}"
+release:
+  github:
+    owner: SneaksAndData
+    name: snd-cli-go
+  extra_files:
+    - glob: ./scripts/install.sh
+      name_template: install.sh

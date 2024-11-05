@@ -22,19 +22,10 @@ jobs:
           
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
+        id: goreleaser
         with:
           distribution: goreleaser
           version: '~> v2'
           args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload install.sh as release asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.goreleaser.outputs.upload_url }}
-          asset_path: scripts/install.sh
-          asset_name: install.sh
-          asset_content_type: application/x-sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
