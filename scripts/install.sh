@@ -7,7 +7,7 @@ REPO_OWNER="SneaksAndData"
 REPO_NAME="snd-cli-go"
 LATEST_RELEASE_TAG=$(curl --silent "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest" | jq -r .tag_name)
 
-VERSION=$(echo $LATEST_RELEASE_TAG | sed 's/^v//')
+VERSION="${LATEST_RELEASE_TAG#v}"
 BASE_BIN_NAME="snd-cli-go_$VERSION"
 
 echo "Determining target OS and architecture..."
@@ -47,12 +47,22 @@ chmod +x "$base_path/snd-cli-go"
 
 if [ -e "$HOME/.local/bin/snd" ]; then
    echo "Removing symlink..."
-   rm $HOME/.local/bin/snd
+   rm "$HOME/.local/bin/snd"
 fi
 
 # Create a symbolic link to the application
 echo "Creating the symlink..."
+local_bin="$HOME/.local/bin"
+if [ ! -d "$local_bin" ]; then
+    mkdir -p "$local_bin"
+fi
 ln -s "$base_path/snd-cli-go" "$HOME/.local/bin/snd"
+
+# Check if $PATH contains $HOME/.local/bin
+case ":$PATH:" in
+    *:"$local_bin":*) ;; #do nothing
+    *) >&2 echo "WARNING: $local_bin not in \$PATH. Please update your \$PATH variable for the shell you want to use." ;;
+esac
 
 echo "Please restart your terminal for the changes to take effect."
 echo "After restarting, you can try running 'snd --help'. :)"
