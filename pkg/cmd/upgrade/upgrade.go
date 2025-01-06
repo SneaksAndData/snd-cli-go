@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
+	"runtime"
+	"strings"
 	"syscall"
 )
 
@@ -43,12 +45,26 @@ func upgradeRun() {
 		os.Exit(1)
 	}
 
+	// Check if the OS is Linux -- if so, run the updater script in the background (does not support self updated binary)
+	if strings.Contains(runtime.GOOS, "linux") {
+		// Execute the updater script
+		if err := exec.Command("nohup", updaterScriptPath.Name(), "&").Start(); err != nil {
+			fmt.Println("Error executing updater script:", err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Update initiated. Please wait for it to complete.")
+		syscall.Exit(0) // Use syscall.Exit to immediately exit
+	}
+
 	// Execute the updater script
-	if err := exec.Command("nohup", updaterScriptPath.Name(), "&").Start(); err != nil {
+	cmd := exec.Command(updaterScriptPath.Name())
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		fmt.Println("Error executing updater script:", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Update initiated. Please wait for it to complete.")
-	syscall.Exit(0) // Use syscall.Exit to immediately exit
+	fmt.Println("Update completed.")
 }

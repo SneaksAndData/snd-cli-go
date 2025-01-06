@@ -1,0 +1,20 @@
+# .goreleaser.yaml
+version: 2
+builds:
+  - id: snd-cli
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/snd-cli
+    ldflags:
+      - -s -w -X "snd-cli/cmd.Version={{.Version}}"
+release:
+  github:
+    owner: SneaksAndData
+    name: snd-cli-go
+  extra_files:
+    - glob: ./scripts/install.sh
+      name_template: install.sh
