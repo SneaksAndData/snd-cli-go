@@ -90,7 +90,7 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	}
 	defaultTag, _ := generateTag()
 	if clientTag == "" && params.ClientTag == "" {
-		pterm.DefaultBasicText.Println("You have not provided a client tag for this submission. Using generated tag: %s \n", defaultTag)
+		pterm.DefaultBasicText.Println(pterm.Sprintf("You have not provided a client tag for this submission. Using generated tag: %s \n", defaultTag))
 		params.ClientTag = defaultTag
 	} else if clientTag != "" {
 		params.ClientTag = clientTag
