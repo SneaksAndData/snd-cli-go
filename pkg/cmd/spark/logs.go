@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"github.com/pterm/pterm"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 
@@ -28,7 +29,7 @@ func NewCmdLogs(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory c
 			}
 			resp, err := logsRun(service.(*spark.Service), id, trimLog)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},

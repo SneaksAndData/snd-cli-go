@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	sparkClient "github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"os"
 	"snd-cli/pkg/cmd/util"
@@ -63,7 +64,7 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 			}
 			resp, err := submitRun(service.(*sparkClient.Service), overrides, jobName)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -89,7 +90,7 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 	}
 	defaultTag, _ := generateTag()
 	if clientTag == "" && params.ClientTag == "" {
-		fmt.Printf("You have not provided a client tag for this submission. Using generated tag: %s \n", defaultTag)
+		pterm.DefaultBasicText.Println("You have not provided a client tag for this submission. Using generated tag: %s \n", defaultTag)
 		params.ClientTag = defaultTag
 	} else if clientTag != "" {
 		params.ClientTag = clientTag

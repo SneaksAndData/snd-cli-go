@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
-	"log"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -28,7 +29,7 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 			}
 			resp, err := removeClaimRun(service.(*claim.Service), userId, claimProvider, cr)
 			if err == nil {
-				log.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -48,5 +49,9 @@ func removeClaimRun(claimService Service, userId, claimProvider string, cr []str
 		return "", fmt.Errorf("failed to remove claims for user %s with claim provider %s: %w", userId, claimProvider, err)
 	}
 
-	return response, nil
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+	return prettifyResponse, nil
 }

@@ -1,7 +1,7 @@
 package version
 
 import (
-	"fmt"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	snd "snd-cli/cmd"
 	"snd-cli/pkg/cmd/util/version"
@@ -15,13 +15,15 @@ func NewCmdVersion() *cobra.Command {
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			err := version.CheckIfNewVersionIsAvailable()
 			if err != nil {
-				fmt.Print("Unable to check if a new version is available: You can view the releases at: https://github.com/SneaksAndData/snd-cli-go/releases\n")
+				pterm.DefaultBasicText.Println("Unable to check if a new version is available: You can view the releases at: https://github.com/SneaksAndData/snd-cli-go/releases\n")
 			}
 			return nil
 
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("snd-cli version %s \n", snd.Version)
+			pterm.DefaultBasicText.Println(
+				pterm.Sprintf("snd-cli version %s", snd.Version),
+			)
 		},
 	}
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
 )
@@ -24,7 +25,7 @@ func NewCmdRequestStatus(authServiceFactory *cmdutil.AuthServiceFactory, service
 			}
 			resp, err := requestStatusRun(service.(*spark.Service), id)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
