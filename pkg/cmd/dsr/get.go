@@ -76,5 +76,5 @@ func renderAsTable(dsrResponse string) {
 		})
 	}
 
-	pterm.DefaultTable.WithHasHeader().WithData(tableData).Render()
+	_ = pterm.DefaultTable.WithHasHeader().WithData(tableData).Render()
 }
