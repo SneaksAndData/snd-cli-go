@@ -35,7 +35,7 @@ func PrettifyJSON(input string) (string, error) {
 	return output.String(), nil
 }
 
-// InteractiveContinue prompts the user with a confirmation message to continue running.i
+// InteractiveContinue prompts the user with a confirmation message to continue running.
 // It restricts the user's answers to "yes" and "no".
 // The function returns the user's response as a string.
 func InteractiveContinue() string {

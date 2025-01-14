@@ -48,3 +48,50 @@ func Test_ConvertStruct(t *testing.T) {
 
 	}
 }
+
+func Test_PrettifyJSON(t *testing.T) {
+	tests := []struct {
+		name          string
+		input         string
+		expected      string
+		expectedError bool
+	}{
+		{
+			name:          "Valid JSON",
+			input:         `{"name":"SomeName","age":30}`,
+			expected:      "{\n  \"name\": \"SomeName\",\n  \"age\": 30\n}",
+			expectedError: false,
+		},
+		{
+			name:          "Invalid JSON",
+			input:         `{"name":"SomeName","age":30`,
+			expected:      "",
+			expectedError: true,
+		},
+		{
+			name:          "Empty JSON",
+			input:         `{}`,
+			expected:      "{}",
+			expectedError: false,
+		},
+		{
+			name:          "Nested JSON",
+			input:         `{"person":{"name":"SomeName","age":30}}`,
+			expected:      "{\n  \"person\": {\n    \"name\": \"SomeName\",\n    \"age\": 30\n  }\n}",
+			expectedError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := PrettifyJSON(tt.input)
+			if (err != nil) != tt.expectedError {
+				t.Errorf("PrettifyJSON() error = %v, expectedError %v", err, tt.expectedError)
+				return
+			}
+			if result != tt.expected {
+				t.Errorf("PrettifyJSON() = %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+}

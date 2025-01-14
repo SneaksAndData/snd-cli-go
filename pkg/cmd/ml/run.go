@@ -110,7 +110,7 @@ func runAlgorithm(algorithmService Service, payloadPath, algorithm, tag string) 
 
 	prettifyResponse, err := util.PrettifyJSON(response)
 	if err != nil {
-		return "", fmt.Errorf("failed to prettify response: %w", err)
+		return "", fmt.Errorf("failed to prettify response: %w. \n Response: %s", err, response)
 	}
 	return prettifyResponse, nil
 }
