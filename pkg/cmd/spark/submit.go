@@ -88,10 +88,10 @@ func submitRun(sparkService Service, overrides, jobName string) (string, error) 
 		return "", err
 	}
 	defaultTag, _ := generateTag()
-	if clientTag == "" {
+	if clientTag == "" && params.ClientTag == "" {
 		fmt.Printf("You have not provided a client tag for this submission. Using generated tag: %s \n", defaultTag)
 		params.ClientTag = defaultTag
-	} else {
+	} else if clientTag != "" {
 		params.ClientTag = clientTag
 	}
 	response, err := sparkService.RunJob(params, jobName)
