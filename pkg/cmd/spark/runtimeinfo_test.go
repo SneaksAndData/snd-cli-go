@@ -21,7 +21,9 @@ func TestRuntimeInfoRun(t *testing.T) {
 			id:            "valid-id",
 			mockResponse:  `{"status":"RUNNING"}`,
 			expectedError: false,
-			expectedResp:  `{"status":"RUNNING"}`,
+			expectedResp: `{
+  "status": "RUNNING"
+}`,
 		},
 		{
 			name:          "Error Fetching Info",

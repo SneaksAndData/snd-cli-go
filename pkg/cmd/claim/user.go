@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 )
 
@@ -37,7 +39,7 @@ func NewCmdAddUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactor
 			}
 			resp, err := addUserRun(service.(*claim.Service), userId, claimProvider)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -52,7 +54,11 @@ func addUserRun(claimService Service, userId, claimProvider string) (string, err
 	if err != nil {
 		return "", fmt.Errorf("failed to add user %s with claim provider %s: %w", userId, claimProvider, err)
 	}
-	return response, nil
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+	return prettifyResponse, nil
 }
 
 func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
@@ -74,14 +80,13 @@ func NewCmdRemoveUser(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 			}
 			resp, err := removeUserRun(service.(*claim.Service), userId, claimProvider)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
 	}
 
 	return cmd
-
 }
 
 func removeUserRun(claimService Service, userId, claimProvider string) (string, error) {

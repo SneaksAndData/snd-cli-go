@@ -5,6 +5,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -68,5 +69,11 @@ func cancelRun(algorithmService Service, algorithm, id, initiator, reason string
 		}
 		return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
-	return response, nil
+
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+
+	return prettifyResponse, nil
 }
