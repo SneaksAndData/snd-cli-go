@@ -46,11 +46,11 @@ func configurationRun(sparkService Service, name string) (string, error) {
 	response, err := sparkService.GetConfiguration(name)
 	if err != nil {
 
-		return "", fmt.Errorf("failed to retrieve configuration with name %s: %w", name, err)
+		return "", fmt.Errorf("received empty response, configuration does not exist or authentication failed: %w", err)
 	}
 	m, err := json.Marshal(&response)
 	if err != nil {
-		return "", fmt.Errorf("Failed to serialize configuration: %w", err)
+		return "", fmt.Errorf("failed to serialize configuration: %w", err)
 	}
 	prettifyResponse, err := util.PrettifyJSON(string(m))
 	if err != nil {
