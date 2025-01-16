@@ -17,6 +17,7 @@ func Test_addClaimRun(t *testing.T) {
 		mockError        error
 		expectedErrorMsg string
 		expectedSuccess  bool
+		mockCall         bool
 	}{
 		{
 			name:            "Success Case",
@@ -26,6 +27,7 @@ func Test_addClaimRun(t *testing.T) {
 			mockResponse:    "{\"identityProvider\":\"providerABC\",\"userId\":\"user123\",\"claims\":[{\"test.test.sneaksanddata.com/.*\":\".*\"}]}",
 			mockError:       nil,
 			expectedSuccess: true,
+			mockCall:        true,
 		},
 		{
 			name:             "Failure Case - Service Error",
@@ -36,6 +38,7 @@ func Test_addClaimRun(t *testing.T) {
 			mockError:        errors.New("service error"),
 			expectedErrorMsg: "service error",
 			expectedSuccess:  false,
+			mockCall:         true,
 		},
 		{
 			name:             "Failure Case - Not Found Error",
@@ -46,6 +49,18 @@ func Test_addClaimRun(t *testing.T) {
 			mockError:        errors.New("not found 404"),
 			expectedErrorMsg: "User not found",
 			expectedSuccess:  false,
+			mockCall:         true,
+		},
+		{
+			name:             "Failure Case - Invalid Claim Format",
+			userId:           "user123",
+			claimsProvider:   "providerABC",
+			claims:           []string{"test1.test.sneaksanddata.com/.*"},
+			mockResponse:     "",
+			mockError:        nil,
+			expectedErrorMsg: "invalid claim format",
+			expectedSuccess:  false,
+			mockCall:         false,
 		},
 	}
 	for _, tc := range tests {
@@ -64,9 +79,10 @@ func Test_addClaimRun(t *testing.T) {
 					assert.Contains(t, err.Error(), tc.expectedErrorMsg)
 				}
 			}
-
-			// Verify the mock was called as expected
-			mockService.AssertExpectations(t)
+			if tc.mockCall {
+				// Verify the mock was called as expected
+				mockService.AssertExpectations(t)
+			}
 		})
 	}
 }

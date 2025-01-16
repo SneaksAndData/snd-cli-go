@@ -14,3 +14,5 @@ exclude:
     - ^pkg/signals        # exclude signal handlers from sample controller
     - hack/*.go           # exclude hack folder
     - main.go             # exclude main file
+    - pkg/cmd/root/root.go  # exclude root file
+    - pkg/cmd/version/version.go  # exclude version file
