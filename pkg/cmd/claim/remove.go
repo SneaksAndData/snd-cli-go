@@ -35,11 +35,17 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		},
 	}
 
-	cmd.Flags().StringSliceVarP(&cr, "claims", "c", []string{}, "Claims to add. e.g. snd add -c \"test1.test.sneaksanddata.com/.*:.*\" -c \"test2.test.sneaksanddata.com/.*:.*\"")
+	cmd.Flags().StringSliceVarP(&cr, "claims", "c", []string{}, "Claims to remove. e.g. snd add -c \"test1.test.sneaksanddata.com/.*:.*\" -c \"test2.test.sneaksanddata.com/.*:.*\"")
 	return cmd
 }
 
 func removeClaimRun(claimService Service, userId, claimProvider string, cr []string) (string, error) {
+	// Validate claims
+	for _, c := range cr {
+		if !util.ValidateClaim(c) {
+			return "", fmt.Errorf("invalid claim format: Ensure the claim string follows the pattern 'path:method'. Please review your claim string: %s", c)
+		}
+	}
 	// Add user claims
 	response, err := claimService.RemoveClaim(userId, claimProvider, cr)
 	if err != nil {

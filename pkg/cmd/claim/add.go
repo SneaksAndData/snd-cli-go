@@ -42,6 +42,12 @@ func NewCmdAddClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 }
 
 func addClaimRun(claimService Service, userId, claimProvider string, ca []string) (string, error) {
+	// Validate claims
+	for _, c := range ca {
+		if !util.ValidateClaim(c) {
+			return "", fmt.Errorf("invalid claim format: Ensure the claim string follows the pattern 'path:method'. Please review your claim string: %s", c)
+		}
+	}
 	// Add user claims
 	response, err := claimService.AddClaim(userId, claimProvider, ca)
 	if err != nil {
