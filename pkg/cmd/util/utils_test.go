@@ -152,3 +152,44 @@ func Test_ValidClaimFormat(t *testing.T) {
 		})
 	}
 }
+
+func Test_IsProdEnv(t *testing.T) {
+	tests := []struct {
+		name     string
+		env      string
+		expected bool
+	}{
+		{
+			name:     "awsp environment",
+			env:      "awsp",
+			expected: true,
+		},
+		{
+			name:     "production environment",
+			env:      "production",
+			expected: true,
+		},
+		{
+			name:     "development environment",
+			env:      "development",
+			expected: false,
+		},
+		{
+			name:     "empty string environment",
+			env:      "",
+			expected: false,
+		},
+		{
+			name:     "random string environment",
+			env:      "random",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := IsProdEnv(tt.env)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}

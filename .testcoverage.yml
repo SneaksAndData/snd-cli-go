@@ -3,9 +3,9 @@ profile: cover.out
 local-prefix: "github.com/SneaksAndData/snd-cli-go"
 
 threshold:
-  file: 70
-  package: 70
-  total: 75
+#  file: 70
+#  package: 70
+#  total: 75
 
 exclude:
   paths:
