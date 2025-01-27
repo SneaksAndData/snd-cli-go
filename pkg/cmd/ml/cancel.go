@@ -25,6 +25,9 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 				return err
 			}
 			tokenProvider, err := token.NewProvider(authService, env)
+			if err != nil {
+				return fmt.Errorf("unable to create token provider: %w", err)
+			}
 
 			user := tokenProvider.GetUserFromToken()
 
