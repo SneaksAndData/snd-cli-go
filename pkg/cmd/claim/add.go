@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-var ca []string
+var claimsToAdd []string
 
 func NewCmdAddClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
@@ -30,26 +30,26 @@ func NewCmdAddClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 			if err != nil {
 				return err
 			}
-			resp, err := addClaimRun(service.(*claim.Service), userId, claimProvider, ca)
+			resp, err := addClaimRun(service.(*claim.Service), userId, claimProvider, claimsToAdd)
 			if err == nil {
 				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
 	}
-	cmd.Flags().StringSliceVarP(&ca, "claims", "c", []string{}, "Claims to add. e.g. snd add -c \"test1.test.sneaksanddata.com/.*:.*\" -c \"test2.test.sneaksanddata.com/.*:.*\"")
+	cmd.Flags().StringSliceVarP(&claimsToAdd, "claims", "c", []string{}, "Claims to add. e.g. snd add -c \"test1.test.sneaksanddata.com/.*:.*\" -c \"test2.test.sneaksanddata.com/.*:.*\"")
 	return cmd
 }
 
-func addClaimRun(claimService Service, userId, claimProvider string, ca []string) (string, error) {
+func addClaimRun(claimService Service, userId, claimProvider string, claimsToAdd []string) (string, error) {
 	// Validate claims
-	for _, c := range ca {
+	for _, c := range claimsToAdd {
 		if !util.ValidateClaim(c) {
 			return "", fmt.Errorf("invalid claim format: Ensure the claim string follows the pattern 'path:method'. Please review your claim string: %s", c)
 		}
 	}
 	// Add user claims
-	response, err := claimService.AddClaim(userId, claimProvider, ca)
+	response, err := claimService.AddClaim(userId, claimProvider, claimsToAdd)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to add claims for user %s for claim provider %s : %v", userId, claimProvider, "User not found")

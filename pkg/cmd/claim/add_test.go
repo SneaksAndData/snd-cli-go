@@ -63,23 +63,23 @@ func Test_addClaimRun(t *testing.T) {
 			mockCall:         false,
 		},
 	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
 			// Mock the Service interface
 			mockService := new(mocks.Service)
-			mockService.On("AddClaim", tc.userId, tc.claimsProvider, tc.claims).Return(tc.mockResponse, tc.mockError)
+			mockService.On("AddClaim", test.userId, test.claimsProvider, test.claims).Return(test.mockResponse, test.mockError)
 
-			_, err := addClaimRun(mockService, tc.userId, tc.claimsProvider, tc.claims)
+			_, err := addClaimRun(mockService, test.userId, test.claimsProvider, test.claims)
 
-			if tc.expectedSuccess {
+			if test.expectedSuccess {
 				assert.NoError(t, err)
 			} else {
 				assert.Error(t, err)
-				if tc.expectedErrorMsg != "" {
-					assert.Contains(t, err.Error(), tc.expectedErrorMsg)
+				if test.expectedErrorMsg != "" {
+					assert.Contains(t, err.Error(), test.expectedErrorMsg)
 				}
 			}
-			if tc.mockCall {
+			if test.mockCall {
 				// Verify the mock was called as expected
 				mockService.AssertExpectations(t)
 			}
