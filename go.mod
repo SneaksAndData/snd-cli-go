@@ -4,7 +4,9 @@ go 1.21.5
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
-	github.com/SneaksAndData/esd-services-api-client-go v0.1.5
+	github.com/SneaksAndData/esd-services-api-client-go v0.1.6
+	github.com/go-playground/validator/v10 v10.19.0
+	github.com/pterm/pterm v0.12.80
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/mod v0.17.0
@@ -24,7 +26,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.19.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gookit/color v1.5.4 // indirect
@@ -35,7 +36,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/pterm/pterm v0.12.80 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect

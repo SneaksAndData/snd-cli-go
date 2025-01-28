@@ -77,24 +77,24 @@ func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory
 	if err != nil {
 		return "", err
 	}
-	answer := "no"
+
 	if util.IsProdEnv(env) {
-		answer = util.InteractiveContinue()
-	}
-	if util.IsProdEnv(env) && answer != "yes" {
-		service, err := serviceFactory.CreateService("algorithm", env, url, authService)
-		if err != nil {
-			return "", err
+		answer := util.InteractiveContinue()
+		if answer != "yes" {
+			return "", fmt.Errorf("operation aborted by user")
 		}
-
-		resp, err := runAlgorithm(service.(*algorithmClient.Service), config.Payload, algorithm, config.Tag)
-		if err != nil {
-			return "", err
-		}
-
-		return resp, err
 	}
-	return "", err
+
+	service, err := serviceFactory.CreateService("algorithm", env, url, authService)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := runAlgorithm(service.(*algorithmClient.Service), config.Payload, algorithm, config.Tag)
+	if err != nil {
+		return "", err
+	}
+	return resp, nil
 }
 
 // runAlgorithm runs the algorithm service with the provided parameters.
@@ -134,6 +134,9 @@ func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 		return p, err
 	}
 
+	if userPayload.AlgorithmParameters == nil {
+		return p, fmt.Errorf("missing required field: 'algorithm_parameters'. Please ensure your payload has the correct structure")
+	}
 	var payload algorithmClient.Payload
 	err = util.ConvertStruct(*userPayload, &payload)
 	if err != nil {

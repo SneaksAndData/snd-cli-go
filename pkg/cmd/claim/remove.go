@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-var cr []string
+var claimsToRemove []string
 
 func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
@@ -27,7 +27,7 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 			if err != nil {
 				return err
 			}
-			resp, err := removeClaimRun(service.(*claim.Service), userId, claimProvider, cr)
+			resp, err := removeClaimRun(service.(*claim.Service), userId, claimProvider, claimsToRemove)
 			if err == nil {
 				pterm.DefaultBasicText.Println(resp)
 			}
@@ -35,13 +35,19 @@ func NewCmdRemoveClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 		},
 	}
 
-	cmd.Flags().StringSliceVarP(&cr, "claims", "c", []string{}, "Claims to add. e.g. snd add -c \"test1.test.sneaksanddata.com/.*:.*\" -c \"test2.test.sneaksanddata.com/.*:.*\"")
+	cmd.Flags().StringSliceVarP(&claimsToRemove, "claims", "c", []string{}, "Claims to remove. e.g. snd add -c \"test1.test.sneaksanddata.com/.*:.*\" -c \"test2.test.sneaksanddata.com/.*:.*\"")
 	return cmd
 }
 
-func removeClaimRun(claimService Service, userId, claimProvider string, cr []string) (string, error) {
+func removeClaimRun(claimService Service, userId, claimProvider string, claimsToRemove []string) (string, error) {
+	// Validate claims
+	for _, c := range claimsToRemove {
+		if !util.ValidateClaim(c) {
+			return "", fmt.Errorf("invalid claim format: Ensure the claim string follows the pattern 'path:method'. Please review your claim string: %s", c)
+		}
+	}
 	// Add user claims
-	response, err := claimService.RemoveClaim(userId, claimProvider, cr)
+	response, err := claimService.RemoveClaim(userId, claimProvider, claimsToRemove)
 	if err != nil {
 		if strings.HasSuffix(err.Error(), "404") {
 			return "", fmt.Errorf("failed to remove claims for user %s for claim provider %s : %v", userId, claimProvider, "User not found")

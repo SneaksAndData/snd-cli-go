@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/pterm/pterm"
+	"regexp"
 )
 
 // ConvertStruct is a function that converts one struct to another struct.
@@ -55,4 +56,11 @@ func IsProdEnv(env string) bool {
 		return true
 	}
 	return false
+}
+
+func ValidateClaim(claim string) bool {
+	// Regex pattern for valid claim strings
+	const claimPattern = `^([a-zA-Z0-9.-]+/[^\s:]*):([A-Za-z.*]+)$`
+	re := regexp.MustCompile(claimPattern)
+	return re.MatchString(claim)
 }
