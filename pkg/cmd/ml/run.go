@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmd/util/file"
@@ -50,7 +51,11 @@ The payload should be provided as a JSON file with the structure below.
 </code></pre>
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runRun(config, authServiceFactory, serviceFactory)
+			resp, err := runRun(config, authServiceFactory, serviceFactory)
+			if err == nil {
+				pterm.DefaultBasicText.Println(resp)
+			}
+			return err
 		},
 		Example: heredoc.Doc(`snd algorithm run --algorithm rdc-auto-replenishment-crystal-orchestrator --payload /path/to/payload.json`),
 	}
@@ -67,24 +72,29 @@ The payload should be provided as a JSON file with the structure below.
 	return cmd
 }
 
-func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) error {
+func runRun(config CommandConfig, authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) (string, error) {
 	authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 	if err != nil {
-		return err
+		return "", err
+	}
+
+	if util.IsProdEnv(env) {
+		answer := util.InteractiveContinue()
+		if answer != "yes" {
+			return "", fmt.Errorf("operation aborted by user")
+		}
 	}
 
 	service, err := serviceFactory.CreateService("algorithm", env, url, authService)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	resp, err := runAlgorithm(service.(*algorithmClient.Service), config.Payload, algorithm, config.Tag)
 	if err != nil {
-		return err
+		return "", err
 	}
-
-	fmt.Println(resp)
-	return nil
+	return resp, nil
 }
 
 // runAlgorithm runs the algorithm service with the provided parameters.
@@ -98,7 +108,11 @@ func runAlgorithm(algorithmService Service, payloadPath, algorithm, tag string) 
 		return "", fmt.Errorf("failed to create run for algorithm %s: %w", algorithm, err)
 	}
 
-	return response, nil
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w. \n Response: %s", err, response)
+	}
+	return prettifyResponse, nil
 }
 
 // readAlgorithmPayload reads and unmarshal the algorithm payload from the provided path.
@@ -120,6 +134,9 @@ func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 		return p, err
 	}
 
+	if userPayload.AlgorithmParameters == nil {
+		return p, fmt.Errorf("missing required field: 'algorithm_parameters'. Please ensure your payload has the correct structure")
+	}
 	var payload algorithmClient.Payload
 	err = util.ConvertStruct(*userPayload, &payload)
 	if err != nil {
@@ -127,5 +144,4 @@ func readAlgorithmPayload(payloadPath string) (algorithmClient.Payload, error) {
 	}
 
 	return payload, nil
-
 }

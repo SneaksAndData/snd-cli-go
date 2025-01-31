@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -28,7 +30,7 @@ func NewCmdGetClaim(authServiceFactory *cmdutil.AuthServiceFactory, serviceFacto
 			}
 			resp, err := getClaimRun(service.(*claim.Service), userId, claimProvider)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -46,5 +48,9 @@ func getClaimRun(claimService Service, userId, claimProvider string) (string, er
 		}
 		return "", fmt.Errorf("failed to retrieve claims for user %s for claim provider %s : %w", userId, claimProvider, err)
 	}
-	return response, nil
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+	return prettifyResponse, nil
 }

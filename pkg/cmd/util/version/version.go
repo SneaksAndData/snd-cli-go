@@ -2,6 +2,7 @@ package version
 
 import (
 	"fmt"
+	"github.com/pterm/pterm"
 	"golang.org/x/mod/semver"
 	"os/exec"
 	snd "snd-cli/cmd"
@@ -20,11 +21,23 @@ func CheckIfNewVersionIsAvailable() error {
 	}
 	result := semver.Compare(lastTag, currentVersion)
 	if result > 0 {
-		fmt.Printf("New version available. Please upgrade.\nCurrent version: %s\nLast available version: %s\nPlease run `snd upgrade` command to update the CLI to the latest version.\n", currentVersion, lastTag)
+		pterm.DefaultBasicText.Println(
+			pterm.FgLightYellow.Sprintf("New version available. Please upgrade.\n") +
+				pterm.Sprintf("Current version: %s\nLast available version: %s\n", currentVersion, lastTag) +
+				"Please run " +
+				pterm.FgLightCyan.Sprintf("snd upgrade") +
+				" command to update the CLI to the latest version.",
+		)
 	} else if result < 0 {
-		fmt.Printf("Your version is newer than the one present in GitHub release.\nCurrent version: %s\nLast available version in GitHub release: %s\n", currentVersion, lastTag)
+		pterm.DefaultBasicText.Println(
+			"Your version is newer than the one present in GitHub release.\n" +
+				pterm.Sprintf("Current version: %s\n", currentVersion) +
+				pterm.Sprintf("Last available version in GitHub release: %s\n", lastTag),
+		)
 	} else {
-		fmt.Printf("The snd version is up to date. %s\n", currentVersion)
+		pterm.DefaultBasicText.Println(
+			pterm.Sprintf("The snd version is up to date. %s\n", currentVersion),
+		)
 	}
 
 	return nil

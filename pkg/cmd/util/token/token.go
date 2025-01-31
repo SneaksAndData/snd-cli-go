@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"snd-cli/pkg/cmd/util/file"
 	"time"
@@ -118,4 +119,30 @@ func (p *Provider) GetToken() (string, error) {
 	}
 
 	return p.token, nil
+}
+
+// GetUserFromToken extracts the user information from the JWT token stored in the Provider.
+// It parses the token, extracts the claims, and retrieves the user claim.
+// If the token is invalid or the user claim is not found, it logs the error and returns an empty string.
+func (p *Provider) GetUserFromToken() string {
+	user := ""
+
+	token, err := p.GetToken()
+	if err != nil {
+		fmt.Println("failed retrieve token: %w", err)
+		return user
+	}
+
+	t, _ := jwt.Parse(token, nil)
+
+	if claims, ok := t.Claims.(jwt.MapClaims); ok {
+		if userClaim, ok := claims["boxer.sneaksanddata.com/user"].(string); ok {
+			user = userClaim
+		} else {
+			fmt.Println("User claim not found or not a string")
+		}
+	} else {
+		fmt.Println("Invalid token claims")
+	}
+	return user
 }

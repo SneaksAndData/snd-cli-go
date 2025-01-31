@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 )
 
@@ -30,7 +32,7 @@ The name of the SparkJob should be provided as an argument.
 			}
 			resp, err := configurationRun(service.(*spark.Service), name)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -44,11 +46,15 @@ func configurationRun(sparkService Service, name string) (string, error) {
 	response, err := sparkService.GetConfiguration(name)
 	if err != nil {
 
-		return "", fmt.Errorf("failed to retrieve configuration with name %s: %w", name, err)
+		return "", fmt.Errorf("received empty response, configuration does not exist or authentication failed: %w", err)
 	}
 	m, err := json.Marshal(&response)
 	if err != nil {
-		return "", fmt.Errorf("Failed to serialize configuration: %w", err)
+		return "", fmt.Errorf("failed to serialize configuration: %w", err)
 	}
-	return string(m), nil
+	prettifyResponse, err := util.PrettifyJSON(string(m))
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+	return prettifyResponse, nil
 }

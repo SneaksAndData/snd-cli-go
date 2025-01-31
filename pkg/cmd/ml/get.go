@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -27,7 +29,7 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			}
 			resp, err := getRun(service.(*algorithmClient.Service), id, algorithm)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -50,5 +52,10 @@ func getRun(algorithmService Service, id, algorithm string) (string, error) {
 		return "", fmt.Errorf("failed to retrieve run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
 
-	return response, nil
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+
+	return prettifyResponse, nil
 }

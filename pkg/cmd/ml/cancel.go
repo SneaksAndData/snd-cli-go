@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	algorithmClient "github.com/SneaksAndData/esd-services-api-client-go/algorithm"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
+	"snd-cli/pkg/cmd/util/token"
 	"snd-cli/pkg/cmdutil"
 	"strings"
 )
@@ -21,13 +24,31 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 			if err != nil {
 				return err
 			}
+			tokenProvider, err := token.NewProvider(authService, env)
+			if err != nil {
+				return fmt.Errorf("unable to create token provider: %w", err)
+			}
+
+			user := tokenProvider.GetUserFromToken()
+
 			service, err := serviceFactory.CreateService("algorithm", env, url, authService)
 			if err != nil {
 				return err
 			}
-			resp, err := cancelRun(service.(*algorithmClient.Service), algorithm, requestId, initiator, reason)
+
+			if user == "" && initiator == "" {
+				pterm.DefaultBasicText.Println("Failed to get user from token, please provide the initiator flag")
+				return nil
+			}
+
+			initiatorToUse := user
+			if user == "" {
+				initiatorToUse = initiator
+			}
+
+			resp, err := cancelRun(service.(*algorithmClient.Service), algorithm, requestId, initiatorToUse, reason)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -40,11 +61,6 @@ func NewCmdCancel(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory
 	err := cmd.MarkFlagRequired("id")
 	if err != nil {
 		fmt.Println("failed to mark 'id' as a required flag: %w", err)
-		return nil
-	}
-	err = cmd.MarkFlagRequired("initiator")
-	if err != nil {
-		fmt.Println("failed to mark 'initiator' as a required flag: %w", err)
 		return nil
 	}
 
@@ -68,5 +84,11 @@ func cancelRun(algorithmService Service, algorithm, id, initiator, reason string
 		}
 		return "", fmt.Errorf("failed to cancel run for algorithm %s with run id %s: %w", algorithm, id, err)
 	}
-	return response, nil
+
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+
+	return prettifyResponse, nil
 }

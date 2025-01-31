@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"snd-cli/pkg/cmd/util"
 	"snd-cli/pkg/cmdutil"
 )
 
@@ -29,7 +31,7 @@ func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 			}
 			resp, err := runtimeInfoRun(service.(*spark.Service), id)
 			if err == nil {
-				fmt.Println(resp)
+				pterm.DefaultBasicText.Println(resp)
 			}
 			return err
 		},
@@ -45,5 +47,9 @@ func runtimeInfoRun(sparkService Service, id string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve runtime info for run id %s: %w", id, err)
 	}
-	return response, nil
+	prettifyResponse, err := util.PrettifyJSON(response)
+	if err != nil {
+		return "", fmt.Errorf("failed to prettify response: %w", err)
+	}
+	return prettifyResponse, nil
 }
