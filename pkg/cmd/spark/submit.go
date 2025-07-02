@@ -20,7 +20,7 @@ var overrides string
 func NewCmdSubmit(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "submit",
-		Short: heredoc.Doc(`Runs the provided Beast V3 job with optional overrides
+		Long: heredoc.Doc(`Runs the provided Beast V3 job with optional overrides
 
 The overrides should be provided as a JSON file with the structure below.
 
@@ -56,9 +56,6 @@ If 'extraArguments', 'projectInputs', 'projectOutputs', or 'expectedParallelism'
 				return err
 			}
 			service, err := serviceFactory.CreateService("spark", env, url, authService)
-			if err != nil {
-				return err
-			}
 			if err != nil {
 				return err
 			}

@@ -26,9 +26,6 @@ func NewCmdRuntimeInfo(authServiceFactory *cmdutil.AuthServiceFactory, serviceFa
 			if err != nil {
 				return err
 			}
-			if err != nil {
-				return err
-			}
 			resp, err := runtimeInfoRun(service.(*spark.Service), id)
 			if err == nil {
 				pterm.DefaultBasicText.Println(resp)
