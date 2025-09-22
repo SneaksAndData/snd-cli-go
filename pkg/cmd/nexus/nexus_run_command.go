@@ -21,7 +21,7 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 	var config CommandConfig
 	cmd := &cobra.Command{
 		Use:   "run",
-		Short: heredoc.Doc(`Run a Nexus algorithm. The payload should be provided as a JSON file with the structure below. If no payload is needed, add {} to file contents`),
+		Short: heredoc.Doc(`Run a Nexus algorithm. The payload should be provided as a JSON.`), // TODO: provide url to an example
 		RunE: func(cmd *cobra.Command, args []string) error {
 			resp, err := executeCreate(config, authServiceFactory, serviceFactory)
 			if err == nil {
@@ -32,7 +32,7 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 		Example: heredoc.Doc(`snd nx run --template rdc-auto-replenishment-crystal-orchestrator --payload /path/to/payload.json`),
 	}
 
-	cmd.Flags().StringVarP(&config.Payload, "payload", "p", "", "Path to the payload JSON file")
+	cmd.Flags().StringVarP(&config.Payload, "payload", "p", "", "Path to the input payload (json)")
 
 	err := cmd.MarkFlagRequired("payload")
 	if err != nil {

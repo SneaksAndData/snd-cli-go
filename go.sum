@@ -37,8 +37,8 @@ github.com/SneaksAndData/esd-services-api-client-go v0.1.6 h1:TBf+cxj6QXU25dhe55
 github.com/SneaksAndData/esd-services-api-client-go v0.1.6/go.mod h1:VSjjpFbRJd9Yjhaj7hKKFwJjAlc+kvkeg0GQMgJSz5o=
 github.com/SneaksAndData/nexus-core v1.4.0 h1:droNI7cAeiNR2HzJVHbf0gZa5j14LSHJ6qbWjk5TY3g=
 github.com/SneaksAndData/nexus-core v1.4.0/go.mod h1:OdAnxP6rGgSSgkGqCXRQy9rscbgnlG/KYCoMxfNNFeM=
-github.com/SneaksAndData/nexus-sdk-go v1.1.2 h1:bF7Zm1i+9gjG2d/D11FZsfmrWPBqj77Qty3QjJwDK4k=
-github.com/SneaksAndData/nexus-sdk-go v1.1.2/go.mod h1:Zj3aWz9UCVSWrTVm5MyMQxXLvfpENR1nj0wyTE068GY=
+github.com/SneaksAndData/nexus-sdk-go v1.1.3 h1:o/cEhH+2BrrWTk9Ugq+RdlpR0wUjjQuqh9gJ+KrQwMU=
+github.com/SneaksAndData/nexus-sdk-go v1.1.3/go.mod h1:Zj3aWz9UCVSWrTVm5MyMQxXLvfpENR1nj0wyTE068GY=
 github.com/atomicgo/cursor v0.0.1/go.mod h1:cBON2QmmrysudxNBFthvMtN32r3jxVRIvzkUiF/RuIk=
 github.com/aws/smithy-go v1.22.4 h1:uqXzVZNuNexwc/xrh6Tb56u89WDlJY6HS+KC0S4QSjw=
 github.com/aws/smithy-go v1.22.4/go.mod h1:t1ufH5HMublsJYulve2RKmHDC15xu1f26kHCp/HgceI=

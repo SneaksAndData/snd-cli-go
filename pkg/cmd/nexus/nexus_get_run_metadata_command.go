@@ -3,18 +3,15 @@ package nexus
 import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc"
-	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"snd-cli/pkg/cmdutil"
 )
 
-var id string
-
-func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
+func NewCmdGetRunMetadata(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "get",
-		Short:   heredoc.Doc(`Get the result for a Nexus run`),
-		Example: heredoc.Doc(`snd nx get --id 762b07c-c67a-4327-970a-18d923fd --template omni-channel-solver -e production`),
+		Use:     "meta",
+		Short:   heredoc.Doc(`Get metadata for a Nexus run`),
+		Example: heredoc.Doc(`snd nx meta --id 762b07c-c67a-4327-970a-18d923fd --algorithm rdc-auto-replenishment-crystal-orchestrator -e production`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authService, err := cmdutil.InitializeAuthService(authUrl, env, authProvider, *authServiceFactory)
 			if err != nil {
@@ -24,9 +21,9 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			if err != nil {
 				return err
 			}
-			resp, err := executeGet(service.(*cmdutil.NexusService), id, template)
+			resp, err := executeGetMetadata(service.(*cmdutil.NexusService), template, id)
 			if err == nil {
-				pterm.DefaultBasicText.Println(resp)
+				fmt.Println(resp)
 			}
 			return err
 		},
@@ -40,21 +37,19 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 	return cmd
 }
 
-func executeGet(nexus *cmdutil.NexusService, id, template string) (string, error) {
+func executeGetMetadata(nexus *cmdutil.NexusService, id, template string) (string, error) {
 	err := nexus.Authenticate()
 	if err != nil {
 		return "", err
 	}
-
-	response, err := nexus.Client.GetRun(id, template)
+	response, err := nexus.Client.GetMetadata(id, template)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve run for the template %s with run id %s: %w", template, id, err)
+		return "", fmt.Errorf("failed to retrieve metadata for the template %s with run id %s: %w", template, id, err)
 	}
 
 	serialized, err := response.MarshalJSON()
-
 	if err != nil {
-		return "", fmt.Errorf("failed to serialize response for the template %s with run id %s: %w", template, id, err)
+		return "", fmt.Errorf("failed to serialize metadata response for the template %s with run id %s: %w", template, id, err)
 	}
 
 	return string(serialized), nil

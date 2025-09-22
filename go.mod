@@ -5,7 +5,8 @@ go 1.24.4
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/SneaksAndData/esd-services-api-client-go v0.1.6
-	github.com/SneaksAndData/nexus-sdk-go v1.1.2
+	github.com/SneaksAndData/nexus-sdk-go v1.1.3
+	github.com/go-faster/jx v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/pterm/pterm v0.12.80
 	github.com/spf13/cobra v1.8.0
@@ -33,7 +34,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/errors v0.7.1 // indirect
-	github.com/go-faster/jx v1.1.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-openapi/jsonpointer v0.21.1 // indirect

@@ -40,5 +40,6 @@ func NewCmdNexus(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 	cmd.AddCommand(NewCmdRun(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdCancel(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdGetPayload(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdGetRunMetadata(authServiceFactory, serviceFactory))
 	return cmd
 }
