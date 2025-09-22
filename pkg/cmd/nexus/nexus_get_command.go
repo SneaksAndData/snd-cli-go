@@ -24,7 +24,7 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 			if err != nil {
 				return err
 			}
-			resp, err := getRun(service.(*cmdutil.NexusService), id, template)
+			resp, err := executeGet(service.(*cmdutil.NexusService), id, template)
 			if err == nil {
 				pterm.DefaultBasicText.Println(resp)
 			}
@@ -40,7 +40,7 @@ func NewCmdGet(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 	return cmd
 }
 
-func getRun(nexus *cmdutil.NexusService, id, template string) (string, error) {
+func executeGet(nexus *cmdutil.NexusService, id, template string) (string, error) {
 	response, err := nexus.Client.GetRun(id, template)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve run for the template %s with run id %s: %w", template, id, err)
