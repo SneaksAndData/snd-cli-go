@@ -76,6 +76,11 @@ func createRun(nexus *cmdutil.NexusService, payloadPath, template string) (strin
 		return "", err
 	}
 
+	err = nexus.Authenticate()
+	if err != nil {
+		return "", err
+	}
+
 	response, err := nexus.Client.CreateRun(payload, template, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to create run for the template %s: %w", template, err)
