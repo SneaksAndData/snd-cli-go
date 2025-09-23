@@ -1,4 +1,5 @@
-name: Release Snd-cli binary
+name: Release snd-cli binary
+run-name: Publish binary from ${{github.ref_name}} by @${{ github.actor }}
 
 on:
   workflow_dispatch
