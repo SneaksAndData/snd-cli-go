@@ -21,7 +21,7 @@ func NewCmdGetRunMetadata(authServiceFactory *cmdutil.AuthServiceFactory, servic
 			if err != nil {
 				return err
 			}
-			resp, err := executeGetMetadata(service.(*cmdutil.NexusService), template, id)
+			resp, err := executeGetMetadata(service.(*cmdutil.NexusService), id, template)
 			if err == nil {
 				fmt.Println(resp)
 			}

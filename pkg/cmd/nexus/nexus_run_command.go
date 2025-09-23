@@ -86,7 +86,7 @@ func createRun(nexus *cmdutil.NexusService, payloadPath, template string) (strin
 		return "", fmt.Errorf("failed to create run for the template %s: %w", template, err)
 	}
 
-	return response, nil
+	return fmt.Sprintf("{\"requestId\": \"%s\"}", response), nil
 }
 
 // readRunPayload reads and unmarshal the algorithm payload from the provided path.

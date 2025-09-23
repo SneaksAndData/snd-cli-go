@@ -21,7 +21,7 @@ func NewCmdGetPayload(authServiceFactory *cmdutil.AuthServiceFactory, serviceFac
 			if err != nil {
 				return err
 			}
-			resp, err := executeGetPayload(service.(*cmdutil.NexusService), template, id)
+			resp, err := executeGetPayload(service.(*cmdutil.NexusService), id, template)
 			if err == nil {
 				fmt.Println(resp)
 			}
