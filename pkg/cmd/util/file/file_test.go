@@ -69,7 +69,13 @@ func createTempFile(t *testing.T, content []byte) (string, func()) {
 	err = tmpFile.Close()
 	assert.NoError(t, err)
 
-	return tmpFile.Name(), func() { os.Remove(tmpFile.Name()) }
+	return tmpFile.Name(), func() {
+		err := os.Remove(tmpFile.Name())
+		if err != nil {
+			t.Error(err)
+			t.FailNow()
+		}
+	}
 }
 
 func Test_IsValidPath(t *testing.T) {
@@ -187,7 +193,13 @@ func Test_CreateDirectoryWithValidPath(t *testing.T) {
 			setupFunc: func() (string, func()) {
 				tmpDir, err := os.MkdirTemp("", "test")
 				assert.NoError(t, err)
-				return tmpDir, func() { os.RemoveAll(tmpDir) }
+				return tmpDir, func() {
+					err := os.RemoveAll(tmpDir)
+					if err != nil {
+						t.Error(err)
+						t.FailNow()
+					}
+				}
 			},
 			expected: "",
 		},
@@ -293,7 +305,13 @@ func Test_WriteToFileWithNonExistentDirectory(t *testing.T) {
 	content := "test content"
 	tmpDir, err := os.MkdirTemp("", "test")
 	assert.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	defer func(path string) {
+		err := os.RemoveAll(path)
+		if err != nil {
+			t.Error(err)
+			t.FailNow()
+		}
+	}(tmpDir)
 
 	nonExistentDir := filepath.Join(tmpDir, "nonexistent")
 	filePath := filepath.Join(nonExistentDir, "file.txt")
