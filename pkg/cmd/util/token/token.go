@@ -139,10 +139,13 @@ func (p *Provider) GetUserFromToken() string {
 		if userClaim, ok := claims["boxer.sneaksanddata.com/user"].(string); ok {
 			user = userClaim
 		} else {
-			fmt.Println("User claim not found or not a string")
+			fmt.Println("User claim not found or not a string - assigning HOSTNAME instead")
+			user, _ = os.Hostname()
 		}
 	} else {
-		fmt.Println("Invalid token claims")
+		fmt.Println("Invalid token claims - assigning HOSTNAME instead")
+		user, _ = os.Hostname()
 	}
+
 	return user
 }

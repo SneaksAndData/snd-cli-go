@@ -31,7 +31,9 @@ func upgradeRun() {
 		fmt.Println("Error creating updater script:", err)
 		os.Exit(1)
 	}
-	defer os.Remove(updaterScriptPath.Name())
+	defer func(name string) {
+		_ = os.Remove(name)
+	}(updaterScriptPath.Name())
 	if _, err := updaterScriptPath.WriteString(upgradeScript); err != nil {
 		fmt.Println("Error writing updater script:", err)
 		os.Exit(1)

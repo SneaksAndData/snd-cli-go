@@ -7,6 +7,7 @@ import (
 	claimCmd "snd-cli/pkg/cmd/claim"
 	dsrCmd "snd-cli/pkg/cmd/dsr"
 	mlCmd "snd-cli/pkg/cmd/ml"
+	nexuscmd "snd-cli/pkg/cmd/nexus"
 	sparkCmd "snd-cli/pkg/cmd/spark"
 	upgradeCmd "snd-cli/pkg/cmd/upgrade"
 	versionCmd "snd-cli/pkg/cmd/version"
@@ -43,6 +44,11 @@ func NewCmdRoot() (*cobra.Command, error) {
 	})
 
 	cmd.AddGroup(&cobra.Group{
+		ID:    "nx",
+		Title: "NEXUS COMMANDS",
+	})
+
+	cmd.AddGroup(&cobra.Group{
 		ID:    "spark",
 		Title: "SPARK COMMANDS",
 	})
@@ -59,10 +65,12 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(authCmd.NewCmdAuth(authServiceFactory))
 	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
 	cmd.AddCommand(mlCmd.NewCmdAlgorithm(serviceFactory, authServiceFactory))
+	cmd.AddCommand(nexuscmd.NewCmdNexus(serviceFactory, authServiceFactory))
 	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
 	cmd.AddCommand(dsrCmd.NewCmdDsr(serviceFactory, authServiceFactory))
 
 	cmd.AddCommand(upgradeCmd.NewCmdUpgrade())
 	cmd.AddCommand(versionCmd.NewCmdVersion())
+
 	return cmd, nil
 }
