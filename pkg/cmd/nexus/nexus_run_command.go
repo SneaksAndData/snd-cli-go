@@ -26,7 +26,7 @@ func NewCmdRun(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cm
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: heredoc.Doc(`Run a Nexus algorithm. The payload should be provided as a valid JSON file. In addition, configuration overrides, parent reference and validity period could be overridden.`),
-		Long: heredoc.Doc(`Run a Nexus algorithm. The payload should be provided as a valid JSON file. In addition, configuration overrides, parent reference and validity period could be overridden.	
+		Long: heredoc.Doc(`Run a Nexus algorithm. The payload should be provided as a valid JSON file. In addition, configuration overrides, parent reference and validity period could be overridden.
 Custom configuration format is provided here: https://github.com/SneaksAndData/nexus-sdk-go/blob/main/pkg/generated/scheduler/oas_schemas_gen.go#L1062-L1069. Example for a version override: {"container": {"versionTag": "v1.2.0"}}
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
