@@ -9,7 +9,6 @@ import (
 	mlCmd "snd-cli/pkg/cmd/ml"
 	nexuscmd "snd-cli/pkg/cmd/nexus"
 	sparkCmd "snd-cli/pkg/cmd/spark"
-	upgradeCmd "snd-cli/pkg/cmd/upgrade"
 	versionCmd "snd-cli/pkg/cmd/version"
 	"snd-cli/pkg/cmdutil"
 )
@@ -26,6 +25,9 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Short:        "SnD CLI",
 		Long:         `SnD CLI is a tool for interacting with various internal and external services in Sneaks & Data.`,
 		SilenceUsage: true,
+		RunE: func(c *cobra.Command, args []string) error {
+			return c.Usage()
+		},
 	}
 
 	cmd.AddGroup(&cobra.Group{
@@ -68,8 +70,6 @@ func NewCmdRoot() (*cobra.Command, error) {
 	cmd.AddCommand(nexuscmd.NewCmdNexus(serviceFactory, authServiceFactory))
 	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
 	cmd.AddCommand(dsrCmd.NewCmdDsr(serviceFactory, authServiceFactory))
-
-	cmd.AddCommand(upgradeCmd.NewCmdUpgrade())
 	cmd.AddCommand(versionCmd.NewCmdVersion())
 
 	return cmd, nil
