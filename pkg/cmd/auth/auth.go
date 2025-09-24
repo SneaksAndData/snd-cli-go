@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var env, provider string
+var env, authUrl, provider string
 
 func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	cmd := &cobra.Command{
@@ -23,7 +23,7 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 		GroupID: "auth",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authService, err := authServiceFactory.CreateAuthService("", env, provider)
+			authService, err := authServiceFactory.CreateAuthService(authUrl, env, provider)
 			if err != nil {
 				return fmt.Errorf("failed to initialize auth service: %w", err)
 			}
@@ -32,13 +32,14 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	}
 
 	helpStr := []string{
-		"Specify the OAuth provider name ",
+		"Specify the OIDC provider name ",
 		"For in-cluster Kubernetes auth specify name of your kubernetes cluster context prefixed with `k8s`",
 		"for example `k8s-esd-airflow-dev-0`",
 	}
 
-	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
+	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target platform environment.")
 	cmd.PersistentFlags().StringVarP(&provider, "auth-provider", "a", "azuread", strings.Join(helpStr, "\n"))
+	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri, including protocol prefix (https).")
 
 	return cmd
 }
