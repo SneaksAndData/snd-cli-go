@@ -32,7 +32,7 @@ func NewCmdAuth(authServiceFactory *cmdutil.AuthServiceFactory) *cobra.Command {
 	}
 
 	helpStr := []string{
-		"Specify the OIDC provider name ",
+		"Specify the identity provider name ",
 		"For in-cluster Kubernetes auth specify name of your kubernetes cluster context prefixed with `k8s`",
 		"for example `k8s-esd-airflow-dev-0`",
 	}
