@@ -28,7 +28,7 @@ RUN yum update -y && yum install -y unzip curl \
   # may be present in /usr/local/bin of the installer stage.
     && ./aws/install --bin-dir /aws-cli-bin/ \
     && wget --quiet "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl" -O /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl \
+    && chmod +x /usr/local/bin/kubectl
 
 
 # Deploy the application binary into a lean image
