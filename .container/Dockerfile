@@ -42,6 +42,8 @@ COPY --from=aws-cli-stage /usr/local/aws-cli/ /usr/local/aws-cli/
 COPY --from=aws-cli-stage /aws-cli-bin/ /usr/local/bin/
 COPY --from=aws-cli-stage /usr/local/bin/kubectl /usr/local/bin/
 
+ENV PATH="$PATH:/app"
+
 USER nonroot:nonroot
 
 ENTRYPOINT ["/app/snd"]
