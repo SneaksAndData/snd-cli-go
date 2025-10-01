@@ -6,12 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"snd-cli/pkg/cmd/spark/mocks"
+	"snd-cli/pkg/cmd/util"
 	"strings"
 	"testing"
 )
 
 func TestGenerateTag(t *testing.T) {
-	tag, _ := generateTag()
+	tag, _ := util.GenerateTag()
 	fmt.Println(tag)
 	parts := strings.Split(tag, "-")
 	assert.Equal(t, "cli", parts[0], "The tag should start with 'cli'.")

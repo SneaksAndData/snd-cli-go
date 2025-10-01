@@ -53,7 +53,9 @@ func getPayloadRun(client *http.Client, algorithmService Service, id, algorithm 
 	if err != nil {
 		return "", fmt.Errorf("HTTP request to sas uri %s failed: %w", response.PayloadUri, err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	switch resp.StatusCode {
 	case http.StatusOK:

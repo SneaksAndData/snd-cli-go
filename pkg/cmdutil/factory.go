@@ -7,6 +7,7 @@ import (
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
+	nexussdk "github.com/SneaksAndData/nexus-sdk-go/sdk"
 	"snd-cli/pkg/cmd/util/token"
 	"strings"
 )
@@ -84,6 +85,8 @@ func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl stri
 		return initClaimService(env, serviceUrl, authService)
 	case "algorithm":
 		return initAlgorithmService(env, serviceUrl, authService)
+	case "nx":
+		return initNexusService(env, serviceUrl, authService)
 	case "spark":
 		return initSparkService(env, serviceUrl, authService)
 	case "dsr":
@@ -182,4 +185,32 @@ func createTokenProvider(env string, authService token.AuthService) (*token.Prov
 		return nil, fmt.Errorf("unable to create token provider: %w", err)
 	}
 	return tp, nil
+}
+
+type NexusService struct {
+	Client        *nexussdk.NexusSchedulerClient
+	tokenProvider *token.Provider
+}
+
+func (ns *NexusService) Authenticate() error {
+	serviceToken, err := ns.tokenProvider.GetToken()
+	if err != nil {
+		return err
+	}
+
+	ns.Client.RefreshAuth(serviceToken)
+	return nil
+}
+
+func initNexusService(env, url string, authService token.AuthService) (*NexusService, error) {
+	tp, err := createTokenProvider(env, authService)
+	if err != nil {
+		return nil, err
+	}
+	renderedUrl := processURL(url, env)
+	// Client is created as anonymous by default
+	return &NexusService{
+		Client:        nexussdk.NewNexusSchedulerClient(renderedUrl, nil, nil, nil),
+		tokenProvider: tp,
+	}, nil
 }
