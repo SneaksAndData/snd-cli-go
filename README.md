@@ -1,6 +1,6 @@
-# Command-line interface for Sneaks & Data
+# CLI for Data & AI Platform.
 
-This repository contains a command-line interface for internal and external services used in Sneaks & Data.
+This repository contains a command-line interface for ECCO Data & AI Platform.
  
 ## Installation
 Retrieve installation script from GitHub
@@ -14,6 +14,9 @@ chmod +x install.sh
 ```
 
 #### Run the installation script
+
+Installation script works for both install and upgrade.
+
 ##### Linux
 ```bash
 ./install.sh
