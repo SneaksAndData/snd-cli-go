@@ -27,7 +27,7 @@ RUN yum update -y && yum install -y unzip curl \
   # accidentally copying over any other executables that
   # may be present in /usr/local/bin of the installer stage.
     && ./aws/install --bin-dir /aws-cli-bin/ \
-    && curl "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/$TARGETARCH/kubectl" -O /usr/local/bin/kubectl \
+    && curl "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/$TARGETARCH/kubectl" -o /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl
 
 
