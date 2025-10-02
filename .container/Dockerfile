@@ -4,6 +4,7 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG APPVERSION
 ARG BUILDNUMBER
+ARG KUBECTL_VERSION="v1.34.0"
 
 WORKDIR /app
 
@@ -16,6 +17,7 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X 'snd-c
 FROM --platform=$BUILDPLATFORM public.ecr.aws/amazonlinux/amazonlinux:2 AS aws-cli-stage
 
 ARG TARGETARCH
+ARG KUBECTL_VERSION="v1.34.0"
 
 RUN yum update -y && yum install -y unzip curl \
     && cli_arch=$(test "$TARGETARCH" = "amd64" && echo "x86_64" || echo "aarch64") \
@@ -27,7 +29,7 @@ RUN yum update -y && yum install -y unzip curl \
   # accidentally copying over any other executables that
   # may be present in /usr/local/bin of the installer stage.
     && ./aws/install --bin-dir /aws-cli-bin/ \
-    && curl "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/$TARGETARCH/kubectl" -o /usr/local/bin/kubectl \
+    && curl -L "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/$TARGETARCH/kubectl" -o /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl
 
 
