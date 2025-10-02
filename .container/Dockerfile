@@ -37,6 +37,10 @@ FROM golang:1.24-bookworm AS build-release-stage
 
 WORKDIR /app
 
+RUN apt-get update \
+ && apt-get --assume-yes upgrade \
+ && apt-get --no-install-recommends --assume-yes install ca-certificates curl jq unzip apt-transport-https lsb-release gnupg libc-bin binutils wget
+
 COPY --from=build-stage /app /app
 
 COPY --from=aws-cli-stage /usr/local/aws-cli/ /usr/local/aws-cli/
