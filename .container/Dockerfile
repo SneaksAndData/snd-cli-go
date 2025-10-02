@@ -32,7 +32,8 @@ RUN yum update -y && yum install -y unzip curl \
 
 
 # Deploy the application binary into a lean image
-FROM gcr.io/distroless/python3-debian12 AS build-release-stage
+# We cannot use distroless here because we need to run /bin/sh -c in the entrypoint script
+FROM golang:1.21-bookworm AS build-release-stage
 
 WORKDIR /app
 
