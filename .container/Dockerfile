@@ -4,6 +4,7 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG APPVERSION
 ARG BUILDNUMBER
+ARG KUBECTL_VERSION="v1.34.0"
 
 WORKDIR /app
 
@@ -16,6 +17,7 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-X 'snd-c
 FROM --platform=$BUILDPLATFORM public.ecr.aws/amazonlinux/amazonlinux:2 AS aws-cli-stage
 
 ARG TARGETARCH
+ARG KUBECTL_VERSION="v1.34.0"
 
 RUN yum update -y && yum install -y unzip curl \
     && cli_arch=$(test "$TARGETARCH" = "amd64" && echo "x86_64" || echo "aarch64") \
@@ -27,23 +29,26 @@ RUN yum update -y && yum install -y unzip curl \
   # accidentally copying over any other executables that
   # may be present in /usr/local/bin of the installer stage.
     && ./aws/install --bin-dir /aws-cli-bin/ \
-    && curl "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/$TARGETARCH/kubectl" -o /usr/local/bin/kubectl \
+    && curl -L "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/$TARGETARCH/kubectl" -o /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl
 
 
 # Deploy the application binary into a lean image
-FROM gcr.io/distroless/python3-debian12 AS build-release-stage
+# We cannot use distroless here because we need to run /bin/sh -c in the entrypoint script
+FROM golang:1.24-bookworm AS build-release-stage
 
 WORKDIR /app
 
-COPY --from=build-stage /app /app
+RUN apt-get update \
+ && apt-get --assume-yes upgrade \
+ && apt-get --no-install-recommends --assume-yes install ca-certificates curl jq unzip apt-transport-https lsb-release gnupg libc-bin binutils wget
+
+COPY --from=build-stage /snd /app
 
 COPY --from=aws-cli-stage /usr/local/aws-cli/ /usr/local/aws-cli/
 COPY --from=aws-cli-stage /aws-cli-bin/ /usr/local/bin/
 COPY --from=aws-cli-stage /usr/local/bin/kubectl /usr/local/bin/
 
 ENV PATH="$PATH:/app"
-
-USER nonroot:nonroot
 
 ENTRYPOINT ["/app/snd"]
