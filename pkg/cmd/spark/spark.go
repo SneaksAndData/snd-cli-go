@@ -7,7 +7,7 @@ import (
 	"snd-cli/pkg/cmdutil"
 )
 
-const beastURL = "https://beast.%s.sneaksanddata.com"
+const beastURL = "https://beast%s.sneaksanddata.com"
 
 var env, url, authProvider, id, authUrl string
 
