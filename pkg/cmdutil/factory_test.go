@@ -20,3 +20,23 @@ func TestProcessURL(t *testing.T) {
 		}
 	}
 }
+
+func TestProcessBeastURL(t *testing.T) {
+	tests := []struct {
+		url      string
+		env      string
+		expected string
+	}{
+		{"https://beast.sneaksanddata.com", "production", "https://beast.sneaksanddata.com"},
+		{"https://beast%s.sneaksanddata.com", "production", "https://beastproduction.sneaksanddata.com"},
+		{"https://beast%s.sneaksanddata.com", "awsp", "https://beast.awsp.sneaksanddata.com"},
+		{"https://beast%s.sneaksanddata.com", "awsd", "https://beast-dev.awsp.sneaksanddata.com"},
+	}
+
+	for _, test := range tests {
+		result := processBeastURL(test.url, test.env)
+		if result != test.expected {
+			t.Errorf("processBeastURL(%q, %q) = %q; want %q", test.url, test.env, result, test.expected)
+		}
+	}
+}

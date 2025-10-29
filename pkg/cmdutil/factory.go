@@ -137,7 +137,7 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 	if err != nil {
 		return nil, err
 	}
-	url := processURL(beastURL, env)
+	url := processBeastURL(beastURL, env)
 	config := spark.Config{
 		BaseURL:      url,
 		GetTokenFunc: tp.GetToken,
@@ -172,6 +172,25 @@ func initDsrService(env, dsrURL string, authService token.AuthService) (*dsr.Ser
 // If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
 // If the URL does not contain the placeholder, the original URL is returned unchanged.
 func processURL(url, env string) string {
+	if strings.Contains(url, "%s") {
+		return fmt.Sprintf(url, env)
+	}
+	return url
+}
+
+// processBeastURL formats the given Beast URL with the provided environment string if the URL contains a placeholder ("%s").
+// It has special handling for "awsd" and "awsp" environments to adjust the environment string accordingly.
+// If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
+// If the URL does not contain the placeholder, the original URL is returned unchanged.
+// This functionality is temporary and specific to Beast service URLs.
+func processBeastURL(url, env string) string {
+	if env == "awsd" {
+		env = "-dev.awsp"
+	} else if env == "awsp" {
+		env = ".awsp"
+	} else {
+		url = processURL(url, env)
+	}
 	if strings.Contains(url, "%s") {
 		return fmt.Sprintf(url, env)
 	}
