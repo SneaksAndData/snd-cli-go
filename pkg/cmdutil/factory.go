@@ -184,12 +184,16 @@ func processURL(url, env string) string {
 // If the URL does not contain the placeholder, the original URL is returned unchanged.
 // This functionality is temporary and specific to Beast service URLs.
 func processBeastURL(url, env string) string {
-	if env == "awsd" {
+	// Temporary handling for Beast service URLs
+	switch env {
+	case "awsd":
 		env = "-dev.awsp"
-	} else if env == "awsp" {
+	case "awsp":
 		env = ".awsp"
-	} else {
-		url = processURL(url, env)
+	default:
+
+		// Default case: no change to env, for backward compatibility
+		return processURL(url, env)
 	}
 	if strings.Contains(url, "%s") {
 		return fmt.Sprintf(url, env)
