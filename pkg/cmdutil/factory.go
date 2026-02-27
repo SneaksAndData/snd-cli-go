@@ -2,17 +2,18 @@ package cmdutil
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmd/util/token"
+	"strings"
+
 	"github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	nexussdk "github.com/SneaksAndData/nexus-sdk-go/sdk"
-	"snd-cli/pkg/cmd/util/token"
-	"strings"
 )
 
-const boxerURL = "https://boxer.%s.sneaksanddata.com"
+const boxerURL = "https://boxer-v2.%s.sneaksanddata.com/api/v1"
 
 // AuthServiceFactory is responsible for creating instances of AuthService.
 // It encapsulates the logic required to configure and instantiate an AuthService.
