@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-const boxerURL = "https://boxer.%s.sneaksanddata.com"
+const boxerURL = "https://boxer-v2.%s.sneaksanddata.com/api/v1"
 
 // AuthServiceFactory is responsible for creating instances of AuthService.
 // It encapsulates the logic required to configure and instantiate an AuthService.
