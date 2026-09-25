@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.24-bookworm AS build-stage
+FROM --platform=$BUILDPLATFORM golang:1.26-bookworm AS build-stage
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -35,7 +35,7 @@ RUN yum update -y && yum install -y unzip curl \
 
 # Deploy the application binary into a lean image
 # We cannot use distroless here because we need to run /bin/sh -c in the entrypoint script
-FROM golang:1.24-bookworm AS build-release-stage
+FROM golang:1.26-bookworm AS build-release-stage
 
 WORKDIR /app
 

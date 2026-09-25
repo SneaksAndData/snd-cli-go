@@ -3,13 +3,14 @@ package nexus
 import (
 	"errors"
 	"fmt"
+	"os"
+	"snd-cli/pkg/cmd/util"
+	"snd-cli/pkg/cmdutil"
+
 	"github.com/MakeNowJust/heredoc"
 	api "github.com/SneaksAndData/nexus-sdk-go/pkg/generated/scheduler"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
-	"os"
-	"snd-cli/pkg/cmd/util"
-	"snd-cli/pkg/cmdutil"
 )
 
 // CommandConfig holds the configuration for the run command.
@@ -17,7 +18,6 @@ type CommandConfig struct {
 	PayloadPath          string
 	CustomConfigPath     string
 	ParentRequestRefPath string
-	ValidFor             string
 	Tag                  string
 }
 
@@ -47,7 +47,6 @@ Custom configuration format is provided here: https://github.com/SneaksAndData/n
 	cmd.Flags().StringVarP(&config.PayloadPath, "payload", "p", "", "Path to the input payload (json).")
 	cmd.Flags().StringVar(&config.CustomConfigPath, "custom-configuration", "", "Path to the optional custom configuration for the run (json).")
 	cmd.Flags().StringVar(&config.ParentRequestRefPath, "parent-request", "", "Path to the optional parent request reference (json).")
-	cmd.Flags().StringVar(&config.ValidFor, "valid-for", "24h", "Payload validity period override in hours. Defaults to 24h, maximum possible value is 168h.")
 	cmd.Flags().StringVar(&config.Tag, "tag", "", "Client-side tag for identifying the submission.")
 
 	err := cmd.MarkFlagRequired("payload")
@@ -167,10 +166,6 @@ func generateRequest(runConfig CommandConfig) (*api.ModelsAlgorithmRequest, erro
 		ParentRequest: api.OptModelsAlgorithmRequestRef{
 			Set:   runConfig.ParentRequestRefPath != "",
 			Value: *parentRef,
-		},
-		PayloadValidFor: api.OptString{
-			Set:   true,
-			Value: runConfig.ValidFor,
 		},
 		RequestApiVersion: api.OptString{
 			Set: false,

@@ -1,16 +1,15 @@
 package root
 
 import (
-	"github.com/SneaksAndData/esd-services-api-client-go/auth"
-	"github.com/spf13/cobra"
 	authCmd "snd-cli/pkg/cmd/auth"
 	claimCmd "snd-cli/pkg/cmd/claim"
-	dsrCmd "snd-cli/pkg/cmd/dsr"
-	mlCmd "snd-cli/pkg/cmd/ml"
 	nexuscmd "snd-cli/pkg/cmd/nexus"
 	sparkCmd "snd-cli/pkg/cmd/spark"
 	versionCmd "snd-cli/pkg/cmd/version"
 	"snd-cli/pkg/cmdutil"
+
+	"github.com/SneaksAndData/esd-services-api-client-go/auth"
+	"github.com/spf13/cobra"
 )
 
 // AuthServiceFactory is a function type that creates a Service instance.
@@ -66,10 +65,8 @@ func NewCmdRoot() (*cobra.Command, error) {
 	// Child commands
 	cmd.AddCommand(authCmd.NewCmdAuth(authServiceFactory))
 	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
-	cmd.AddCommand(mlCmd.NewCmdAlgorithm(serviceFactory, authServiceFactory))
 	cmd.AddCommand(nexuscmd.NewCmdNexus(serviceFactory, authServiceFactory))
 	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
-	cmd.AddCommand(dsrCmd.NewCmdDsr(serviceFactory, authServiceFactory))
 	cmd.AddCommand(versionCmd.NewCmdVersion())
 
 	return cmd, nil
