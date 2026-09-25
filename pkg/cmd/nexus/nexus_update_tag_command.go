@@ -26,7 +26,7 @@ func NewCmdUpdateTag(authServiceFactory *cmdutil.AuthServiceFactory, serviceFact
 			if err != nil {
 				return err
 			}
-			err = executeTagUpdate(service.(*cmdutil.NexusService), id, template, newTag)
+			err = executeTagUpdate(service.(*cmdutil.NexusService), newTag, template, id)
 			if err == nil {
 				pterm.DefaultBasicText.Println(fmt.Sprintf("Submission %s/%s tag successfully updated to %s", template, id, newTag))
 			}
@@ -64,6 +64,10 @@ func executeTagUpdate(nexus *cmdutil.NexusService, tag, template, id string) err
 	response, err := nexus.Client.GetRun(id, template)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve run for the template %s with run id %s: %w", template, id, err)
+	}
+
+	if response == nil {
+		return fmt.Errorf("run for the template %s with id %s not found", template, id)
 	}
 
 	if !sdk.IsFinished(response.Status.Value) {
