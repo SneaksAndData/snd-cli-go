@@ -2,9 +2,10 @@ package nexus
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmdutil"
+
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmdutil"
 )
 
 const nexusServiceUrl = "https://nexus.%s.sneaksanddata.com"
@@ -41,5 +42,6 @@ func NewCmdNexus(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 	cmd.AddCommand(NewCmdCancel(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdGetPayload(authServiceFactory, serviceFactory))
 	cmd.AddCommand(NewCmdGetRunMetadata(authServiceFactory, serviceFactory))
+	cmd.AddCommand(NewCmdUpdateTag(authServiceFactory, serviceFactory))
 	return cmd
 }
