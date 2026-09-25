@@ -2,10 +2,11 @@ package nexus
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmdutil"
+
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmdutil"
 )
 
 var id string
@@ -49,6 +50,10 @@ func executeGet(nexus *cmdutil.NexusService, id, template string) (string, error
 	response, err := nexus.Client.GetRun(id, template)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve run for the template %s with run id %s: %w", template, id, err)
+	}
+
+	if response == nil {
+		return "", fmt.Errorf("run for the template %s with id %s not found", template, id)
 	}
 
 	serialized, err := response.MarshalJSON()
