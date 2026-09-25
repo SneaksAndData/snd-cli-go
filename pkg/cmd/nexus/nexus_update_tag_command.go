@@ -45,6 +45,12 @@ func NewCmdUpdateTag(authServiceFactory *cmdutil.AuthServiceFactory, serviceFact
 		fmt.Println("failed to mark 'value' as a required flag: %w", err)
 		return nil
 	}
+	cmd.Flags().StringVarP(&id, "id", "i", "", "Specify the Nexus run identifier")
+	err = cmd.MarkFlagRequired("id")
+	if err != nil {
+		fmt.Println("failed to mark 'id' as a required flag: %w", err)
+		return nil
+	}
 
 	return cmd
 }
