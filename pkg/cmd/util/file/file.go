@@ -100,6 +100,7 @@ func (f File) ReadAndUnmarshal(v interface{}) error {
 	}
 
 	rv := reflect.ValueOf(v)
+	//nolint:govet // Bypass "Constant reflect.Ptr should be inlined" false positive
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return fmt.Errorf("non-nil pointer required for unmarshaling")
 	}
