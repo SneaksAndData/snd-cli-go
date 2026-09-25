@@ -2,9 +2,10 @@ package nexus
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmdutil"
+
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmdutil"
 )
 
 func NewCmdGetRunMetadata(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
@@ -45,6 +46,9 @@ func executeGetMetadata(nexus *cmdutil.NexusService, id, template string) (strin
 	response, err := nexus.Client.GetMetadata(id, template)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve metadata for the template %s with run id %s: %w", template, id, err)
+	}
+	if response == nil {
+		return "", fmt.Errorf("run for the template %s with id %s not found", template, id)
 	}
 
 	serialized, err := response.MarshalJSON()
