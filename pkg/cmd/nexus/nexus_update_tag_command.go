@@ -14,7 +14,7 @@ import (
 func NewCmdUpdateTag(authServiceFactory *cmdutil.AuthServiceFactory, serviceFactory cmdutil.ServiceFactory) *cobra.Command {
 	var newTag string
 	cmd := &cobra.Command{
-		Use:   "run",
+		Use:   "tag",
 		Short: heredoc.Doc(`Update a client tag on a completed Nexus run.`),
 		Long:  heredoc.Doc(`Update a client tag to a provided value. Clients that rely on tagging can utilize this to reset their internal run tracking state`),
 		RunE: func(cmd *cobra.Command, args []string) error {

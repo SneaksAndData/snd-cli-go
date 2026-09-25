@@ -22,6 +22,8 @@ func NewCmdNexus(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 			$ snd nx get --id fa1d02af-c294-4bf6-989f-1234 --template omni-channel-solver
 			$ snd nx payload --id fa1d02af-c294-4bf6-989f-1234 --template omni-channel-solver
 			$ snd nx cancel --id fa1d02af-c294-4bf6-989f-1234 --template omni-channel-solver --reason test
+			$ snd nx meta --id fa1d02af-c294-4bf6-989f-1234 --template omni-channel-solver
+			$ snd nx tag --id fa1d02af-c294-4bf6-989f-1234 --template omni-channel-solver --value new-tag
 		`),
 		GroupID: "nx",
 	}
