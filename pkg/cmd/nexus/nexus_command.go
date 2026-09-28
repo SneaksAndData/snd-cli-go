@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const nexusServiceUrl = "https://nexus.%s.sneaksanddata.com"
+const nexusServiceUrl = "https://nexus-%s"
 
 var env, url, authProvider, template, authUrl string
 

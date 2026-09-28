@@ -1,13 +1,14 @@
 package spark
 
 import (
+	"snd-cli/pkg/cmdutil"
+
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmdutil"
 )
 
-const beastURL = "https://beast%s.sneaksanddata.com"
+const beastURL = "https://beast%s"
 
 var env, url, authProvider, id, authUrl string
 

@@ -2,14 +2,15 @@ package cmdutil
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmd/util/token"
+	"strings"
+
 	"github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	nexussdk "github.com/SneaksAndData/nexus-sdk-go/sdk"
-	"snd-cli/pkg/cmd/util/token"
-	"strings"
 )
 
 const boxerURL = "https://boxer-v2.%s.sneaksanddata.com/api/v1"
@@ -190,6 +191,26 @@ func processBeastURL(url, env string) string {
 		env = "-dev.awsp"
 	case "awsp":
 		env = ".awsp"
+	default:
+
+		// Default case: no change to env, for backward compatibility
+		return processURL(url, env)
+	}
+	if strings.Contains(url, "%s") {
+		return fmt.Sprintf(url, env)
+	}
+	return url
+}
+
+// processAwsURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
+// If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
+// If the URL does not contain the placeholder, the original URL is returned unchanged.
+func processAwsURL(url, env string) string {
+	switch env {
+	case "awsd":
+		env = env + "-dev-0.snd-awsp.io"
+	case "awsp":
+		env = env + "-production-0.snd-awsp.io"
 	default:
 
 		// Default case: no change to env, for backward compatibility
