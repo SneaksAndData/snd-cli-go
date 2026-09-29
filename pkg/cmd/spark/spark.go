@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const beastURL = "https://beast%s"
+const beastURL = "https://beast-%s.snd-awsp.io"
 
 var env, url, authProvider, id, authUrl string
 

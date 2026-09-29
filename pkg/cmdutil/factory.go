@@ -5,10 +5,7 @@ import (
 	"snd-cli/pkg/cmd/util/token"
 	"strings"
 
-	"github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
-	"github.com/SneaksAndData/esd-services-api-client-go/claim"
-	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	nexussdk "github.com/SneaksAndData/nexus-sdk-go/sdk"
 )
@@ -82,55 +79,13 @@ func NewConcreteServiceFactory() *ConcreteServiceFactory {
 //	An error if the service creation fails or if an unknown service type is specified.
 func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl string, authService token.AuthService) (interface{}, error) {
 	switch serviceType {
-	case "claim":
-		return initClaimService(env, serviceUrl, authService)
-	case "algorithm":
-		return initAlgorithmService(env, serviceUrl, authService)
 	case "nx":
 		return initNexusService(env, serviceUrl, authService)
 	case "spark":
 		return initSparkService(env, serviceUrl, authService)
-	case "dsr":
-		return initDsrService(env, serviceUrl, authService)
 	default:
 		return nil, fmt.Errorf("unknown service type: %s", serviceType)
 	}
-}
-
-func initClaimService(env, boxerClaimURL string, authService token.AuthService) (*claim.Service, error) {
-	tp, err := createTokenProvider(env, authService)
-	if err != nil {
-		return nil, err
-	}
-	url := processURL(boxerClaimURL, env)
-	config := claim.Config{
-		ClaimURL:     url,
-		GetTokenFunc: tp.GetToken,
-	}
-	claimService, err := claim.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create claim service: %w", err)
-	}
-	return claimService, nil
-}
-
-func initAlgorithmService(env, crystalURL string, authService token.AuthService) (*algorithm.Service, error) {
-	tp, err := createTokenProvider(env, authService)
-	if err != nil {
-		return nil, err
-	}
-	url := processURL(crystalURL, env)
-	config := algorithm.Config{
-		SchedulerURL: url,
-		APIVersion:   "v1.2",
-		GetTokenFunc: tp.GetToken,
-	}
-
-	algorithmService, err := algorithm.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create algorithm service: %w", err)
-	}
-	return algorithmService, nil
 }
 
 func initSparkService(env, beastURL string, authService token.AuthService) (*spark.Service, error) {
@@ -138,7 +93,7 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 	if err != nil {
 		return nil, err
 	}
-	url := processBeastURL(beastURL, env)
+	url := processAwsURL(beastURL, env)
 	config := spark.Config{
 		BaseURL:      url,
 		GetTokenFunc: tp.GetToken,
@@ -151,73 +106,25 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 	return sparkService, nil
 }
 
-func initDsrService(env, dsrURL string, authService token.AuthService) (*dsr.Service, error) {
-	tp, err := createTokenProvider(env, authService)
-	if err != nil {
-		return nil, err
-	}
-	url := processURL(dsrURL, env)
-	config := dsr.Config{
-		DsrBaseUrl:   url,
-		GetTokenFunc: tp.GetToken,
-	}
-
-	dsrService, err := dsr.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create dsr service: %w", err)
-	}
-	return dsrService, nil
-}
-
-// processURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
-// If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
-// If the URL does not contain the placeholder, the original URL is returned unchanged.
-func processURL(url, env string) string {
-	if strings.Contains(url, "%s") {
-		return fmt.Sprintf(url, env)
-	}
-	return url
-}
-
-// processBeastURL formats the given Beast URL with the provided environment string if the URL contains a placeholder ("%s").
-// It has special handling for "awsd" and "awsp" environments to adjust the environment string accordingly.
-// If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
-// If the URL does not contain the placeholder, the original URL is returned unchanged.
-// This functionality is temporary and specific to Beast service URLs.
-func processBeastURL(url, env string) string {
-	// Temporary handling for Beast service URLs
-	switch env {
-	case "awsd":
-		env = "-dev.awsp"
-	case "awsp":
-		env = ".awsp"
-	default:
-
-		// Default case: no change to env, for backward compatibility
-		return processURL(url, env)
-	}
-	if strings.Contains(url, "%s") {
-		return fmt.Sprintf(url, env)
-	}
-	return url
-}
-
 // processAwsURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
 // If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
 // If the URL does not contain the placeholder, the original URL is returned unchanged.
 func processAwsURL(url, env string) string {
+	var envName string
+	var envDomain string
 	switch env {
 	case "awsd":
-		env = env + "-dev-0.snd-awsp.io"
+		envName = "dev-0"
 	case "awsp":
-		env = env + "-production-0.snd-awsp.io"
+		envName = "production-0"
 	default:
-
 		// Default case: no change to env, for backward compatibility
-		return processURL(url, env)
 	}
-	if strings.Contains(url, "%s") {
-		return fmt.Sprintf(url, env)
+
+	if strings.Count(url, "%s") == 2 {
+		return fmt.Sprintf(url, envName, envDomain)
+	} else if strings.Count(url, "%s") == 1 {
+		return fmt.Sprintf(url, envDomain)
 	}
 	return url
 }
@@ -251,7 +158,7 @@ func initNexusService(env, url string, authService token.AuthService) (*NexusSer
 	if err != nil {
 		return nil, err
 	}
-	renderedUrl := processURL(url, env)
+	renderedUrl := processAwsURL(url, env)
 	// Client is created as anonymous by default
 	return &NexusService{
 		Client:        nexussdk.NewNexusSchedulerClient(renderedUrl, nil, nil, nil),
