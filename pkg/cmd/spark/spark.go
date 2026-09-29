@@ -1,13 +1,13 @@
 package spark
 
 import (
+	"snd-cli/pkg/cmd/urls"
+	"snd-cli/pkg/cmdutil"
+
 	"github.com/MakeNowJust/heredoc"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	"github.com/spf13/cobra"
-	"snd-cli/pkg/cmdutil"
 )
-
-const beastURL = "https://beast%s.sneaksanddata.com"
 
 var env, url, authProvider, id, authUrl string
 
@@ -36,7 +36,7 @@ func NewCmdSpark(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&id, "id", "i", "", "Specify the  Job ID")
-	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", beastURL, "Specify the service url")
+	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", urls.BeastURL, "Specify the service url")
 	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri")
 
 	cmd.AddCommand(NewCmdSubmit(authServiceFactory, serviceFactory))

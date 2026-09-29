@@ -2,13 +2,12 @@ package nexus
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmd/urls"
 	"snd-cli/pkg/cmdutil"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 )
-
-const nexusServiceUrl = "https://nexus.%s.sneaksanddata.com"
 
 var env, url, authProvider, template, authUrl string
 
@@ -30,7 +29,7 @@ func NewCmdNexus(serviceFactory cmdutil.ServiceFactory, authServiceFactory *cmdu
 	cmd.PersistentFlags().StringVarP(&env, "env", "e", cmdutil.BaseEnvironment, "Target environment")
 	cmd.PersistentFlags().StringVarP(&authProvider, "auth-provider", "a", "azuread", "Specify the OAuth provider name")
 	cmd.PersistentFlags().StringVarP(&template, "template", "", "", "Specify the template name")
-	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", nexusServiceUrl, "Specify the service url")
+	cmd.PersistentFlags().StringVarP(&url, "custom-service-url", "", urls.NexusUrl, "Specify the service url")
 	cmd.PersistentFlags().StringVarP(&authUrl, "custom-auth-url", "", "", "Specify the auth service uri")
 
 	err := cmd.MarkPersistentFlagRequired("template")
