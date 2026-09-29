@@ -27,13 +27,14 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
 
       - name: Get project version
-        uses: SneaksAndData/github-actions/generate_version@v0.1.12
+        uses: SneaksAndData/github-actions/generate_version@e3f4ea513c548adf4e774364872966d0d4a3d2fe # v0.1.12
         id: current_version
 
       - name: Set up variables
@@ -44,7 +45,7 @@ jobs:
           test "$VERSION" == "current" && echo "IMAGE_VERSION=$CURRENT_VERSION" >> ${GITHUB_ENV} || echo "IMAGE_VERSION=$VERSION" >> ${GITHUB_ENV} 
 
       - name: Import AWS Secrets
-        uses: hashicorp/vault-action@v4
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: https://hashicorp-vault-production-0.snd-awsp.io/
           role: github
@@ -55,27 +56,27 @@ jobs:
         id: aws_secrets
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
           aws-access-key-id: ${{ env.ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Log in to the GitHub Container Registry
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
         with:
           registry-type: public
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -84,7 +85,7 @@ jobs:
             latest=false
 
       - name: Push image to ECR Public registry
-        uses: akhilerm/tag-push-action@v2.2.0
+        uses: akhilerm/tag-push-action@f35ff2cb99d407368b5c727adbcc14a2ed81d509 # v2.2.0
         with:
           src: ${{ steps.meta.outputs.tags }}
           dst: public.ecr.aws/ecco-sneaks-and-data/${{ github.event.repository.name }}:${{ steps.meta.outputs.version }}
