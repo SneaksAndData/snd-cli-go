@@ -1,22 +1,29 @@
 package cmdutil
 
-import "testing"
+import (
+	"snd-cli/pkg/cmd/urls"
+	"testing"
+)
 
-// TestProcessURL tests the processURL function.
+// TestProcessURL tests the ProcessURL function.
 func TestProcessURL(t *testing.T) {
 	tests := []struct {
 		url      string
 		env      string
 		expected string
 	}{
-		{"http://example.com", "production", "http://example.com"},
-		{"http://%s.example.com", "production", "http://production.example.com"},
+		{"https://example.com", "production", "https://example.com"},
+		{urls.NexusUrl, "production", "https://nexus-production.snd-production.io"},
+		{urls.NexusUrl, "awsd", "https://nexus-dev-0.snd-awsd.io"},
+		{urls.NexusUrl, "awsp", "https://nexus-production-0.snd-awsp.io"},
+		{urls.BoxerURL, "awsd", "https://boxer-dev-0.snd-awsd.io/api/v1"},
+		{urls.BoxerURL, "awsp", "https://boxer-production-0.snd-awsp.io/api/v1"},
 	}
 
 	for _, test := range tests {
-		result := processURL(test.url, test.env)
+		result := ProcessURL(test.url, test.env)
 		if result != test.expected {
-			t.Errorf("processURL(%q, %q) = %q; want %q", test.url, test.env, result, test.expected)
+			t.Errorf("ProcessURL(%q, %q) = %q; want %q", test.url, test.env, result, test.expected)
 		}
 	}
 }
@@ -28,9 +35,9 @@ func TestProcessBeastURL(t *testing.T) {
 		expected string
 	}{
 		{"https://beast.sneaksanddata.com", "production", "https://beast.sneaksanddata.com"},
-		{"https://beast%s.sneaksanddata.com", "production", "https://beastproduction.sneaksanddata.com"},
-		{"https://beast%s.sneaksanddata.com", "awsp", "https://beast.awsp.sneaksanddata.com"},
-		{"https://beast%s.sneaksanddata.com", "awsd", "https://beast-dev.awsp.sneaksanddata.com"},
+		{urls.BeastURL, "production", "https://beast-production.snd-awsp.io"},
+		{urls.BeastURL, "awsp", "https://beast-production-0.snd-awsp.io"},
+		{urls.BeastURL, "awsd", "https://beast-dev-0.snd-awsp.io"},
 	}
 
 	for _, test := range tests {

@@ -2,17 +2,17 @@ package cmdutil
 
 import (
 	"fmt"
+	"snd-cli/pkg/cmd/urls"
+	"snd-cli/pkg/cmd/util/token"
+	"strings"
+
 	"github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
 	"github.com/SneaksAndData/esd-services-api-client-go/claim"
 	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	nexussdk "github.com/SneaksAndData/nexus-sdk-go/sdk"
-	"snd-cli/pkg/cmd/util/token"
-	"strings"
 )
-
-const boxerURL = "https://boxer-v2.%s.sneaksanddata.com/api/v1"
 
 // AuthServiceFactory is responsible for creating instances of AuthService.
 // It encapsulates the logic required to configure and instantiate an AuthService.
@@ -28,7 +28,7 @@ func NewAuthServiceFactory() *AuthServiceFactory {
 // specific settings, such as the TokenURL, ensuring the AuthService is tailored to operate
 // within the specified environment.
 func (f *AuthServiceFactory) CreateAuthService(authUrl, env, provider string) (*auth.Service, error) {
-	tokenURL := fmt.Sprintf(boxerURL, env)
+	tokenURL := ProcessURL(urls.BoxerURL, env)
 	if authUrl != "" {
 		tokenURL = authUrl
 	}
@@ -101,7 +101,7 @@ func initClaimService(env, boxerClaimURL string, authService token.AuthService) 
 	if err != nil {
 		return nil, err
 	}
-	url := processURL(boxerClaimURL, env)
+	url := ProcessURL(boxerClaimURL, env)
 	config := claim.Config{
 		ClaimURL:     url,
 		GetTokenFunc: tp.GetToken,
@@ -118,7 +118,7 @@ func initAlgorithmService(env, crystalURL string, authService token.AuthService)
 	if err != nil {
 		return nil, err
 	}
-	url := processURL(crystalURL, env)
+	url := ProcessURL(crystalURL, env)
 	config := algorithm.Config{
 		SchedulerURL: url,
 		APIVersion:   "v1.2",
@@ -155,7 +155,7 @@ func initDsrService(env, dsrURL string, authService token.AuthService) (*dsr.Ser
 	if err != nil {
 		return nil, err
 	}
-	url := processURL(dsrURL, env)
+	url := ProcessURL(dsrURL, env)
 	config := dsr.Config{
 		DsrBaseUrl:   url,
 		GetTokenFunc: tp.GetToken,
@@ -168,12 +168,22 @@ func initDsrService(env, dsrURL string, authService token.AuthService) (*dsr.Ser
 	return dsrService, nil
 }
 
-// processURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
+// ProcessURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
 // If the URL contains the "%s" placeholder, it will be replaced with the `env` string using sprintf.
 // If the URL does not contain the placeholder, the original URL is returned unchanged.
-func processURL(url, env string) string {
+func ProcessURL(url, env string) string {
+	var envName string
+	switch env {
+	case "awsd":
+		envName = "dev-0"
+	case "awsp":
+		envName = "production-0"
+	default:
+		// Default case: no change to env, for backward compatibility
+		envName = env
+	}
 	if strings.Contains(url, "%s") {
-		return fmt.Sprintf(url, env)
+		return fmt.Sprintf(url, envName, env)
 	}
 	return url
 }
@@ -184,19 +194,17 @@ func processURL(url, env string) string {
 // If the URL does not contain the placeholder, the original URL is returned unchanged.
 // This functionality is temporary and specific to Beast service URLs.
 func processBeastURL(url, env string) string {
-	// Temporary handling for Beast service URLs
+	var envName string
 	switch env {
 	case "awsd":
-		env = "-dev.awsp"
+		envName = "dev-0"
 	case "awsp":
-		env = ".awsp"
+		envName = "production-0"
 	default:
-
-		// Default case: no change to env, for backward compatibility
-		return processURL(url, env)
+		envName = env
 	}
 	if strings.Contains(url, "%s") {
-		return fmt.Sprintf(url, env)
+		return fmt.Sprintf(url, envName)
 	}
 	return url
 }
@@ -230,7 +238,7 @@ func initNexusService(env, url string, authService token.AuthService) (*NexusSer
 	if err != nil {
 		return nil, err
 	}
-	renderedUrl := processURL(url, env)
+	renderedUrl := ProcessURL(url, env)
 	// Client is created as anonymous by default
 	return &NexusService{
 		Client:        nexussdk.NewNexusSchedulerClient(renderedUrl, nil, nil, nil),
