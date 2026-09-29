@@ -2,7 +2,6 @@ package root
 
 import (
 	authCmd "snd-cli/pkg/cmd/auth"
-	claimCmd "snd-cli/pkg/cmd/claim"
 	nexuscmd "snd-cli/pkg/cmd/nexus"
 	sparkCmd "snd-cli/pkg/cmd/spark"
 	versionCmd "snd-cli/pkg/cmd/version"
@@ -35,16 +34,6 @@ func NewCmdRoot() (*cobra.Command, error) {
 	})
 
 	cmd.AddGroup(&cobra.Group{
-		ID:    "claim",
-		Title: "CLAIM COMMANDS",
-	})
-
-	cmd.AddGroup(&cobra.Group{
-		ID:    "ml",
-		Title: "ML ALGORITHM COMMANDS",
-	})
-
-	cmd.AddGroup(&cobra.Group{
 		ID:    "nx",
 		Title: "NEXUS COMMANDS",
 	})
@@ -54,17 +43,11 @@ func NewCmdRoot() (*cobra.Command, error) {
 		Title: "SPARK COMMANDS",
 	})
 
-	cmd.AddGroup(&cobra.Group{
-		ID:    "dsr",
-		Title: "DSR  COMMANDS",
-	})
-
 	authServiceFactory := cmdutil.NewAuthServiceFactory()
 	serviceFactory := cmdutil.NewConcreteServiceFactory()
 
 	// Child commands
 	cmd.AddCommand(authCmd.NewCmdAuth(authServiceFactory))
-	cmd.AddCommand(claimCmd.NewCmdClaim(serviceFactory, authServiceFactory))
 	cmd.AddCommand(nexuscmd.NewCmdNexus(serviceFactory, authServiceFactory))
 	cmd.AddCommand(sparkCmd.NewCmdSpark(serviceFactory, authServiceFactory))
 	cmd.AddCommand(versionCmd.NewCmdVersion())

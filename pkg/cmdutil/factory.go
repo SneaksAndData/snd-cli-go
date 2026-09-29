@@ -6,10 +6,7 @@ import (
 	"snd-cli/pkg/cmd/util/token"
 	"strings"
 
-	"github.com/SneaksAndData/esd-services-api-client-go/algorithm"
 	"github.com/SneaksAndData/esd-services-api-client-go/auth"
-	"github.com/SneaksAndData/esd-services-api-client-go/claim"
-	"github.com/SneaksAndData/esd-services-api-client-go/dsr"
 	"github.com/SneaksAndData/esd-services-api-client-go/spark"
 	nexussdk "github.com/SneaksAndData/nexus-sdk-go/sdk"
 )
@@ -81,55 +78,13 @@ func NewConcreteServiceFactory() *ConcreteServiceFactory {
 //	An error if the service creation fails or if an unknown service type is specified.
 func (f *ConcreteServiceFactory) CreateService(serviceType, env, serviceUrl string, authService token.AuthService) (interface{}, error) {
 	switch serviceType {
-	case "claim":
-		return initClaimService(env, serviceUrl, authService)
-	case "algorithm":
-		return initAlgorithmService(env, serviceUrl, authService)
 	case "nx":
 		return initNexusService(env, serviceUrl, authService)
 	case "spark":
 		return initSparkService(env, serviceUrl, authService)
-	case "dsr":
-		return initDsrService(env, serviceUrl, authService)
 	default:
 		return nil, fmt.Errorf("unknown service type: %s", serviceType)
 	}
-}
-
-func initClaimService(env, boxerClaimURL string, authService token.AuthService) (*claim.Service, error) {
-	tp, err := createTokenProvider(env, authService)
-	if err != nil {
-		return nil, err
-	}
-	url := ProcessURL(boxerClaimURL, env)
-	config := claim.Config{
-		ClaimURL:     url,
-		GetTokenFunc: tp.GetToken,
-	}
-	claimService, err := claim.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create claim service: %w", err)
-	}
-	return claimService, nil
-}
-
-func initAlgorithmService(env, crystalURL string, authService token.AuthService) (*algorithm.Service, error) {
-	tp, err := createTokenProvider(env, authService)
-	if err != nil {
-		return nil, err
-	}
-	url := ProcessURL(crystalURL, env)
-	config := algorithm.Config{
-		SchedulerURL: url,
-		APIVersion:   "v1.2",
-		GetTokenFunc: tp.GetToken,
-	}
-
-	algorithmService, err := algorithm.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create algorithm service: %w", err)
-	}
-	return algorithmService, nil
 }
 
 func initSparkService(env, beastURL string, authService token.AuthService) (*spark.Service, error) {
@@ -148,24 +103,6 @@ func initSparkService(env, beastURL string, authService token.AuthService) (*spa
 		return nil, fmt.Errorf("failed to create spark service: %w", err)
 	}
 	return sparkService, nil
-}
-
-func initDsrService(env, dsrURL string, authService token.AuthService) (*dsr.Service, error) {
-	tp, err := createTokenProvider(env, authService)
-	if err != nil {
-		return nil, err
-	}
-	url := ProcessURL(dsrURL, env)
-	config := dsr.Config{
-		DsrBaseUrl:   url,
-		GetTokenFunc: tp.GetToken,
-	}
-
-	dsrService, err := dsr.New(config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create dsr service: %w", err)
-	}
-	return dsrService, nil
 }
 
 // ProcessURL formats the given URL with the provided environment string if the URL contains a placeholder ("%s").
